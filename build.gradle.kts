@@ -11,7 +11,7 @@ allprojects {
   apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
   spotless {
     java {
-            target("**/java/**/*.java", "**/kotlin/**/*.java")
+      target("**/java/**/*.java", "**/kotlin/**/*.java")
       targetExclude("**/generated/**", "**/generated_tests/**")
       googleJavaFormat()
       formatAnnotations()
