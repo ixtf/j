@@ -7,10 +7,11 @@ allprojects {
   group = "com.github.ixtf.j"
   version = "1.0.0"
 
-  apply { plugin(rootProject.libs.plugins.spotless.get().pluginId) }
+  apply(plugin = rootProject.libs.plugins.jvm.get().pluginId)
+  apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
   spotless {
     java {
-      target("**/java/**/*.java", "**/kotlin/**/*.java")
+            target("**/java/**/*.java", "**/kotlin/**/*.java")
       targetExclude("**/generated/**", "**/generated_tests/**")
       googleJavaFormat()
       formatAnnotations()
@@ -40,7 +41,8 @@ allprojects {
 }
 
 subprojects {
-  apply { plugin(rootProject.libs.plugins.jvm.get().pluginId) }
+  apply(plugin = "maven-publish")
+  apply(plugin = rootProject.libs.plugins.jvm.get().pluginId)
 
   java {
     toolchain { languageVersion = JavaLanguageVersion.of(21) }
@@ -53,6 +55,18 @@ subprojects {
     compilerOptions {
       freeCompilerArgs.add("-Xjsr305=strict")
       freeCompilerArgs.add("-Xemit-jvm-type-annotations")
+    }
+  }
+
+  configure<PublishingExtension> {
+    publications {
+      create<MavenPublication>("mavenJava") {
+        from(components["java"])
+        versionMapping {
+          usage("java-api") { fromResolutionOf("runtimeClasspath") }
+          usage("java-runtime") { fromResolutionResult() }
+        }
+      }
     }
   }
 }
