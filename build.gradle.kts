@@ -7,19 +7,19 @@ allprojects {
   group = "com.github.ixtf.j"
   version = "1.0.0"
 
-  apply(plugin = rootProject.libs.plugins.jvm.get().pluginId)
   apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
-  spotless {
+  configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     java {
-      target("**/java/**/*.java", "**/kotlin/**/*.java")
+      target("src/**/*.java")
       targetExclude("**/generated/**", "**/generated_tests/**")
-      googleJavaFormat()
+      // googleJavaFormat()
+      palantirJavaFormat().style("GOOGLE")
       formatAnnotations()
       trimTrailingWhitespace()
       endWithNewline()
     }
     kotlin {
-      target("**/java/**/*.kt", "**/kotlin/**/*.kt")
+      target("src/**/*.kt")
       targetExclude("**/generated/**", "**/generated_tests/**")
       ktfmt()
       trimTrailingWhitespace()
