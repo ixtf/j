@@ -1,0 +1,15 @@
+[versions]
+bom = "4.3.13"
+
+kotlin = "2.1.20"
+spotless = "7.0.3"
+junit = "5.11.4"
+
+[libraries]
+bom = { module = "com.gitee.ixtf:bom", version.ref = "bom" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+
+[plugins]
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
