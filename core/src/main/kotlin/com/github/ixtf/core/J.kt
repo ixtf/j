@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.ixtf.core
 
 import cn.hutool.core.collection.CollUtil
