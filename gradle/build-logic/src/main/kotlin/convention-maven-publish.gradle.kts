@@ -67,19 +67,13 @@ afterEvaluate {
         }
 
         pom {
-          name.set(project.name)
-          description.set("A concise description of my library.")
-          url.set("http://www.example.com")
-          licenses {
-            license {
-              name.set("The Apache License, Version 2.0")
-              url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            }
-          }
+          name = project.name
+          url = "https://github.com/ixtf/j"
           scm {
-            connection = "scm:git:git://example.com/my-project.git"
-            developerConnection = "scm:git:ssh://example.com/my-project.git"
-            url = "https://example.com/my-project"
+            connection = "scm:git:git://github.com/ixtf/j.git"
+            developerConnection = "scm:git:ssh://github.com/ixtf/j.git"
+            url = "https://github.com/ixtf/j"
+            tag = scmInfo["commitId"]?.take(8)
           }
           developers {
             developer {
@@ -88,6 +82,12 @@ afterEvaluate {
               email = "ixtf1984@gmail.com"
             }
           }
+          //          licenses {
+          //            license {
+          //              name.set("The Apache License, Version 2.0")
+          //              url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+          //            }
+          //          }
         }
       }
     }
