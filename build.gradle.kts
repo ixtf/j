@@ -1,0 +1,1 @@
+plugins { id("convention-spotless") }
