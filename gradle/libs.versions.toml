@@ -5,7 +5,7 @@
 [versions]
 bom = "4.3.15"
 
-kotlin = "2.1.20"
+kotlin = "2.2.0"
 spotless = "7.0.4"
 grgit = "5.2.1"
 junit = "5.11.4"

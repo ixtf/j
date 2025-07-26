@@ -25,6 +25,14 @@ class IxtfEnvLong(sysProp: String, v: Long) : IxtfEnv<Long>(sysProp, v.toString(
   override fun getValue(thisRef: Any?, property: KProperty<*>) = read().toLong()
 }
 
+class IxtfEnvDouble(sysProp: String, v: Double) : IxtfEnv<Double>(sysProp, v.toString()) {
+  override fun getValue(thisRef: Any?, property: KProperty<*>) = read().toDouble()
+}
+
+class IxtfEnvFloat(sysProp: String, v: Float) : IxtfEnv<Float>(sysProp, v.toString()) {
+  override fun getValue(thisRef: Any?, property: KProperty<*>) = read().toFloat()
+}
+
 abstract class IxtfEnv<T>(val sysProp: String, val defaultV: String) : ReadWriteProperty<Any?, T> {
   private val envProp by lazy { sysProp.replace('.', '_').uppercase() }
 
