@@ -34,6 +34,9 @@ object J {
         if (violations.isNotEmpty()) throw ConstraintViolationException(violations)
       }
 
+  fun blankToDefault(o: CharSequence?, default: String = StrUtil.EMPTY): String =
+      StrUtil.blankToDefault(o, default)
+
   @OptIn(ExperimentalContracts::class)
   fun isBlank(o: CharSequence?): Boolean {
     contract { returns(false) implies (o != null) }
