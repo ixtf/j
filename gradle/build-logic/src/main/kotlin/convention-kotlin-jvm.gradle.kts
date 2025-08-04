@@ -2,6 +2,7 @@ plugins {
   // `java-gradle-plugin`
   // alias(libs.plugins.kotlin.jvm)
   id("org.jetbrains.kotlin.jvm")
+  id("org.jetbrains.kotlin.kapt")
 }
 
 afterEvaluate {

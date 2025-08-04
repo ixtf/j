@@ -1,4 +1,4 @@
-package com.github.ixtf.core.kotlinx
+package com.github.ixtf.core
 
 import cn.hutool.core.date.DateUtil
 import java.time.LocalDate

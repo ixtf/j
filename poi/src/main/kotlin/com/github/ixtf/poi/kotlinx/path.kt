@@ -1,7 +1,7 @@
 package com.github.ixtf.poi.kotlinx
 
 import cn.hutool.core.io.FileUtil
-import com.github.ixtf.core.kotlinx.extName
+import com.github.ixtf.core.extName
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Path

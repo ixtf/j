@@ -9,7 +9,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.github.ixtf.core.kotlinx.extName
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import java.util.*

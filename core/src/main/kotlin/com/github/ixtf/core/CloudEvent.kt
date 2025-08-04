@@ -1,7 +1,6 @@
-package com.github.ixtf.core.kotlinx
+package com.github.ixtf.core
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.ixtf.core.MAPPER
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider

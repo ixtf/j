@@ -1,11 +1,9 @@
-package com.github.ixtf.core.kotlinx
+package com.github.ixtf.core
 
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.io.file.PathUtil
 import cn.hutool.crypto.digest.DigestUtil
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.ixtf.core.J
-import com.github.ixtf.core.objectMap
 import java.io.File
 import java.nio.file.Path
 
@@ -21,17 +19,17 @@ fun File.extName(): String = FileUtil.extName(this)
 
 fun Path.extName(): String = FileUtil.extName(toFile())
 
-fun File.md5Hex(): String = DigestUtil.md5Hex(this)
+fun File.md5(): ByteArray = DigestUtil.md5(this)
 
-fun Path.md5Hex(): String = DigestUtil.md5Hex(toFile())
+fun Path.md5(): ByteArray = DigestUtil.md5(toFile())
 
-fun File.sha256Hex(): String = DigestUtil.sha256Hex(this)
+fun File.sha256(): ByteArray = DigestUtil.sha256(this)
 
-fun Path.sha256Hex(): String = DigestUtil.sha256Hex(toFile())
+fun Path.sha256(): ByteArray = DigestUtil.sha256(toFile())
 
-fun File.sm3Hex(): String = DigestUtil.digester("sm3").digestHex(this)
+fun File.sm3(): ByteArray = DigestUtil.digester("sm3").digest(this)
 
-fun Path.sm3Hex(): String = DigestUtil.digester("sm3").digestHex(toFile())
+fun Path.sm3(): ByteArray = DigestUtil.digester("sm3").digest(toFile())
 
 inline fun <reified T> File.readJson(): T = objectMap(filename()).readValue<T>(this)
 
