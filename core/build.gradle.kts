@@ -22,4 +22,9 @@ dependencies {
   api("io.cloudevents:cloudevents-protobuf")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("io.projectreactor.kotlin:reactor-kotlin-extensions")
+
+  testImplementation("org.bouncycastle:bcprov-jdk18on")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-hashing:1.9.0")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-hashing-sha256:1.9.0")
 }

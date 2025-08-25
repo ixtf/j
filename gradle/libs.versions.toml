@@ -3,9 +3,9 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-bom = "4.3.15"
+bom = "4.4.0"
 
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 spotless = "7.0.4"
 grgit = "5.2.1"
 junit = "5.11.4"

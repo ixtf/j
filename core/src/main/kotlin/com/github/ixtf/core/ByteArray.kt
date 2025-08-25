@@ -18,6 +18,10 @@ inline fun <reified T> ByteArray.inputCommand(): T = J.inputCommand(readJson<T>(
 
 fun ByteArray.base64(): String = Base64.encode(this)
 
+fun ByteArray.base64UrlSafe(): String = Base64.encodeUrlSafe(this)
+
+fun ByteArray.base64WithoutPadding(): String = Base64.encodeWithoutPadding(this)
+
 fun ByteArray.base62(): String = Base62.encode(this)
 
 fun ByteArray.base58(): String = Base58.encode(this)

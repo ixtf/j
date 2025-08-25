@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.TimeInterval
 import cn.hutool.core.map.MapUtil
 import cn.hutool.core.util.ArrayUtil
+import cn.hutool.core.util.IdUtil
 import cn.hutool.core.util.StrUtil
 import jakarta.validation.ConstraintViolationException
 import java.io.File
@@ -95,4 +96,6 @@ object J {
     contract { returns(true) implies (o != null) }
     return !isEmpty(o)
   }
+
+  fun objectId(): String = IdUtil.objectId()
 }
