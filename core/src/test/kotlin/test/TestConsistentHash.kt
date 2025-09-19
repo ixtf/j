@@ -3,20 +3,20 @@ package test
 import cn.hutool.crypto.digest.DigestUtil
 
 fun main() {
-    val router = ConsistentHashRouter()
-    val machineA = Machine("192.168.1.10", 2551)
-    val machineB = Machine("192.168.1.11", 2552)
-    val machineC = Machine("192.168.1.12", 2553)
+  val router = ConsistentHashRouter()
+  val machineA = Machine("192.168.1.10", 2551)
+  val machineB = Machine("192.168.1.11", 2552)
+  val machineC = Machine("192.168.1.12", 2553)
 
-    router.addMachine(machineA)
-    router.addMachine(machineB)
-    router.addMachine(machineC)
+  router.addMachine(machineA)
+  router.addMachine(machineB)
+  router.addMachine(machineC)
 
-    val actorIds = listOf("actor-1", "actor-2", "actor-3", "user-12345", "order-67890")
-    actorIds.forEach { id ->
-        val targetMachine = router.routeTo(id)
-        println("Actor '$id' is routed to machine: ${targetMachine?.id}")
-    }
+  val actorIds = listOf("actor-1", "actor-2", "actor-3", "user-12345", "order-67890")
+  actorIds.forEach { id ->
+    val targetMachine = router.routeTo(id)
+    println("Actor '$id' is routed to machine: ${targetMachine?.id}")
+  }
 }
 
 data class Machine(val ip: String, val port: Int) {
@@ -33,7 +33,7 @@ class ConsistentHashRouter(private val virtualNodeCount: Int = 100) {
     for (i in 0 until virtualNodeCount) {
       val virtualNodeKey = "${machine.id}#$i"
       val hash = DigestUtil.sha256(virtualNodeKey).hashCode().toLong()
-      //val hash = Hash(SHA256).hash(virtualNodeKey.toByteArray()).long
+      // val hash = Hash(SHA256).hash(virtualNodeKey.toByteArray()).long
       circle[hash] = machine
     }
   }

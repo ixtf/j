@@ -25,4 +25,6 @@ include(":core")
 
 include(":inject")
 
+include(":cqrs")
+
 include(":poi")
