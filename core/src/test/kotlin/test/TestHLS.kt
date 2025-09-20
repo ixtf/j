@@ -111,10 +111,10 @@ private class HLSVerticle(
     require(!dlError)
     outPath.toFile().outputStream().use { outputStream ->
       FileUtil.loopFiles(dlDirPath.toFile()).sorted().forEach { file ->
-        val buffer = fs.readFile("$file").coAwait()
         val (key, ivSpec) = m3u8AesFuture.coAwait()
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
+          val buffer = fs.readFile("$file").coAwait()
         val decrypt = cipher.update(buffer.bytes)
         outputStream.write(decrypt)
       }

@@ -12,13 +12,13 @@ afterEvaluate {
   version = "1.0.0"
 
   java {
-    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
     withJavadocJar()
     withSourcesJar()
   }
 
   kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     compilerOptions {
       freeCompilerArgs.add("-Xjsr305=strict")
       freeCompilerArgs.add("-Xemit-jvm-type-annotations")
