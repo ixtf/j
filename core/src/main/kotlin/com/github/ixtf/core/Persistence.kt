@@ -76,7 +76,7 @@ data class ProcessDuration(
 
 enum class SortStart {
   asc,
-  desc
+  desc,
 }
 
 @JvmRecord data class Sort(val id: String, val start: SortStart)
@@ -86,7 +86,7 @@ data class PageQueryResult<T>(
     val first: Int,
     val pageSize: Int,
     val count: Long,
-    val data: Collection<T>
+    val data: Collection<T>,
 )
 
 @JvmRecord data class EntityDTO(@field:NotBlank val id: String)

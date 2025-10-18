@@ -7,4 +7,6 @@ plugins {
 dependencies {
   api(project(":core"))
   api(project(":inject"))
+
+  testImplementation("io.akka:akka-javasdk")
 }

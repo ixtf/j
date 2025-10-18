@@ -6,8 +6,7 @@
 bom = "4.5.0"
 
 kotlin = "2.2.10"
-spotless = "7.0.4"
-grgit = "5.2.1"
+spotless = "8.0.0"
 junit = "5.11.4"
 
 [libraries]
@@ -17,7 +16,6 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref 
 
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 spotless-gradle-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
-grgit-gradle-plugin = { module = "org.ajoberstar.grgit:org.ajoberstar.grgit.gradle.plugin", version.ref = "grgit" }
 
 [plugins]
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

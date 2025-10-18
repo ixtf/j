@@ -54,17 +54,20 @@ val MAPPER by lazy {
         findAndAddModules()
         // defaultLocale(Locale.CHINA)
         //      defaultTimeZone(TimeZone.getTimeZone(ZoneId.))
-      })
+      }
+  )
 }
 
 val YAML_MAPPER by lazy {
   build(
-      YAMLMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } })
+      YAMLMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } }
+  )
 }
 
 val TOML_MAPPER by lazy {
   build(
-      TomlMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } })
+      TomlMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } }
+  )
 }
 
 val VALIDATOR: Validator by lazy {

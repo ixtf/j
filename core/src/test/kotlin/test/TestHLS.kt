@@ -39,13 +39,13 @@ private val webClient = WebClient.create(vertx)
 private val fs = vertx.fileSystem()
 
 suspend fun main() {
-  val filename = "刘浩存"
+  val filename = "周宁"
   val verticle =
       HLSVerticle(
           m3u8S =
-              "ZXJqUlVfNHQ0TFNSZnY2RnN5U1RCMGx5U2sxaVV6SmFXR2Q0Wmxsd1QySXdXV0o2VldoWmVuTkdRVzFNVWs1VmNVaG5kSGRJTVVwclF6QXZVVVZ5YmtaT1JVcG1WSFZ0VDJKMmVYTTNaSFV5VkRCMFdWUmhUSFl4Wkc1aVdYRjRXamc0TURGT2VDOVZSSE5KTmpObmVHNHpSblUxUkhaTloxVkJQUT09",
-          baseUri = URI("https://s1.playhls.com"),
-          // baseUri = URI("https://s2.playhls.com"),
+              "TXBfNDRQY2Nwb2ZlR1hPLUk1M1UzbXB1YmxBNVEwVm1SWHB1ZDJreWFFbE9TMWR0UlVGTGRuaE1kSGxFYkdNMldXTlJlVmxqU1cxSFNXRkJUMjV5VDBaVmJubDZZVmxVYWpST2EzTmpTMFp4YjBNNVVXOTBTWE5xWTBOVlpteDJOM0ZyZEhCelREQkJjVlk0YTAxc1dTdHhZMmwzTW1oWGVURnZQUT09",
+          //          baseUri = URI("https://s1.playhls.com"),
+          baseUri = URI("https://s2.playhls.com"),
           dlDirPath = Path("/tmp/$filename"),
           outPath = Path("/Users/jzb/Movies/$filename.mp4"),
       )
@@ -114,7 +114,7 @@ private class HLSVerticle(
         val (key, ivSpec) = m3u8AesFuture.coAwait()
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
-          val buffer = fs.readFile("$file").coAwait()
+        val buffer = fs.readFile("$file").coAwait()
         val decrypt = cipher.update(buffer.bytes)
         outputStream.write(decrypt)
       }

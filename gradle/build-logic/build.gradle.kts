@@ -6,7 +6,6 @@ plugins {
 dependencies {
   implementation(libs.kotlin.gradle.plugin)
   implementation(libs.spotless.gradle.plugin)
-  implementation(libs.grgit.gradle.plugin)
 }
 
 spotless {
