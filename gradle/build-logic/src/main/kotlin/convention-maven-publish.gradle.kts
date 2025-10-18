@@ -21,44 +21,41 @@ afterEvaluate {
           )
         } else {
           // Git 信息获取函数
-          fun getGitBranch(): String {
-            return try {
-              providers
-                  .exec { commandLine("git", "rev-parse", "--abbrev-ref", "HEAD") }
-                  .standardOutput
-                  .asText
-                  .get()
-                  .trim()
-            } catch (e: Exception) {
-              "unknown"
-            }
-          }
+          fun getGitBranch(): String =
+              try {
+                providers
+                    .exec { commandLine("git", "rev-parse", "--abbrev-ref", "HEAD") }
+                    .standardOutput
+                    .asText
+                    .get()
+                    .trim()
+              } catch (_: Exception) {
+                "unknown"
+              }
 
-          fun getGitCommitHash(): String {
-            return try {
-              providers
-                  .exec { commandLine("git", "rev-parse", "HEAD") }
-                  .standardOutput
-                  .asText
-                  .get()
-                  .trim()
-            } catch (e: Exception) {
-              "unknown"
-            }
-          }
+          fun getGitCommitHash(): String =
+              try {
+                providers
+                    .exec { commandLine("git", "rev-parse", "HEAD") }
+                    .standardOutput
+                    .asText
+                    .get()
+                    .trim()
+              } catch (_: Exception) {
+                "unknown"
+              }
 
-          fun getGitCommitTime(): String {
-            return try {
-              providers
-                  .exec { commandLine("git", "log", "-1", "--format=%cI") }
-                  .standardOutput
-                  .asText
-                  .get()
-                  .trim()
-            } catch (e: Exception) {
-              Instant.now().toString()
-            }
-          }
+          fun getGitCommitTime(): String =
+              try {
+                providers
+                    .exec { commandLine("git", "log", "-1", "--format=%cI") }
+                    .standardOutput
+                    .asText
+                    .get()
+                    .trim()
+              } catch (_: Exception) {
+                Instant.now().toString()
+              }
           // 使用 Gradle 原生命令获取 Git 信息
           val branch = getGitBranch()
           val commitId = getGitCommitHash()
