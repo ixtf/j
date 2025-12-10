@@ -22,6 +22,10 @@ afterEvaluate {
     compilerOptions {
       freeCompilerArgs.add("-Xjsr305=strict")
       freeCompilerArgs.add("-Xemit-jvm-type-annotations")
+      // freeCompilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
+      // freeCompilerArgs.add("-Xuse-experimental=kotlin.Experimental")
+      freeCompilerArgs.add("-Xannotation-default-target=param-property")
+      // freeCompilerArgs.add("-Xannotation-target-all")
     }
   }
 

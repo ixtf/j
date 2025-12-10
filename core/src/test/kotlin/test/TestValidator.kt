@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty
 
 fun main() {
   val validator = Validator.instance()
+    validator.validate(Address("", listOf("")))
 }
 
 data class Address(

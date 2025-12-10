@@ -23,13 +23,15 @@ dependencies {
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-  testImplementation("io.avaje:avaje-validator:2.13")
+  testImplementation("io.avaje:avaje-validator")
   testImplementation("org.bouncycastle:bcprov-jdk18on")
   testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
   testImplementation("io.lindstrom:m3u8-parser:0.30")
-  testImplementation("io.vertx:vertx-web-client:5.0.4")
-  testImplementation("io.vertx:vertx-lang-kotlin-coroutines:5.0.4")
+  testImplementation("io.vertx:vertx-web")
+  testImplementation("io.vertx:vertx-web-client")
+  testImplementation("io.vertx:vertx-lang-kotlin")
+  testImplementation("io.vertx:vertx-lang-kotlin-coroutines")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 }
