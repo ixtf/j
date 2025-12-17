@@ -1,4 +1,4 @@
-package test
+package com.github.ixtf.inject
 
 import io.avaje.inject.PostConstruct
 import io.avaje.inject.Prototype

@@ -8,7 +8,6 @@ plugins {
 afterEvaluate {
   // 统一配置所有 Kotlin 库
   group = "com.github.ixtf.j"
-
   version = "1.0.0"
 
   java {
@@ -38,5 +37,11 @@ afterEvaluate {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(libs.findLibrary("kotlin.test").get())
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+  }
+
+  tasks.test {
+    useJUnitPlatform()
+    testLogging { events("passed", "skipped", "failed") }
+    failOnNoDiscoveredTests = false
   }
 }

@@ -4,16 +4,20 @@ plugins {
   id("convention-maven-publish")
 }
 
+val injectV = "12.1"
+val validatorV = "2.15"
+
 dependencies {
   api(project(":core"))
-  api("io.avaje:avaje-inject")
-  api("io.avaje:avaje-validator")
+  implementation("io.avaje:avaje-inject")
 
-  kapt("io.avaje:avaje-inject-generator")
-  kapt("io.avaje:avaje-validator-generator")
+  //  annotationProcessor("io.avaje:avaje-inject-generator:$injectV")
+  //  annotationProcessor("io.avaje:avaje-validator-generator:$validatorV")
+  kapt("io.avaje:avaje-inject-generator:$injectV")
+  kapt("io.avaje:avaje-validator-generator:$validatorV")
 
-  testImplementation("io.avaje:avaje-inject-test")
-  testImplementation("io.avaje:avaje-validator")
-  kaptTest("io.avaje:avaje-inject-generator")
-  kaptTest("io.avaje:avaje-validator")
+  testImplementation("io.avaje:avaje-inject-test:$injectV")
+  //  testAnnotationProcessor("io.avaje:avaje-inject-generator:$injectV")
+  //  testAnnotationProcessor("io.avaje:avaje-validator-generator:$validatorV")
+  kaptTest("io.avaje:avaje-inject-generator:$injectV")
 }

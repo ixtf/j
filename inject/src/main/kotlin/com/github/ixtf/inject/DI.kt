@@ -7,10 +7,10 @@ import java.util.Optional
 import kotlin.reflect.KProperty
 
 object DI {
-  val BEAN_SCOPE by lazy { BeanScope.builder().build() }
+  val BEAN_SCOPE: BeanScope by lazy { BeanScope.builder().build() }
 
   inline fun <reified T : Any> get(): T {
-    if (T::class.java == Optional::class.java) {
+    if (T::class == Optional::class) {
       val typeToken = object : TypeToken<T>() {}
       val optionalInnerType = typeToken.type as ParameterizedType
       val realType = optionalInnerType.actualTypeArguments[0]

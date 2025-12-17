@@ -10,7 +10,8 @@ dependencies {
   api("cn.hutool:hutool-system")
   api("cn.hutool:hutool-setting")
   api("cn.hutool:hutool-jwt")
-  api("ch.qos.logback:logback-classic")
+  implementation("ch.qos.logback:logback-classic")
+  implementation("io.avaje:avaje-validator")
   api("org.hibernate.validator:hibernate-validator")
   api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
@@ -34,4 +35,7 @@ dependencies {
   testImplementation("io.vertx:vertx-lang-kotlin-coroutines")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+  val validatorV = "2.15"
+  kaptTest("io.avaje:avaje-validator-generator:$validatorV")
 }

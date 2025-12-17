@@ -11,7 +11,7 @@ dependencies {
 spotless {
   kotlin {
     target("**/java/**/*.kt", "**/kotlin/**/*.kt")
-    targetExclude("**/generated/**", "**/generated_tests/**")
+    targetExclude("**/generated/**", "**/generated_tests/**", "**/generated-sources/**")
     ktfmt()
     trimTrailingWhitespace()
     endWithNewline()

@@ -36,7 +36,7 @@ private fun build(mapper: ObjectMapper) =
       registerKotlinModule { enable(KotlinFeature.StrictNullChecks) }
       disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
       enable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
-      setSerializationInclusion(JsonInclude.Include.NON_NULL)
+      setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
     }
 
 val MAPPER by lazy {

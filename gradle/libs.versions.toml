@@ -5,9 +5,9 @@
 [versions]
 bom = "5.0.0"
 
-kotlin = "2.2.21"
-spotless = "8.0.0"
-junit = "5.11.4"
+kotlin = "2.3.0"
+spotless = "8.1.0"
+junit = "6.0.1"
 
 [libraries]
 bom = { module = "com.gitee.ixtf:bom", version.ref = "bom" }
