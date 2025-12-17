@@ -6,6 +6,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import org.junit.jupiter.api.Test
+import java.io.Serializable
 
 class TestValidator {
   @Test
@@ -15,8 +16,9 @@ class TestValidator {
   }
 }
 
-@ImportValidPojo
+@Valid
+@JvmRecord
 data class Address(
     @NotBlank val street: String,
     @NotEmpty val suburb: List<@Valid @NotBlank String>,
-)
+): Serializable
