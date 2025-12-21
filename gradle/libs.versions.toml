@@ -8,6 +8,7 @@ bom = "5.0.0"
 kotlin = "2.3.0"
 spotless = "8.1.0"
 junit = "6.0.1"
+ksp = "2.3.4"
 
 [libraries]
 bom = { module = "com.gitee.ixtf:bom", version.ref = "bom" }
@@ -16,6 +17,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref 
 
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 spotless-gradle-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [plugins]
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

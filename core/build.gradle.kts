@@ -31,11 +31,13 @@ dependencies {
   testImplementation("io.lindstrom:m3u8-parser:0.30")
   testImplementation("io.vertx:vertx-web")
   testImplementation("io.vertx:vertx-web-client")
+  testImplementation("io.vertx:vertx-reactive-streams")
   testImplementation("io.vertx:vertx-lang-kotlin")
   testImplementation("io.vertx:vertx-lang-kotlin-coroutines")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
   val validatorV = "2.15"
-  kaptTest("io.avaje:avaje-validator-generator:$validatorV")
+  // kaptTest("io.avaje:avaje-validator-generator:$validatorV")
+  ksp("io.avaje:avaje-validator-generator:$validatorV")
 }

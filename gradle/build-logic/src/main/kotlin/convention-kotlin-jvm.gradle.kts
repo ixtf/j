@@ -3,6 +3,7 @@ plugins {
   // alias(libs.plugins.kotlin.jvm)
   id("org.jetbrains.kotlin.jvm")
   id("org.jetbrains.kotlin.kapt")
+  id("com.google.devtools.ksp")
 }
 
 afterEvaluate {
@@ -15,6 +16,9 @@ afterEvaluate {
     withJavadocJar()
     withSourcesJar()
   }
+  tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-proc:full")
+  }
 
   kotlin {
     jvmToolchain(25)
@@ -26,6 +30,13 @@ afterEvaluate {
       freeCompilerArgs.add("-Xannotation-default-target=param-property")
       // freeCompilerArgs.add("-Xannotation-target-all")
     }
+  }
+
+  kapt {
+    // 确保生成代码的路径被 IDE 识别
+    useBuildCache = true
+    // 如果有多个注解处理器，确保它们都能正常工作
+    includeCompileClasspath = false
   }
 
   dependencies {
