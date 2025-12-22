@@ -150,17 +150,7 @@ private class HLS2Verticle(private val downloadState: DownloadState) : Coroutine
         }
         .subscribe(rrs)
     val asyncFile = fs.open("$outPath", openOptionsOf()).coAwait()
-    rrs.pipeTo(asyncFile)
-    //    outPath.toFile().outputStream().use { outputStream ->
-    //      FileUtil.loopFiles(dlDirPath.toFile()).sorted().forEach { file ->
-    //        val (key, ivSpec) = m3u8AesFuture.coAwait()
-    //        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-    //        cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
-    //        val buffer = fs.readFile("$file").coAwait()
-    //        val decrypt = cipher.update(buffer.bytes)
-    //        outputStream.write(decrypt)
-    //      }
-    //    }
+    rrs.pipeTo(asyncFile).coAwait()
   }
 
   private suspend fun WebClient.dl(mediaSegment: MediaSegment) {
