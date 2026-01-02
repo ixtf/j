@@ -18,13 +18,12 @@ object J {
   private lateinit var DI: Any
 
   @Synchronized
-  fun initDI(v: Any) {
+  fun initDI(block: () -> Any) {
     require(!::DI.isInitialized)
-    DI = v
+    DI = block()
   }
 
-  @Suppress("UNCHECKED_CAST")
-  fun <T> asDI(): T = DI as T
+  @Suppress("UNCHECKED_CAST") fun <T> asDI(): T = DI as T
 
   fun timer(): TimeInterval = DateUtil.timer()
 
