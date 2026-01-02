@@ -2,8 +2,8 @@ plugins {
   // `java-gradle-plugin`
   // alias(libs.plugins.kotlin.jvm)
   id("org.jetbrains.kotlin.jvm")
-  id("org.jetbrains.kotlin.kapt")
-  id("com.google.devtools.ksp")
+  //id("org.jetbrains.kotlin.kapt")
+  //id("com.google.devtools.ksp")
 }
 
 afterEvaluate {
@@ -25,19 +25,19 @@ afterEvaluate {
     compilerOptions {
       freeCompilerArgs.add("-Xjsr305=strict")
       freeCompilerArgs.add("-Xemit-jvm-type-annotations")
+      freeCompilerArgs.add("-Xannotation-default-target=param-property")
       // freeCompilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
       // freeCompilerArgs.add("-Xuse-experimental=kotlin.Experimental")
-      freeCompilerArgs.add("-Xannotation-default-target=param-property")
       // freeCompilerArgs.add("-Xannotation-target-all")
     }
   }
 
-  kapt {
-    // 确保生成代码的路径被 IDE 识别
-    useBuildCache = true
-    // 如果有多个注解处理器，确保它们都能正常工作
-    includeCompileClasspath = false
-  }
+//  kapt {
+//    // 确保生成代码的路径被 IDE 识别
+//    useBuildCache = true
+//    // 如果有多个注解处理器，确保它们都能正常工作
+//    includeCompileClasspath = false
+//  }
 
   dependencies {
     val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs")

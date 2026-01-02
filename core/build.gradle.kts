@@ -36,8 +36,4 @@ dependencies {
   testImplementation("io.vertx:vertx-lang-kotlin-coroutines")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-
-  val validatorV = "2.15"
-  // kaptTest("io.avaje:avaje-validator-generator:$validatorV")
-  ksp("io.avaje:avaje-validator-generator:$validatorV")
 }

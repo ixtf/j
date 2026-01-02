@@ -23,6 +23,4 @@ rootProject.name = "j"
 
 include(":core")
 
-include(":inject")
-
 include(":poi")

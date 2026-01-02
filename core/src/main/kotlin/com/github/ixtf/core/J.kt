@@ -15,6 +15,17 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 object J {
+  private lateinit var DI: Any
+
+  @Synchronized
+  fun initDI(v: Any) {
+    require(!::DI.isInitialized)
+    DI = v
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  fun <T> asDI(): T = DI as T
+
   fun timer(): TimeInterval = DateUtil.timer()
 
   @OptIn(ExperimentalContracts::class)
