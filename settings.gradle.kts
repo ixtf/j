@@ -21,6 +21,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "j"
 
+include(":compiler")
+
 include(":core")
+include(":vertx")
+include(":cqrs")
 
 include(":poi")
