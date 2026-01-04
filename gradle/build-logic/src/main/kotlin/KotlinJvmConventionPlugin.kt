@@ -16,7 +16,7 @@ class KotlinJvmConventionPlugin : Plugin<Project> {
       pluginManager.apply("org.jetbrains.kotlin.jvm")
       pluginManager.apply("java-library")
 
-      group = "com.github.ixtf.vertx"
+      group = "com.github.ixtf.j"
       version = "1.0.0"
 
       extensions.configure<JavaPluginExtension> {
