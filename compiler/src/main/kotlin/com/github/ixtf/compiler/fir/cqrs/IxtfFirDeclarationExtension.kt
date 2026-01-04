@@ -1,4 +1,4 @@
-package com.github.ixtf.compiler.plugin.cqrs
+package com.github.ixtf.compiler.fir.cqrs
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension

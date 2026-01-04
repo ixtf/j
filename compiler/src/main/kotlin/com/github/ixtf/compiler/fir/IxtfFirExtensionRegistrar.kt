@@ -1,7 +1,7 @@
-package com.github.ixtf.compiler.plugin
+package com.github.ixtf.compiler.fir
 
-import com.github.ixtf.compiler.plugin.cqrs.IxtfFirDeclarationExtension
-import com.github.ixtf.compiler.plugin.test.TestFirDeclarationExtension
+import com.github.ixtf.compiler.fir.cqrs.IxtfFirDeclarationExtension
+import com.github.ixtf.compiler.fir.test.TestFirDeclarationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 class IxtfFirExtensionRegistrar : FirExtensionRegistrar() {

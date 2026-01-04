@@ -1,4 +1,4 @@
-package com.github.ixtf.compiler.plugin.test
+package com.github.ixtf.compiler.fir.test
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities

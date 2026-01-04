@@ -5,13 +5,17 @@ plugins {
 }
 
 dependencies {
-  api(project(":core"))
+  implementation(project(":vertx"))
+  implementation(project(":cqrs"))
 
+  implementation(libs.ksp.api)
+  implementation(libs.kotlinpoet)
+  implementation(libs.kotlinpoet.ksp)
+
+  compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("compiler"))
   compileOnly(kotlin("compiler-internal"))
   compileOnly(kotlin("compiler-fir"))
-  //  compileOnly("org.jetbrains.kotlin:kotlin-compiler-internal:2.3.0")
-  //  compileOnly("org.jetbrains.kotlin:kotlin-compiler-fir:2.3.0")
 
   testImplementation(kotlin("test"))
 }

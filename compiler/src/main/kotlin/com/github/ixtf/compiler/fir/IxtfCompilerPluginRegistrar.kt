@@ -1,4 +1,4 @@
-package com.github.ixtf.compiler.plugin
+package com.github.ixtf.compiler.fir
 
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
