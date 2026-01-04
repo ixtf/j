@@ -16,6 +16,6 @@ class TestValidator {
 }
 
 data class Address(
-    @NotBlank val street: String,
-    @NotEmpty val suburb: List<@Valid @NotBlank String>,
+  @NotBlank val street: String,
+  @NotEmpty val suburb: List<@Valid @NotBlank String>,
 ) : Serializable

@@ -1,20 +1,15 @@
-package com.github.ixtf.core
+package com.github.ixtf.core.kit
 
 import cn.hutool.core.codec.Base58
 import cn.hutool.core.codec.Base62
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.util.HexUtil
 import cn.hutool.crypto.digest.DigestUtil
-import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.ByteArrayInputStream
 
 fun ByteArray.gzip(): ByteArray = ByteArrayInputStream(this).gzip()
 
 fun ByteArray.unGzip(): ByteArray = ByteArrayInputStream(this).unGzip()
-
-inline fun <reified T> ByteArray.readJson(): T = MAPPER.readValue<T>(this)
-
-inline fun <reified T> ByteArray.inputCommand(): T = J.inputCommand(readJson<T>())
 
 fun ByteArray.base64(): String = Base64.encode(this)
 

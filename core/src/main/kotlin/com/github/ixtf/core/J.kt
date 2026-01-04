@@ -8,6 +8,7 @@ import cn.hutool.core.map.MapUtil
 import cn.hutool.core.util.ArrayUtil
 import cn.hutool.core.util.IdUtil
 import cn.hutool.core.util.StrUtil
+import com.github.ixtf.core.kit.writeJson
 import jakarta.validation.ConstraintViolationException
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
@@ -39,13 +40,13 @@ object J {
   fun writeJson(s: String, o: Any) = File(s).writeJson(o)
 
   fun <T> inputCommand(o: T): T =
-      o.apply {
-        val violations = VALIDATOR.validate(o)
-        if (violations.isNotEmpty()) throw ConstraintViolationException(violations)
-      }
+    o.apply {
+      val violations = VALIDATOR.validate(o)
+      if (violations.isNotEmpty()) throw ConstraintViolationException(violations)
+    }
 
   fun blankToDefault(o: CharSequence?, default: String = StrUtil.EMPTY): String =
-      StrUtil.blankToDefault(o, default)
+    StrUtil.blankToDefault(o, default)
 
   @OptIn(ExperimentalContracts::class)
   fun isBlank(o: CharSequence?): Boolean {

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.github.ixtf.core.kit.extName
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 import java.util.*
@@ -23,21 +24,21 @@ import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator
  * @return jackson map
  */
 fun objectMap(o: String) =
-    when (o.extName().lowercase()) {
-      "yml",
-      "yaml" -> YAML_MAPPER
-      "toml" -> TOML_MAPPER
-      "json" -> MAPPER
-      else -> MAPPER
-    }
+  when (o.extName().lowercase()) {
+    "yml",
+    "yaml" -> YAML_MAPPER
+    "toml" -> TOML_MAPPER
+    "json" -> MAPPER
+    else -> MAPPER
+  }
 
 private fun build(mapper: ObjectMapper) =
-    mapper.apply {
-      registerKotlinModule { enable(KotlinFeature.StrictNullChecks) }
-      disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-      enable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
-      setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-    }
+  mapper.apply {
+    registerKotlinModule { enable(KotlinFeature.StrictNullChecks) }
+    disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    enable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
+    setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+  }
 
 val MAPPER by lazy {
   //    val OBJECT_MAPPER = ObjectMapper(
@@ -50,30 +51,30 @@ val MAPPER by lazy {
   //            .build()
   //    )
   build(
-      jsonMapper {
-        findAndAddModules()
-        // defaultLocale(Locale.CHINA)
-        //      defaultTimeZone(TimeZone.getTimeZone(ZoneId.))
-      }
+    jsonMapper {
+      findAndAddModules()
+      // defaultLocale(Locale.CHINA)
+      //      defaultTimeZone(TimeZone.getTimeZone(ZoneId.))
+    }
   )
 }
 
 val YAML_MAPPER by lazy {
   build(
-      YAMLMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } }
+    YAMLMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } }
   )
 }
 
 val TOML_MAPPER by lazy {
   build(
-      TomlMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } }
+    TomlMapper().apply { ServiceLoader.load(Module::class.java).forEach { registerModule(it) } }
   )
 }
 
 val VALIDATOR: Validator by lazy {
   Validation.byDefaultProvider()
-      .configure()
-      .messageInterpolator(ParameterMessageInterpolator())
-      .buildValidatorFactory()
-      .validator
+    .configure()
+    .messageInterpolator(ParameterMessageInterpolator())
+    .buildValidatorFactory()
+    .validator
 }

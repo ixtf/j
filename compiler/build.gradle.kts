@@ -4,6 +4,4 @@ plugins {
   id("convention-maven-publish")
 }
 
-dependencies {
-  api(project(":core"))
-}
+dependencies { api(project(":core")) }

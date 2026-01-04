@@ -1,4 +1,4 @@
-package com.github.ixtf.core
+package com.github.ixtf.core.kit
 
 import cn.hutool.core.date.DateUtil
 import java.time.LocalDate
@@ -10,7 +10,7 @@ import java.util.*
 fun Date.betweenMs(endDate: Date): Long = DateUtil.betweenMs(this, endDate)
 
 fun Date.betweenDay(endDate: Date, isReset: Boolean = false): Long =
-    DateUtil.betweenDay(this, endDate, isReset)
+  DateUtil.betweenDay(this, endDate, isReset)
 
 fun Date.ldt(): LocalDateTime = DateUtil.toLocalDateTime(this)
 

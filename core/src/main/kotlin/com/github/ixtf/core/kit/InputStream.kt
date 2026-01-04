@@ -1,7 +1,8 @@
-package com.github.ixtf.core
+package com.github.ixtf.core.kit
 
 import cn.hutool.core.compress.Gzip
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.ixtf.core.MAPPER
 import com.google.common.io.ByteStreams
 import java.io.ByteArrayOutputStream
 import java.io.InputStream

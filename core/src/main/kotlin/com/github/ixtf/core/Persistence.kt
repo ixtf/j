@@ -1,5 +1,7 @@
 package com.github.ixtf.core
 
+import com.github.ixtf.core.kit.date
+import com.github.ixtf.core.kit.ldt
 import com.google.common.collect.Lists
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -43,10 +45,8 @@ interface IEntityLoggable : IEntity {
   }
 }
 
-data class DefaultOperator(
-    @field:NotBlank @param:NotBlank override val id: String,
-    @field:NotBlank @param:NotBlank override var name: String,
-) : IOperator {
+data class DefaultOperator(@NotBlank override val id: String, @NotBlank override val name: String) :
+  IOperator {
   constructor(o: IOperator) : this(id = o.id, name = o.name)
 
   override fun equals(other: Any?): Boolean {
@@ -62,9 +62,9 @@ data class DefaultOperator(
 }
 
 data class ProcessDuration(
-    val startDateTime: Date = Date(),
-    val endDateTime: Date? = null,
-    val seconds: Long? = null,
+  val startDateTime: Date = Date(),
+  val endDateTime: Date? = null,
+  val seconds: Long? = null,
 ) {
   fun onEnd(): ProcessDuration {
     val endLdt = LocalDateTime.now()
@@ -83,15 +83,15 @@ enum class SortStart {
 
 @JvmRecord
 data class PageQueryResult<T>(
-    val first: Int,
-    val pageSize: Int,
-    val count: Long,
-    val data: Collection<T>,
+  val first: Int,
+  val pageSize: Int,
+  val count: Long,
+  val data: Collection<T>,
 )
 
-@JvmRecord data class EntityDTO(@field:NotBlank val id: String)
+@JvmRecord data class EntityDTO(@NotBlank val id: String)
 
-@JvmRecord data class EntitiesDTO(@field:NotEmpty val ids: Set<@Valid @NotBlank String>)
+@JvmRecord data class EntitiesDTO(@NotEmpty val ids: Set<@Valid @NotBlank String>)
 
 interface UnitOfWork {
   fun registerSave(o: IEntity)
@@ -111,15 +111,15 @@ interface UnitOfWork {
 
 abstract class AbstractUnitOfWork : UnitOfWork {
   protected val saveList: MutableList<IEntity> =
-      Collections.synchronizedList(Lists.newArrayList<IEntity>())
+    Collections.synchronizedList(Lists.newArrayList<IEntity>())
   protected val newList: MutableList<IEntity> =
-      Collections.synchronizedList(Lists.newArrayList<IEntity>())
+    Collections.synchronizedList(Lists.newArrayList<IEntity>())
   protected val dirtyList: MutableList<IEntity> =
-      Collections.synchronizedList(Lists.newArrayList<IEntity>())
+    Collections.synchronizedList(Lists.newArrayList<IEntity>())
   protected val deleteList: MutableList<IEntity> =
-      Collections.synchronizedList(Lists.newArrayList<IEntity>())
+    Collections.synchronizedList(Lists.newArrayList<IEntity>())
   protected val purgeList: MutableList<IEntity> =
-      Collections.synchronizedList(Lists.newArrayList<IEntity>())
+    Collections.synchronizedList(Lists.newArrayList<IEntity>())
 
   @Synchronized
   override fun registerSave(o: IEntity) {

@@ -13,17 +13,17 @@ import org.apache.poi.ss.util.CellUtil
 fun Workbook.sheet(): Sheet = firstOrNull() ?: createSheet()
 
 fun Workbook.byteArray(): ByteArray =
-    ByteArrayOutputStream().use { baos ->
-      BufferedOutputStream(baos).use { write(it) }
-      baos.toByteArray()
-    }
+  ByteArrayOutputStream().use { baos ->
+    BufferedOutputStream(baos).use { write(it) }
+    baos.toByteArray()
+  }
 
 fun Sheet.rowOrNull(row: Int = 0): Row? = getRow(row)
 
 fun Sheet.row(row: Int = 0): Row = CellUtil.getRow(row, this)
 
 fun Sheet.addMergedRegion(firstRow: Int, lastRow: Int, firstCol: Int, lastCol: Int) =
-    addMergedRegion(CellRangeAddress(firstRow, lastRow, firstCol, lastCol))
+  addMergedRegion(CellRangeAddress(firstRow, lastRow, firstCol, lastCol))
 
 fun Row.cellOrNull(col: Int = 0): Cell? = getCell(col)
 
@@ -77,21 +77,21 @@ inline fun <reified T> Cell.value(): T = valueOrNull()!!
 
 inline fun <reified T> Cell.valueOrNull(): T? {
   val value =
-      if (String::class.java.isAssignableFrom(T::class.java)) {
-        when (cellType) {
-          BLANK,
-          STRING -> stringCellValue
-          NUMERIC -> numericCellValue.toString()
-          else -> null
-        }
-      } else if (Boolean::class.java.isAssignableFrom(T::class.java)) {
-        when (cellType) {
-          BOOLEAN -> booleanCellValue
-          else -> null
-        }
-      } else null
+    if (String::class.java.isAssignableFrom(T::class.java)) {
+      when (cellType) {
+        BLANK,
+        STRING -> stringCellValue
+        NUMERIC -> numericCellValue.toString()
+        else -> null
+      }
+    } else if (Boolean::class.java.isAssignableFrom(T::class.java)) {
+      when (cellType) {
+        BOOLEAN -> booleanCellValue
+        else -> null
+      }
+    } else null
   return value as? T
 }
 
 fun Cell.isFirst(range: CellRangeAddress) =
-    rowIndex == range.firstRow && columnIndex == range.firstColumn
+  rowIndex == range.firstRow && columnIndex == range.firstColumn

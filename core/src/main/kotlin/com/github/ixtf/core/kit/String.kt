@@ -1,7 +1,9 @@
-package com.github.ixtf.core
+package com.github.ixtf.core.kit
 
 import cn.hutool.core.io.FileUtil
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.ixtf.core.J
+import com.github.ixtf.core.MAPPER
 import java.io.File
 
 fun String.filename(): String = FileUtil.getName(this)

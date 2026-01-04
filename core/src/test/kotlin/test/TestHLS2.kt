@@ -5,7 +5,7 @@ import cn.hutool.core.util.HexUtil
 import cn.hutool.log.Log
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ixtf.core.MAPPER
-import com.github.ixtf.core.filename
+import com.github.ixtf.core.kit.filename
 import io.lindstrom.m3u8.model.MediaSegment
 import io.lindstrom.m3u8.parser.MediaPlaylistParser
 import io.vertx.core.Future
@@ -22,7 +22,6 @@ import io.vertx.kotlin.core.file.openOptionsOf
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
 import java.net.URI
-import java.nio.file.Path
 import java.time.Duration
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -49,10 +48,10 @@ private val baseUri = URI("https://video.xchina.download")
 
 suspend fun main() {
   val downloadState =
-      DownloadState.loadState(
-          "63c9e2636de4c",
-          "https://video.xchina.download/m3u8/63c9e2636de4c/720.m3u8?expires=1766593202&md5=mTLv8mEGR3yYUdjeG9CaAA",
-      )
+    DownloadState.loadState(
+      "63c9e2636de4c",
+      "https://video.xchina.download/m3u8/63c9e2636de4c/720.m3u8?expires=1766593202&md5=mTLv8mEGR3yYUdjeG9CaAA",
+    )
 
   val verticle = HLS2Verticle(downloadState = downloadState)
   vertx.deployVerticle(verticle, deploymentOptionsOf(threadingModel = VIRTUAL_THREAD)).coAwait()
@@ -80,11 +79,11 @@ private data class DownloadState(val id: String, val m3u8: String) {
 private class HLS2Verticle(private val downloadState: DownloadState) : CoroutineVerticle() {
   private val log = Log.get(this.javaClass)
   private val retry =
-      Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
-          .maxBackoff(Duration.ofSeconds(3))
-          .jitter(0.5)
-          .onRetryExhaustedThrow { spec, signal -> RuntimeException("重连失败，放弃连接") }
-          .doBeforeRetry { signal -> log.error("连接断开，尝试第 ${signal.totalRetries() + 1} 次重连...") }
+    Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
+      .maxBackoff(Duration.ofSeconds(3))
+      .jitter(0.5)
+      .onRetryExhaustedThrow { spec, signal -> RuntimeException("重连失败，放弃连接") }
+      .doBeforeRetry { signal -> log.error("连接断开，尝试第 ${signal.totalRetries() + 1} 次重连...") }
 
   private val outPath = Path("${FileUtil.getUserHomePath()}/Movies/${downloadState.id}.mp4")
   private val dlDirPath = Path("/tmp/${downloadState.id}").also { FileUtil.mkdir(it) }
@@ -139,16 +138,16 @@ private class HLS2Verticle(private val downloadState: DownloadState) : Coroutine
   private suspend fun merge() {
     val rrs = ReactiveReadStream.readStream<Buffer>()
     flux {
-          val (key, ivSpec) = m3u8AesFuture.coAwait()
-          val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-          FileUtil.loopFiles(dlDirPath.toFile()).sorted().forEach { file ->
-            cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
-            val buffer = fs.readFile("$file").coAwait()
-            val decrypt = cipher.update(buffer.bytes)
-            send(Buffer.buffer(decrypt))
-          }
+        val (key, ivSpec) = m3u8AesFuture.coAwait()
+        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        FileUtil.loopFiles(dlDirPath.toFile()).sorted().forEach { file ->
+          cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
+          val buffer = fs.readFile("$file").coAwait()
+          val decrypt = cipher.update(buffer.bytes)
+          send(Buffer.buffer(decrypt))
         }
-        .subscribe(rrs)
+      }
+      .subscribe(rrs)
     val asyncFile = fs.open("$outPath", openOptionsOf()).coAwait()
     rrs.pipeTo(asyncFile).coAwait()
   }
@@ -158,12 +157,12 @@ private class HLS2Verticle(private val downloadState: DownloadState) : Coroutine
     val dlPath = dlDirPath.resolve(uri.path.filename())
     if (dlPath.exists()) return
     val body =
-        getAbs("$uri")
-            .putHeader("Referer", "https://xchina.co/video/id-${downloadState.id}.html")
-            .send()
-            .expecting(SC_SUCCESS)
-            .coAwait()
-            .body()
+      getAbs("$uri")
+        .putHeader("Referer", "https://xchina.co/video/id-${downloadState.id}.html")
+        .send()
+        .expecting(SC_SUCCESS)
+        .coAwait()
+        .body()
     log.info("$dlPath")
     fs.writeFile("$dlPath", body).coAwait()
   }

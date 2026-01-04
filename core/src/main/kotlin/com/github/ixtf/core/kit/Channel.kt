@@ -1,4 +1,4 @@
-package com.github.ixtf.core.kotlinx
+package com.github.ixtf.core.kit
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -19,19 +19,19 @@ fun <T, R> Flow<T>.parallelProcess(block: suspend (T) -> R): Flow<R> = channelFl
 }
 
 suspend fun <T, R> Iterable<T>.parallelCollect(block: suspend (T) -> R) =
-    parallelProcess { block(it) }.collect()
+  parallelProcess { block(it) }.collect()
 
 suspend fun <T, R> Iterable<T>.parallelToList(block: suspend (T) -> R): List<R> =
-    parallelProcess { block(it) }.toList()
+  parallelProcess { block(it) }.toList()
 
 suspend fun <T, R> Sequence<T>.parallelCollect(block: suspend (T) -> R) =
-    parallelProcess { block(it) }.collect()
+  parallelProcess { block(it) }.collect()
 
 suspend fun <T, R> Sequence<T>.parallelToList(block: suspend (T) -> R): List<R> =
-    parallelProcess { block(it) }.toList()
+  parallelProcess { block(it) }.toList()
 
 suspend fun <T, R> Flow<T>.parallelCollect(block: suspend (T) -> R) =
-    parallelProcess { block(it) }.collect()
+  parallelProcess { block(it) }.collect()
 
 suspend fun <T, R> Flow<T>.parallelToList(block: suspend (T) -> R): List<R> =
-    parallelProcess { block(it) }.toList()
+  parallelProcess { block(it) }.toList()
