@@ -12,26 +12,47 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 
 /**
- * template:
+ * Invoker 代码生成示意。
+ *
+ * KotlinPoet 将为每个 EventSourced Entity 生成一个 Invoker，实现 `EventSourcedEntityInvoker<T>`，用于根据方法名动态分发调用。
+ *
+ * 生成后的代码结构如下：
  *
  * ```kotlin
  * @Singleton
- * interface ${name}Invoker @Inject constructor() : EventSourcedEntityInvoker<$name> {
- *   override val componentClass: Class<$name> get() = $name::class.java
+ * class ExampleInvoker @Inject constructor() :
+ *   EventSourcedEntityInvoker<Example> {
+ *
+ *   override val componentClass: Class<Example>
+ *     get() = Example::class.java
  *
  *   override suspend fun invoke(
- *     instance: $name,
- *     methodName: String,
+ *     instance: Example,
+ *     method: String,
  *     args: Array<*>,
- *   ): Any? = when (methodName) {
- *     "create" -> instance.create(args[0] as String, args[1] as String)
- *     "update" -> instance.update(args[0] as String, args[1] as String)
- *     "delete" -> instance.delete().also { Unit }
- *     "currentState" -> instance.currentState()
- *     else -> error("""Unknown method '$methodName' for UserEntity""")
+ *   ): Any? = when (method) {
+ *     "create" ->
+ *       instance.create(args[0] as String, args[1] as String)
+ *
+ *     "update" ->
+ *       instance.update(args[0] as String, args[1] as String)
+ *
+ *     "delete" ->
+ *       instance.delete().also { Unit }
+ *
+ *     "currentState" ->
+ *       instance.currentState()
+ *
+ *     else ->
+ *       error("Unknown method '$method' for Example")
  *   }
  * }
  * ```
+ *
+ * 说明：
+ * - `Example` 为被处理的实体类型
+ * - Invoker 负责将字符串方法名映射为实体的实际方法调用
+ * - `args` 按方法参数顺序传入，需在生成代码中进行类型转换
  */
 class InvokerGenerator(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
   fun generate(descriptors: List<ComponentDescriptor>, originatingFiles: Set<KSFile>) {
@@ -47,7 +68,7 @@ class InvokerGenerator(private val codeGenerator: CodeGenerator, private val log
       FunSpec.builder("invoke")
         .addModifiers(KModifier.OVERRIDE, KModifier.SUSPEND)
         .addParameter("instance", componentClass)
-        .addParameter("methodName", STRING)
+        .addParameter("method", STRING)
         .addParameter("args", ARRAY.parameterizedBy(STAR))
         .returns(ANY.copy(nullable = true))
         .addCode(buildDispatchBlock(descriptor))
@@ -82,10 +103,10 @@ class InvokerGenerator(private val codeGenerator: CodeGenerator, private val log
     val block = CodeBlock.builder()
 
     // 使用 beginControlFlow 自动处理 { 和 缩进
-    block.beginControlFlow("return when (methodName)")
+    block.beginControlFlow("return when (method)")
 
     descriptor.methods.forEach { method ->
-      // 生成分支： "methodName" -> instance.methodName(args[0] as Type)
+      // 生成分支： "method" -> instance.method(args[0] as Type)
       block.add("%S -> ", method.name)
       block.add("instance.%L(", method.name)
 
@@ -105,11 +126,11 @@ class InvokerGenerator(private val codeGenerator: CodeGenerator, private val log
       block.add("\n")
     }
 
-    // 处理 $methodName：在生成的代码中显示 $methodName 变量
+    // 处理 $method：在生成的代码中显示 $method 变量
     // 这里使用 %P 配合 \$ 确保生成的 .kt 文件里保留 $ 符号
     block.addStatement(
       "else -> error(%P)",
-      "Unknown method '\$methodName' for ${descriptor.simpleName}",
+      "Unknown method '\$method' for ${descriptor.simpleName}",
     )
 
     block.endControlFlow() // 自动处理 }

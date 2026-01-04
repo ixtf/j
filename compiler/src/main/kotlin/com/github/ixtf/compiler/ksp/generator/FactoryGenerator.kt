@@ -13,14 +13,19 @@ import com.squareup.kotlinpoet.ksp.*
 import dagger.assisted.*
 
 /**
- * template:
+ * Factory 接口生成规则说明。
+ *
+ * KotlinPoet 将为每个 `@EventSourcedEntity` 类型生成如下接口：
  *
  * ```kotlin
- * @AssistedFactory
- * interface ${name}Factory : EventSourcedEntityFactory<$name> {
- *   override val componentClass: Class<$name> get() = $name::class.java
+ * interface ExampleFactory : EventSourcedEntityFactory<Example> {
+ *   override val componentClass: Class<Example>
+ *     get() = Example::class.java
  * }
  * ```
+ * - 接口名：`${EntityName}Factory`
+ * - 泛型参数：实体类型本身
+ * - `componentClass` 用于运行期类型获取
  */
 class FactoryGenerator(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
   fun generate(descriptors: List<ComponentDescriptor>, originatingFiles: Set<KSFile>) {
