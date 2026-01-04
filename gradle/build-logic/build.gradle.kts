@@ -4,7 +4,7 @@ plugins {
   alias(libs.plugins.spotless)
 }
 
-kotlin { jvmToolchain { languageVersion = JavaLanguageVersion.of(25) } }
+kotlin { jvmToolchain(25) }
 
 dependencies {
   implementation(libs.kotlin.gradlePlugin)
@@ -16,19 +16,19 @@ gradlePlugin {
   plugins {
     register("KotlinJvmConventionPlugin") {
       id = "convention-kotlin-jvm"
-      implementationClass = "KotlinJvmConventionPlugin"
+      implementationClass = "com.github.ixtf.conventions.KotlinJvmConventionPlugin"
     }
     register("SpotlessConventionPlugin") {
       id = "convention-spotless"
-      implementationClass = "SpotlessConventionPlugin"
+      implementationClass = "com.github.ixtf.conventions.SpotlessConventionPlugin"
     }
     register("MavenPublishConventionPlugin") {
       id = "convention-maven-publish"
-      implementationClass = "MavenPublishConventionPlugin"
+      implementationClass = "com.github.ixtf.conventions.MavenPublishConventionPlugin"
     }
     register("KspConventionPlugin") {
       id = "convention-ksp"
-      implementationClass = "KspConventionPlugin"
+      implementationClass = "com.github.ixtf.conventions.KspConventionPlugin"
     }
   }
 }

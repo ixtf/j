@@ -1,3 +1,5 @@
+package com.github.ixtf.conventions
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -21,10 +23,12 @@ class KotlinJvmConventionPlugin : Plugin<Project> {
 
       extensions.configure<JavaPluginExtension> {
         // JavaVersion.VERSION_25.name
-        toolchain { languageVersion = JavaLanguageVersion.of(25) }
+        toolchain { languageVersion.assign(JavaLanguageVersion.of(25)) }
         withJavadocJar()
         withSourcesJar()
         tasks.withType<JavaCompile> {
+          options.release.set(25)
+          options.encoding = "UTF-8"
           // 自动生成代码无需警告
           options.compilerArgs.addAll(listOf("-Xlint:none", "-nowarn"))
         }

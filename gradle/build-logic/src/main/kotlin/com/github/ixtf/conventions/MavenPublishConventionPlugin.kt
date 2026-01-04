@@ -1,3 +1,5 @@
+package com.github.ixtf.conventions
+
 import java.time.Instant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
