@@ -50,8 +50,8 @@ private val baseUri = URI("https://video.xchina.download")
 suspend fun main() {
   val downloadState =
       DownloadState.loadState(
-          "6729ecf0b9fe5",
-          "https://video.xchina.download/m3u8/6729ecf0b9fe5/720.m3u8?expires=1766336045&md5=o96x_QmHvxGUS9-mFPSquQ\n\n",
+          "63c9e2636de4c",
+          "https://video.xchina.download/m3u8/63c9e2636de4c/720.m3u8?expires=1766593202&md5=mTLv8mEGR3yYUdjeG9CaAA",
       )
 
   val verticle = HLS2Verticle(downloadState = downloadState)
