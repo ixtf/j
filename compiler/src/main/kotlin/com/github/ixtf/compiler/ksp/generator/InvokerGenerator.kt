@@ -14,37 +14,25 @@ import jakarta.inject.Singleton
 /**
  * Invoker 代码生成示意。
  *
- * KotlinPoet 将为每个 EventSourced Entity 生成一个 Invoker，实现 `EventSourcedEntityInvoker<T>`，用于根据方法名动态分发调用。
+ * KotlinPoet 将为每个 EventSourced Entity 生成一个 Invoker，实现 `ComponentInvoker<T>`，用于根据方法名动态分发调用。
  *
  * 生成后的代码结构如下：
  *
  * ```kotlin
  * @Singleton
- * class ExampleInvoker @Inject constructor() :
- *   EventSourcedEntityInvoker<Example> {
- *
- *   override val componentClass: Class<Example>
- *     get() = Example::class.java
+ * class ExampleInvoker @Inject constructor() : ComponentInvoker<Example> {
+ *   override val componentClass = Example::class.java
  *
  *   override suspend fun invoke(
  *     instance: Example,
  *     method: String,
  *     args: Array<*>,
  *   ): Any? = when (method) {
- *     "create" ->
- *       instance.create(args[0] as String, args[1] as String)
- *
- *     "update" ->
- *       instance.update(args[0] as String, args[1] as String)
- *
- *     "delete" ->
- *       instance.delete().also { Unit }
- *
- *     "currentState" ->
- *       instance.currentState()
- *
- *     else ->
- *       error("Unknown method '$method' for Example")
+ *     "create" -> instance.create(args[0] as String, args[1] as String)
+ *     "update" -> instance.update(args[0] as String, args[1] as String)
+ *     "delete" -> instance.delete()
+ *     "currentState" -> instance.currentState()
+ *     else -> error("Unknown method '$method' for Example")
  *   }
  * }
  * ```
@@ -114,16 +102,7 @@ class InvokerGenerator(private val codeGenerator: CodeGenerator, private val log
         if (index > 0) block.add(", ")
         block.add("args[%L] as %T", index, param.type)
       }
-      block.add(")")
-
-      // 如果方法返回 Unit，when 的这个分支会被认为是 Unit 类型
-      // 如果 invoke 要求返回 Any?，Unit 会被自动装箱
-      if (method.returnType == UNIT) {
-        block.add(".also { Unit }")
-      }
-
-      // addStatement 会自动处理换行
-      block.add("\n")
+      block.add(")\n")
     }
 
     // 处理 $method：在生成的代码中显示 $method 变量
