@@ -14,8 +14,8 @@ dependencies {
 
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("compiler"))
-  compileOnly(kotlin("compiler-internal"))
-  compileOnly(kotlin("compiler-fir"))
+  //  compileOnly(kotlin("compiler-internal"))
+  //  compileOnly(kotlin("compiler-fir"))
 
   testImplementation(kotlin("test"))
 }

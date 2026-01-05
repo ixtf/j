@@ -11,7 +11,6 @@ dependencies {
   api("cn.hutool:hutool-setting")
   api("cn.hutool:hutool-jwt")
   implementation("ch.qos.logback:logback-classic")
-  implementation("io.avaje:avaje-validator")
   api("org.hibernate.validator:hibernate-validator")
   api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
@@ -24,7 +23,6 @@ dependencies {
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-  testImplementation("io.avaje:avaje-validator")
   testImplementation("org.bouncycastle:bcprov-jdk18on")
   testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 

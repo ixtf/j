@@ -6,6 +6,8 @@ plugins {
 
 kotlin { jvmToolchain(25) }
 
+// kotlin { jvmToolchain { languageVersion = JavaLanguageVersion.of(25) } }
+
 dependencies {
   implementation(libs.kotlin.gradlePlugin)
   implementation(libs.spotless.gradlePlugin)
