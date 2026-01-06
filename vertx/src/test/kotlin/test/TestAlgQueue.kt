@@ -7,7 +7,6 @@ import io.vertx.core.Vertx
 import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -29,9 +28,9 @@ enum class AlgTaskType {
 private data class AlgTask(val type: AlgTaskType, val id: String) {
   companion object {
     private val fakeMQ = buildMap {
-      AlgTaskType.entries.forEach { type ->
+      AlgTaskType.entries.forEachIndexed { index, type ->
         val taskQueue = Queues.newConcurrentLinkedQueue<AlgTask>()
-        (1..5).forEach { idx -> taskQueue.add(AlgTask(type, "task-$idx")) }
+        if (index % 2 == 0) (1..5).forEach { idx -> taskQueue.add(AlgTask(type, "task-$idx")) }
         put(type, taskQueue)
       }
     }
@@ -50,13 +49,10 @@ private class TestVerticle : BaseCoroutineVerticle() {
   override suspend fun start() {
     super.start()
     launch {
-
-
-
       while (isActive) {
         val task = fetchTask()
-        val prepared = task.prepare() // CPU 并发
-        preparedSlot.send(prepared) // ⭐ 如果 invoke 忙，这里会自动阻塞
+        val prepared = task.prepare()
+        preparedSlot.send(prepared)
       }
     }
     launch {
