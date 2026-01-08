@@ -11,10 +11,10 @@ import reactor.core.publisher.Mono
 private val vertx = Vertx.vertx()
 
 suspend fun main() {
-  vertx.deployVerticle(Broker()).coAwait()
+  vertx.deployVerticle(BrokerClient()).coAwait()
 }
 
-private class Broker : BaseCoroutineVerticle(), SocketAcceptor {
+private class BrokerClient : BaseCoroutineVerticle(), SocketAcceptor {
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> {
     TODO("Not yet implemented")
   }

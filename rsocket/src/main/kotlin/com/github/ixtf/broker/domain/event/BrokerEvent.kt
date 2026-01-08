@@ -1,6 +1,14 @@
 package com.github.ixtf.broker.domain.event
 
+import io.rsocket.RSocket
+import java.time.Instant
+
 sealed interface BrokerEvent {
-  data class Registered(val service: String, val principal: String, val tags: Set<String>? = null) :
-    BrokerEvent
+  data class Registered(
+    val sendingSocket: RSocket,
+    val service: String,
+    val principal: String,
+    val tags: Set<String>? = null,
+    val fireDateTime: Instant = Instant.now(),
+  ) : BrokerEvent
 }
