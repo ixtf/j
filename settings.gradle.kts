@@ -29,4 +29,6 @@ include(":vertx")
 
 include(":cqrs")
 
+include(":rsocket")
+
 include(":poi")
