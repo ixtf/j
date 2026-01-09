@@ -1,5 +1,6 @@
 package test
 
+import com.github.ixtf.broker.internal.ConnectionSetupPayloadBuilder.Companion.buildConnectionSetupPayload
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.ConnectionSetupPayload
 import io.rsocket.RSocket
@@ -11,11 +12,12 @@ import reactor.core.publisher.Mono
 private val vertx = Vertx.vertx()
 
 suspend fun main() {
-  vertx.deployVerticle(BrokerService()).coAwait()
+  vertx.deployVerticle(BrokerServer()).coAwait()
 }
 
-private class BrokerService : BaseCoroutineVerticle(), SocketAcceptor {
+private class BrokerServer : BaseCoroutineVerticle(), SocketAcceptor {
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> {
+    buildConnectionSetupPayload(service = "service") {}
     TODO("Not yet implemented")
   }
 

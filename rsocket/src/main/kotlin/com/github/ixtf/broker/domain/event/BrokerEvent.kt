@@ -7,7 +7,8 @@ sealed interface BrokerEvent {
   data class Registered(
     val sendingSocket: RSocket,
     val service: String,
-    val principal: String,
+    val instance: String,
+    val host: String,
     val tags: Set<String>? = null,
     val fireDateTime: Instant = Instant.now(),
   ) : BrokerEvent

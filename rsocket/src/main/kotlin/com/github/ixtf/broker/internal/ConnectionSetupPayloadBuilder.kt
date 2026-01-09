@@ -1,8 +1,12 @@
 package com.github.ixtf.broker.internal
 
+import com.github.ixtf.broker.domain.event.BrokerEvent
+import com.github.ixtf.broker.toJsonObject
 import com.github.ixtf.broker.toPayload
 import com.github.ixtf.core.J
+import io.rsocket.ConnectionSetupPayload
 import io.rsocket.Payload
+import io.rsocket.RSocket
 import io.vertx.core.json.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.mono
@@ -15,6 +19,8 @@ class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
 
   suspend fun build(): Payload {
     val data = buildMap {
+      put("service", service)
+      put("instance", instance)
       put("host", withContext(Dispatchers.IO) { J.localIp() })
       token?.takeIf { it.isNotBlank() }?.let { put("token", it) }
       tags?.takeIf { it.isNotEmpty() }?.let { put("tags", it) }
@@ -25,12 +31,23 @@ class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
   companion object {
     inline fun buildConnectionSetupPayload(
       service: String,
-      instance: String,
+      instance: String = J.objectId(),
       crossinline block: suspend ConnectionSetupPayloadBuilder.() -> Unit,
     ): Mono<Payload> = mono {
       val builder = ConnectionSetupPayloadBuilder(service = service, instance = instance)
       builder.block()
       builder.build()
     }
+
+    internal fun ConnectionSetupPayload.toRegistered(sendingSocket: RSocket) =
+      toJsonObject().run {
+        BrokerEvent.Registered(
+          sendingSocket = sendingSocket,
+          service = getString("service"),
+          instance = getString("instance"),
+          host = getString("host"),
+          tags = getJsonArray("tags")?.map { it.toString() }?.toSet(),
+        )
+      }
   }
 }

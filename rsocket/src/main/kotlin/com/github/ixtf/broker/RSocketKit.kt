@@ -9,9 +9,15 @@ import io.vertx.core.json.JsonObject
 
 fun Buffer.toPayload(): Payload = DefaultPayload.create(bytes)
 
+fun Payload.toBuffer(): Buffer = Buffer.buffer(data().array())
+
 fun JsonObject.toPayload(): Payload = toBuffer().toPayload()
 
+fun Payload.toJsonObject(): JsonObject = toBuffer().toJsonObject()
+
 fun JsonArray.toPayload(): Payload = toBuffer().toPayload()
+
+fun JsonArray.toJsonArray(): JsonArray = toBuffer().toJsonArray()
 
 fun CloudEvent.toPayload(): Payload {
   TODO()
