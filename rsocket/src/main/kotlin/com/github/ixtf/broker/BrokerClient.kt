@@ -11,7 +11,6 @@ import io.rsocket.core.RSocketClient
 import kotlin.properties.Delegates
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 
 enum class RSocketStatus {
   INIT,
@@ -35,9 +34,9 @@ class BrokerClient(val service: String, val principal: String) : RSocketClient, 
   }
 
   fun reConnect() {
-//    fireAndForget(brokerRequest { buildReConnect() })
-//      .subscribeOn(Schedulers.boundedElastic())
-//      .subscribe()
+    //    fireAndForget(brokerRequest { buildReConnect() })
+    //      .subscribeOn(Schedulers.boundedElastic())
+    //      .subscribe()
   }
 
   var status: RSocketStatus by

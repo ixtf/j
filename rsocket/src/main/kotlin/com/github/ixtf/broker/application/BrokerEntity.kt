@@ -14,7 +14,7 @@ class BrokerEntity : BaseCoroutineVerticle() {
       BrokerEvent.Registered::class.simpleName -> {}
       else -> {}
     }
-    BrokerEvent.Registered(ce.type)
+    // BrokerEvent.Registered(ce.type)
     ce.data
   }
 }

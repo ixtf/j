@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import reactor.core.publisher.Mono
 
 class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
+  var host: String? = null
   var token: String? = null
   var tags: Set<String>? = null
 
@@ -21,7 +22,8 @@ class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
     val data = buildMap {
       put("service", service)
       put("instance", instance)
-      put("host", withContext(Dispatchers.IO) { J.localIp() })
+      host = withContext(Dispatchers.IO) { J.localIp() }
+      host?.takeIf { it.isNotBlank() }?.let { put("host", it) }
       token?.takeIf { it.isNotBlank() }?.let { put("token", it) }
       tags?.takeIf { it.isNotEmpty() }?.let { put("tags", it) }
     }
