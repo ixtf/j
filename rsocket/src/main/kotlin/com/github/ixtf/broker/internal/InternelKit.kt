@@ -1,14 +1,15 @@
 package com.github.ixtf.broker.internal
 
-import io.cloudevents.CloudEvent
-import io.rsocket.ConnectionSetupPayload
 import io.rsocket.RSocket
 import io.rsocket.transport.ClientTransport
+import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
+import io.rsocket.transport.netty.server.TcpServerTransport
 import reactor.core.scheduler.Schedulers
 
-fun ConnectionSetupPayload.toCloudEvent(): CloudEvent {
-  TODO()
+internal fun tcpServerTransport(target: String): ServerTransport<*> {
+  val (bindAddress, port) = target.split(":")
+  return TcpServerTransport.create(bindAddress, port.toInt())
 }
 
 internal fun tcpClientTransport(target: String): ClientTransport {
@@ -16,6 +17,6 @@ internal fun tcpClientTransport(target: String): ClientTransport {
   return TcpClientTransport.create(bindAddress, port.toInt())
 }
 
-fun RSocket.doAfterTerminate(block: () -> Unit) {
+internal fun RSocket.doAfterTerminate(block: () -> Unit) {
   onClose().doAfterTerminate(block).subscribeOn(Schedulers.boundedElastic()).subscribe()
 }

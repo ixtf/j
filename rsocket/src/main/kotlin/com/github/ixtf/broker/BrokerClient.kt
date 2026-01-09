@@ -24,6 +24,8 @@ class BrokerClient(val service: String, val principal: String) : RSocketClient, 
   private lateinit var serviceRSocket: RSocket
   private lateinit var delegate: RSocketClient
 
+  override fun toString(): String = "BrokerClient($service[$principal])"
+
   // ⚠️别调用
   @Synchronized
   internal fun initConnect(serviceRSocket: RSocket, delegateRSocket: Mono<RSocket>) {
