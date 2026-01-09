@@ -2,15 +2,25 @@ package com.github.ixtf.broker
 
 import cn.hutool.log.Log
 import com.github.ixtf.broker.RSocketStatus.*
+import com.github.ixtf.broker.internal.ConnectionSetupPayloadBuilder.Companion.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.doAfterTerminate
+import com.github.ixtf.broker.internal.tcpClientTransport
+import com.github.ixtf.core.J
 import io.rsocket.ConnectionSetupPayload
 import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketClient
+import io.rsocket.core.RSocketConnector
+import io.rsocket.core.Resume
+import io.rsocket.frame.decoder.PayloadDecoder
+import io.rsocket.util.DefaultPayload
+import java.time.Duration
 import kotlin.properties.Delegates
+import kotlinx.coroutines.reactor.mono
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
+import reactor.util.retry.Retry
 
 enum class RSocketStatus {
   INIT,
@@ -19,30 +29,58 @@ enum class RSocketStatus {
   DISPOSE,
 }
 
-class BrokerClient(val service: String, val principal: String) : RSocketClient, SocketAcceptor {
+class BrokerClient(val service: String, val principal: String = J.objectId()) :
+  RSocketClient, SocketAcceptor {
   private val log = Log.get("$service[$principal]")
   private lateinit var serviceRSocket: RSocket
-  private lateinit var delegate: RSocketClient
+  private val delegate: RSocketClient by lazy {
+    RSocketClient.from(
+      RSocketConnector.create()
+        .acceptor(this)
+        .payloadDecoder(PayloadDecoder.ZERO_COPY)
+        .setupPayload(buildConnectionSetupPayload(service, principal) {})
+        .reconnect(
+          Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
+            .maxBackoff(Duration.ofSeconds(3))
+            .jitter(0.5)
+            .doBeforeRetry { signal ->
+              log.error("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
+            }
+        )
+        // 1. 开启 Resume 功能
+        .resume(
+          Resume()
+            .sessionDuration(Duration.ofMinutes(5)) // 允许服务端宕机 5 分钟内恢复 Session
+            .retry(
+              Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
+                .maxBackoff(Duration.ofSeconds(3))
+                .jitter(0.5)
+                .doBeforeRetry { signal ->
+                  log.error("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
+                }
+            )
+        )
+        .connect(tcpClientTransport(IXTF_API_BROKER_TARGET))
+    )
+  }
 
   override fun toString(): String = "BrokerClient($service[$principal])"
 
-  // ⚠️别调用
-  @Synchronized
-  internal fun initConnect(serviceRSocket: RSocket, delegateRSocket: Mono<RSocket>) {
-    this.serviceRSocket = serviceRSocket
-    if (::delegate.isInitialized) delegate.dispose()
-    delegate = RSocketClient.from(delegateRSocket)
-    delegate.connect()
+  init {
+    serviceRSocket = object : RSocket {}
+    delegate.onClose().subscribe { println("delegate onClose") }
+    reConnect()
   }
 
   fun reConnect() {
+    delegate.fireAndForget(mono { DefaultPayload.create(DefaultPayload.EMPTY_BUFFER) }).subscribe()
     //    fireAndForget(brokerRequest { buildReConnect() })
     //      .subscribeOn(Schedulers.boundedElastic())
     //      .subscribe()
   }
 
   var status: RSocketStatus by
-    Delegates.observable(RSocketStatus.INIT) { prop, old, new ->
+    Delegates.observable(INIT) { prop, old, new ->
       if (old == new) return@observable
       log.warn("$old -> $new")
       if (delegate.isDisposed) {
