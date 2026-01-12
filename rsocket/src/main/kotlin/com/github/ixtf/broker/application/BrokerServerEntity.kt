@@ -1,4 +1,4 @@
-package com.github.ixtf.broker.verticle
+package com.github.ixtf.broker.application
 
 import com.github.ixtf.broker.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.domain.BrokerServer
@@ -9,7 +9,7 @@ import com.github.ixtf.vertx.verticle.ActorVerticle
 import io.rsocket.ConnectionSetupPayload
 import io.rsocket.RSocket
 
-abstract class BrokerServerVerticle(
+abstract class BrokerServerEntity(
   private val id: String = J.objectId(),
   private val name: String = "Broker",
   private val target: String = IXTF_API_BROKER_TARGET,
