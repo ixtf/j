@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal
 
-import com.github.ixtf.broker.domain.event.BrokerEvent
+import com.github.ixtf.broker.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.toJsonObject
 import com.github.ixtf.broker.toPayload
 import com.github.ixtf.core.J
@@ -43,7 +43,7 @@ class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
 
     internal fun ConnectionSetupPayload.toRegistered(sendingSocket: RSocket) =
       toJsonObject().run {
-        BrokerEvent.Registered(
+        BrokerServerEvent.Registered(
           sendingSocket = sendingSocket,
           service = getString("service"),
           instance = getString("instance"),

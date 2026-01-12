@@ -31,7 +31,7 @@ enum class RSocketStatus {
 
 class BrokerClient(val service: String, val principal: String = J.objectId()) :
   RSocketClient, SocketAcceptor {
-  private val log = Log.get("$service[$principal]")
+  private val log = Log.get(javaClass)
   private lateinit var serviceRSocket: RSocket
   private val delegate: RSocketClient by lazy {
     RSocketClient.from(
