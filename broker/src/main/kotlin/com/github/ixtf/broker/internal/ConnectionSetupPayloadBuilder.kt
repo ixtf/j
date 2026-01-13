@@ -1,12 +1,8 @@
 package com.github.ixtf.broker.internal
 
-import com.github.ixtf.broker.domain.event.BrokerServerEvent
-import com.github.ixtf.broker.toJsonObject
 import com.github.ixtf.broker.toPayload
 import com.github.ixtf.core.J
-import io.rsocket.ConnectionSetupPayload
 import io.rsocket.Payload
-import io.rsocket.RSocket
 import io.vertx.core.json.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.mono
@@ -40,16 +36,5 @@ class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
       builder.block()
       builder.build()
     }
-
-    internal fun ConnectionSetupPayload.toRegistered(sendingSocket: RSocket) =
-      toJsonObject().run {
-        BrokerServerEvent.Connected(
-          sendingSocket = sendingSocket,
-          service = getString("service"),
-          instance = getString("instance"),
-          host = getString("host"),
-          tags = getJsonArray("tags")?.map { it.toString() }?.toSet(),
-        )
-      }
   }
 }

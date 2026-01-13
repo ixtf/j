@@ -15,6 +15,7 @@ import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketServer
 import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
+import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.coAwait
@@ -27,10 +28,12 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
-internal class BrokerServerEntity(private var server: BrokerServer) :
-  BaseCoroutineVerticle(), SocketAcceptor {
+internal class BrokerServerEntity(
+  private var server: BrokerServer,
+  private val serverRSocket: RSocket,
+  private val authProvider: AuthenticationProvider? = null,
+) : BaseCoroutineVerticle(), SocketAcceptor {
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
-  private val serverRSocket by lazy { BrokerServerRSocket(this) }
   private lateinit var closeable: Closeable
 
   override suspend fun start() {
@@ -66,7 +69,6 @@ internal class BrokerServerEntity(private var server: BrokerServer) :
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     val dto = MAPPER.readValue<SetupDTO>(setup.toBuffer().bytes)
-    val authProvider = server.authProvider
     if (authProvider != null) {
       authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
       if (dto.service.isNullOrBlank().not()) {

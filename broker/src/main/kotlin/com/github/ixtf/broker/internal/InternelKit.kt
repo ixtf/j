@@ -1,11 +1,29 @@
 package com.github.ixtf.broker.internal
 
+import com.github.ixtf.broker.IXTF_API_BROKER_AUTH
 import io.rsocket.RSocket
 import io.rsocket.transport.ClientTransport
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
+import io.vertx.core.Vertx
+import io.vertx.ext.auth.authentication.AuthenticationProvider
+import io.vertx.ext.auth.jwt.JWTAuth
+import io.vertx.kotlin.ext.auth.jwt.jwtAuthOptionsOf
+import io.vertx.kotlin.ext.auth.pubSecKeyOptionsOf
 import reactor.core.scheduler.Schedulers
+
+internal fun Vertx.defaultBrokerAuthProvider(
+  buffer: String? = IXTF_API_BROKER_AUTH
+): AuthenticationProvider? {
+  if (buffer.isNullOrBlank()) return null
+  return JWTAuth.create(
+    this,
+    jwtAuthOptionsOf().apply {
+      addPubSecKey(pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer))
+    },
+  )
+}
 
 internal fun tcpServerTransport(target: String): ServerTransport<*> {
   val (bindAddress, port) = target.split(":")
