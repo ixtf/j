@@ -1,6 +1,5 @@
-package com.github.ixtf.broker
+package com.github.ixtf.broker.domain
 
-import com.github.ixtf.broker.domain.BrokerServer
 import io.rsocket.RSocket
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
