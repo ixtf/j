@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal
 
-import com.github.ixtf.broker.IXTF_API_BROKER_AUTH
+import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
 import io.rsocket.RSocket
 import io.rsocket.transport.ClientTransport
 import io.rsocket.transport.ServerTransport
