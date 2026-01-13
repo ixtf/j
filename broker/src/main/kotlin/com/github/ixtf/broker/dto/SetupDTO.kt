@@ -4,8 +4,9 @@ import java.io.Serializable
 
 @JvmRecord
 data class SetupDTO(
-  val token: String,
   val host: String,
   val service: String? = null,
+  val principal: String? = null,
   val tags: Set<String>? = null,
+  val token: String? = null,
 ) : Serializable

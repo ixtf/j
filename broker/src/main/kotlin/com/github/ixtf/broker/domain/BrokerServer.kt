@@ -4,6 +4,7 @@ import com.github.ixtf.broker.domain.event.BrokerServerEvent
 import io.rsocket.RSocket
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
+import io.vertx.ext.auth.authentication.AuthenticationProvider
 import java.time.Instant
 
 data class BrokerServer(
@@ -14,7 +15,8 @@ data class BrokerServer(
   val groupMap: Map<String, ServiceGroup> = emptyMap(),
   val createDateTime: Instant = Instant.now(),
   val modifyDateTime: Instant = createDateTime,
-) : RSocket {
+  val authProvider: AuthenticationProvider? = null,
+) {
   internal fun transport(): ServerTransport<*> = TcpServerTransport.create(host, port)
 
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServer {

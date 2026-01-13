@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
   api(project(":vertx"))
+  api("io.vertx:vertx-auth-jwt")
 
   api("io.rsocket:rsocket-core")
   api("io.rsocket:rsocket-transport-netty")
