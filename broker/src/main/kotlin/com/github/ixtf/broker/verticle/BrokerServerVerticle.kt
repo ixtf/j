@@ -20,9 +20,13 @@ abstract class BrokerServerVerticle : BaseCoroutineVerticle() {
   ) {
     val (host, port) = target.split(":")
     val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())
+    addServer(server)
+  }
+
+  protected suspend fun addServer(server: BrokerServer) {
     val entity = BrokerServerEntity(server = server)
     val options = deploymentOptionsOf(threadingModel = VIRTUAL_THREAD)
     vertx.deployVerticle(entity, options).coAwait()
-    SERVER_CACHE.put(id, entity)
+    SERVER_CACHE.put(server.id, entity)
   }
 }

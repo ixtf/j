@@ -54,6 +54,11 @@ internal class BrokerServerEntity(private var server: BrokerServer) :
     }
   }
 
+  override suspend fun stop() {
+    closeable.dispose()
+    super.stop()
+  }
+
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     MAPPER.readValue<BrokerServerEvent>(setup.toBuffer().bytes)
     println(setup.refCnt())
