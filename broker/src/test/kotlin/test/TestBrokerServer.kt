@@ -56,7 +56,7 @@ private class BrokerServer : BaseCoroutineVerticle(), SocketAcceptor {
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> {
-    println("test")
+    println("test: ${setup.refCnt()}")
     return mono { object : RSocket {} }
   }
 }

@@ -21,7 +21,7 @@ abstract class ActorVerticle<S, E> : BaseCoroutineVerticle() {
 
   protected abstract suspend fun applyEvent(event: E): S
 
-  protected open suspend fun handleEffect(envelopes: Collection<Tuple3<S, E, S>>) = Unit
+  // protected open suspend fun handleEffect(envelopes: Collection<Tuple3<S, E, S>>) = Unit
 
   override suspend fun start() {
     super.start()
@@ -32,7 +32,7 @@ abstract class ActorVerticle<S, E> : BaseCoroutineVerticle() {
         try {
           val effects = handleEvent(events)
           persist(currentState())
-          launch { handleEffect(effects) }
+          // launch { handleEffect(effects) }
           promise.complete(currentState())
         } catch (_: CancellationException) {
           // ignore
@@ -45,7 +45,7 @@ abstract class ActorVerticle<S, E> : BaseCoroutineVerticle() {
     }
   }
 
-  protected open suspend fun handleEvent(events: List<E>) =
+  protected open suspend fun handleEvent(events: List<E>): Collection<Tuple3<S?, E, S>> =
     events.map { event ->
       val previous = _currentState
       _currentState = applyEvent(event)
