@@ -41,4 +41,3 @@ data class BrokerServer(
 
   override fun hashCode() = id.hashCode()
 }
-

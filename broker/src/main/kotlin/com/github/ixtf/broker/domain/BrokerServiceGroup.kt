@@ -4,10 +4,10 @@ import com.github.ixtf.broker.domain.event.BrokerServerEvent
 import java.time.Instant
 
 data class BrokerServiceGroup(
-    val id: String,
-    val createDateTime: Instant,
-    val modifyDateTime: Instant = createDateTime,
-    val instances: List<BrokerServiceInstance> = emptyList(),
+  val id: String,
+  val createDateTime: Instant,
+  val modifyDateTime: Instant = createDateTime,
+  val instances: List<BrokerServiceInstance> = emptyList(),
 ) {
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServiceGroup =
     copy(
