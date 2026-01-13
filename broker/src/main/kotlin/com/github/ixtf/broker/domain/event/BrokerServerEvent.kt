@@ -13,5 +13,9 @@ sealed interface BrokerServerEvent {
     val fireDateTime: Instant = Instant.now(),
   ) : BrokerServerEvent
 
-  data class DisConnected(val service: String, val instance: String) : BrokerServerEvent
+  data class DisConnected(
+    val service: String,
+    val instance: String,
+    val fireDateTime: Instant = Instant.now(),
+  ) : BrokerServerEvent
 }

@@ -23,8 +23,10 @@ data class BrokerServer(
 
   internal fun onEvent(event: BrokerServerEvent.DisConnected): BrokerServer {
     val group = groupMap[event.service] ?: return this
-    group.onEvent(event)
-    TODO("Not yet implemented")
+    return copy(
+      groupMap = groupMap + (group.id to group.onEvent(event)),
+      modifyDateTime = event.fireDateTime,
+    )
   }
 
   override fun equals(other: Any?): Boolean {
@@ -43,23 +45,25 @@ data class ServiceGroup(
   val modifyDateTime: Instant = createDateTime,
   val instances: List<ServiceInstance> = emptyList(),
 ) {
-  internal fun onEvent(event: BrokerServerEvent.Connected) =
+  internal fun onEvent(event: BrokerServerEvent.Connected): ServiceGroup =
     copy(
       instances =
         instances +
           ServiceInstance(
             id = event.instance,
-            service = event.service,
             rSocket = event.rSocket,
+            host = event.host,
             tags = event.tags,
             createDateTime = event.fireDateTime,
           ),
       modifyDateTime = event.fireDateTime,
     )
 
-  internal fun onEvent(event: BrokerServerEvent.DisConnected) {
-    TODO("Not yet implemented")
-  }
+  internal fun onEvent(event: BrokerServerEvent.DisConnected): ServiceGroup =
+    copy(
+      instances = instances.filter { it.id != event.instance },
+      modifyDateTime = event.fireDateTime,
+    )
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -73,8 +77,8 @@ data class ServiceGroup(
 
 data class ServiceInstance(
   val id: String,
-  val service: String,
   val rSocket: RSocket,
+  val host: String,
   val tags: Set<String>? = null,
   val createDateTime: Instant = Instant.now(),
 ) {
@@ -82,14 +86,8 @@ data class ServiceInstance(
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
     other as ServiceInstance
-    if (service != other.service) return false
-    if (id != other.id) return false
-    return true
+    return id == other.id
   }
 
-  override fun hashCode(): Int {
-    var result = service.hashCode()
-    result = 31 * result + id.hashCode()
-    return result
-  }
+  override fun hashCode() = id.hashCode()
 }
