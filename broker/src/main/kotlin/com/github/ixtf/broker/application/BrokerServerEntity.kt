@@ -23,7 +23,7 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
-class BrokerServerEntity(private var server: BrokerServer) :
+internal class BrokerServerEntity(private var server: BrokerServer) :
   BaseCoroutineVerticle(), SocketAcceptor {
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
   private lateinit var closeable: Closeable
