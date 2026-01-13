@@ -43,7 +43,7 @@ class ConnectionSetupPayloadBuilder(val service: String, val instance: String) {
 
     internal fun ConnectionSetupPayload.toRegistered(sendingSocket: RSocket) =
       toJsonObject().run {
-        BrokerServerEvent.Registered(
+        BrokerServerEvent.Connected(
           sendingSocket = sendingSocket,
           service = getString("service"),
           instance = getString("instance"),
