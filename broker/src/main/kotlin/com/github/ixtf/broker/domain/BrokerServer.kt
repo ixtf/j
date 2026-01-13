@@ -15,7 +15,7 @@ data class BrokerServer(
   val createDateTime: Instant = Instant.now(),
   val modifyDateTime: Instant = createDateTime,
 ) : RSocket {
-  fun transport(): ServerTransport<*> = TcpServerTransport.create(host, port)
+  internal fun transport(): ServerTransport<*> = TcpServerTransport.create(host, port)
 
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServer {
     val group = groupMap[event.service] ?: ServiceGroup(event.service, event.fireDateTime)
