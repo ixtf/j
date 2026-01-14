@@ -19,7 +19,6 @@ dependencies {
   api("com.fasterxml.jackson.module:jackson-module-kotlin")
   api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
   api("com.fasterxml.jackson.dataformat:jackson-dataformat-toml")
-  api("io.cloudevents:cloudevents-protobuf")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("io.projectreactor.kotlin:reactor-kotlin-extensions")
 

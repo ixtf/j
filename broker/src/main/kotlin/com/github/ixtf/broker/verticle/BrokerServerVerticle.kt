@@ -38,6 +38,10 @@ abstract class BrokerServerVerticle(
   }
 
   override fun metadataPush(payload: Payload): Mono<Void> {
+    if (payload.hasMetadata()) {
+      val metadata = payload.sliceMetadata()
+      payload.metadata
+    }
     return super.metadataPush(payload)
   }
 

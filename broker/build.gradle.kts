@@ -11,5 +11,5 @@ dependencies {
   api("io.rsocket:rsocket-core")
   api("io.rsocket:rsocket-transport-netty")
   api("com.github.ben-manes.caffeine:caffeine")
-  api("io.cloudevents:cloudevents-core")
+  api("io.cloudevents:cloudevents-protobuf")
 }

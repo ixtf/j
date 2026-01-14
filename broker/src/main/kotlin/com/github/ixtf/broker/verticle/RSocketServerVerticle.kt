@@ -4,7 +4,7 @@ import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.domain.RSocketServer
-import com.github.ixtf.broker.readValue
+import com.github.ixtf.broker.readValueOrNull
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
@@ -50,7 +50,7 @@ abstract class RSocketServerVerticle(
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     jwtAuth?.also { authProvider ->
-      val dto = setup.readValue<SetupDTO>()
+      val dto = setup.readValueOrNull<SetupDTO>()
       require(dto.token.isNullOrBlank().not())
       val credentials = TokenCredentials(dto.token)
       authProvider.authenticate(credentials).coAwait()
