@@ -5,7 +5,7 @@ import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
 import java.time.Instant
 
-data class BrokerServer(
+internal data class BrokerServer(
   val id: String,
   val name: String,
   val host: String,

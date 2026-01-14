@@ -3,7 +3,7 @@ package com.github.ixtf.broker.domain
 import io.rsocket.RSocket
 import java.time.Instant
 
-data class RSocketServer(
+internal data class RSocketServer(
   val id: String,
   val name: String,
   val host: String,

@@ -27,4 +27,6 @@ dependencies {
   api("io.projectreactor.kotlin:reactor-kotlin-extensions")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+  testImplementation("net.openhft:chronicle-queue:5.27ea11")
 }

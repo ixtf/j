@@ -3,7 +3,7 @@ package com.github.ixtf.broker.domain
 import com.github.ixtf.broker.domain.event.BrokerServerEvent
 import java.time.Instant
 
-data class BrokerServiceGroup(
+internal data class BrokerServiceGroup(
   val id: String,
   val createDateTime: Instant,
   val modifyDateTime: Instant = createDateTime,

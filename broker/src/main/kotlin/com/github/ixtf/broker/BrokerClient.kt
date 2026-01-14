@@ -4,6 +4,7 @@ import cn.hutool.log.Log
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.RSocketStatus.*
 import com.github.ixtf.broker.internal.ConnectionSetupPayloadBuilder.Companion.buildConnectionSetupPayload
+import com.github.ixtf.broker.internal.InternalBrokerKit
 import com.github.ixtf.broker.internal.doAfterTerminate
 import com.github.ixtf.broker.internal.tcpClientTransport
 import com.github.ixtf.core.J
@@ -21,7 +22,6 @@ import kotlin.properties.Delegates
 import kotlinx.coroutines.reactor.mono
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
-import reactor.util.retry.Retry
 
 enum class RSocketStatus {
   INIT,
@@ -41,24 +41,18 @@ class BrokerClient(val service: String, val principal: String = J.objectId()) :
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(buildConnectionSetupPayload(service, principal) {})
         .reconnect(
-          Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
-            .maxBackoff(Duration.ofSeconds(3))
-            .jitter(0.5)
-            .doBeforeRetry { signal ->
-              log.error("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
-            }
+          InternalBrokerKit.defaultRetry().doBeforeRetry { signal ->
+            log.warn("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
+          }
         )
         // 1. 开启 Resume 功能
         .resume(
           Resume()
             .sessionDuration(Duration.ofMinutes(5)) // 允许服务端宕机 5 分钟内恢复 Session
             .retry(
-              Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
-                .maxBackoff(Duration.ofSeconds(3))
-                .jitter(0.5)
-                .doBeforeRetry { signal ->
-                  log.error("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
-                }
+              InternalBrokerKit.defaultRetry().doBeforeRetry { signal ->
+                log.warn("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
+              }
             )
         )
         .connect(tcpClientTransport(IXTF_API_BROKER_TARGET))
