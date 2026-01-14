@@ -28,9 +28,9 @@ abstract class BrokerServerVerticle(
     val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())
     BrokerServerEntity(
       server = server,
-      brokerRSocket = this,
       authProvider = jwtAuth,
       lbStrategy = lbStrategy,
+      brokerRSocket = this,
     )
   }
 
