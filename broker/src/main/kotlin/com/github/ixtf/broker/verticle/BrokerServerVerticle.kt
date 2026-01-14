@@ -10,6 +10,7 @@ import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.vertx.core.ThreadingModel.VIRTUAL_THREAD
+import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.kotlin.core.deploymentOptionsOf
 import io.vertx.kotlin.coroutines.coAwait
 import org.reactivestreams.Publisher
@@ -22,7 +23,9 @@ abstract class BrokerServerVerticle : BaseCoroutineVerticle(), RSocket {
   protected open val id: String = J.objectId()
   protected open val name: String = "Broker"
   protected open val target: String = IXTF_API_BROKER_TARGET
-  protected open val authProvider by lazy { vertx.defaultBrokerAuthProvider() }
+  protected open val authProvider: AuthenticationProvider? by lazy {
+    vertx.defaultBrokerAuthProvider()
+  }
   private val entity by lazy {
     val (host, port) = target.split(":")
     val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())
