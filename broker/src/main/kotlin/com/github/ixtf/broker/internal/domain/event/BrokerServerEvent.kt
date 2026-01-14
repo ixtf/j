@@ -1,4 +1,4 @@
-package com.github.ixtf.broker.domain.event
+package com.github.ixtf.broker.internal.domain.event
 
 import io.rsocket.RSocket
 import java.time.Instant

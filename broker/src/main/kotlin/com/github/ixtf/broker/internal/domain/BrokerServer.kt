@@ -1,6 +1,6 @@
-package com.github.ixtf.broker.domain
+package com.github.ixtf.broker.internal.domain
 
-import com.github.ixtf.broker.domain.event.BrokerServerEvent
+import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
 import java.time.Instant

@@ -1,6 +1,6 @@
-package com.github.ixtf.broker.domain
+package com.github.ixtf.broker.internal.domain
 
-import com.github.ixtf.broker.domain.event.BrokerServerEvent
+import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import java.time.Instant
 
 internal data class BrokerServiceGroup(

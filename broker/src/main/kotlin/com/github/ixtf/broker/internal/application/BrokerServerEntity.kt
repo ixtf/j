@@ -1,11 +1,11 @@
-package com.github.ixtf.broker.application
+package com.github.ixtf.broker.internal.application
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ixtf.broker.BrokerKit.toBuffer
-import com.github.ixtf.broker.domain.BrokerServer
-import com.github.ixtf.broker.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
+import com.github.ixtf.broker.internal.domain.BrokerServer
+import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import com.github.ixtf.core.MAPPER
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
@@ -17,7 +17,6 @@ import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
-import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.coroutines.receiveChannelHandler
 import java.time.Duration

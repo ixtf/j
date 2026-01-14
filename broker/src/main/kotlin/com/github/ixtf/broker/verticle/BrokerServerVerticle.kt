@@ -2,9 +2,9 @@ package com.github.ixtf.broker.verticle
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.application.BrokerServerEntity
-import com.github.ixtf.broker.domain.BrokerServer
 import com.github.ixtf.broker.internal.InternalKit.defaultAuthProvider
+import com.github.ixtf.broker.internal.application.BrokerServerEntity
+import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Payload
