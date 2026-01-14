@@ -7,7 +7,6 @@ import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
 import io.vertx.core.Vertx
-import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.kotlin.ext.auth.jwt.jwtAuthOptionsOf
 import io.vertx.kotlin.ext.auth.pubSecKeyOptionsOf
@@ -17,9 +16,7 @@ import reactor.util.retry.Retry
 import reactor.util.retry.RetryBackoffSpec
 
 internal object InternalKit {
-  internal fun Vertx.defaultAuthProvider(
-    buffer: String? = IXTF_API_BROKER_AUTH
-  ): AuthenticationProvider? {
+  internal fun Vertx.defaultAuthProvider(buffer: String? = IXTF_API_BROKER_AUTH): JWTAuth? {
     if (buffer.isNullOrBlank()) return null
     val key = pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer)
     val config = jwtAuthOptionsOf(pubSecKeys = listOf(key))
