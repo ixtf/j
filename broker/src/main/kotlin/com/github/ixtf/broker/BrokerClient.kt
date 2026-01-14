@@ -3,8 +3,8 @@ package com.github.ixtf.broker
 import cn.hutool.log.Log
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.RSocketStatus.*
-import com.github.ixtf.broker.internal.ConnectionSetupPayloadBuilder.Companion.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit
+import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
 import com.github.ixtf.core.J

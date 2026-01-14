@@ -1,16 +1,25 @@
 package com.github.ixtf.broker.internal
 
+import cn.hutool.core.util.ReflectUtil
+import com.github.ixtf.broker.BrokerKit.toPayload
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
+import com.github.ixtf.broker.dto.BrokerServiceSetupDTO
+import io.rsocket.DuplexConnection
+import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.rsocket.transport.ClientTransport
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
 import io.vertx.core.Vertx
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.kotlin.ext.auth.jwt.jwtAuthOptionsOf
 import io.vertx.kotlin.ext.auth.pubSecKeyOptionsOf
+import java.net.SocketAddress
 import java.time.Duration
+import kotlinx.coroutines.reactor.mono
+import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.util.retry.Retry
 import reactor.util.retry.RetryBackoffSpec
@@ -23,6 +32,11 @@ internal object InternalKit {
     return JWTAuth.create(this, config)
   }
 
+  internal fun RSocket.remoteAddress(): SocketAddress? =
+    runCatching { ReflectUtil.getFieldValue(this, "connection") }
+      .map { (it as? DuplexConnection)?.remoteAddress() }
+      .getOrDefault(null)
+
   internal fun RSocket.doAfterTerminate(block: () -> Unit) {
     onClose().doAfterTerminate(block).subscribeOn(Schedulers.boundedElastic()).subscribe()
   }
@@ -30,6 +44,10 @@ internal object InternalKit {
   internal fun tcpServerTransport(target: String): ServerTransport<*> {
     val (bindAddress, port) = target.split(":")
     return TcpServerTransport.create(bindAddress, port.toInt())
+  }
+
+  internal fun buildConnectionSetupPayload(dto: BrokerServiceSetupDTO): Mono<Payload> = mono {
+    JsonObject.mapFrom(dto).toPayload()
   }
 
   internal fun tcpClientTransport(target: String): ClientTransport {

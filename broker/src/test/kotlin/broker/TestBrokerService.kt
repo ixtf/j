@@ -1,4 +1,4 @@
-package test
+package broker
 
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
