@@ -74,9 +74,7 @@ internal class BrokerServerEntity(
       authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
       if (dto.service.isNullOrBlank().not()) {
         require(dto.principal.isNullOrBlank().not())
-        val disConnectedEvent =
-          BrokerServerEvent.DisConnected(service = dto.service, instance = dto.principal)
-        val connectedEvent =
+        channel.handle(
           BrokerServerEvent.Connected(
             rSocket = sendingSocket,
             instance = dto.principal,
@@ -84,8 +82,12 @@ internal class BrokerServerEntity(
             host = dto.host,
             tags = dto.tags,
           )
-        channel.handle(connectedEvent)
-        sendingSocket.doAfterTerminate { channel.handle(disConnectedEvent) }
+        )
+        sendingSocket.doAfterTerminate {
+          channel.handle(
+            BrokerServerEvent.DisConnected(service = dto.service, instance = dto.principal)
+          )
+        }
       }
     }
     serverRSocket
