@@ -6,13 +6,16 @@ import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.readValue
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
+import io.netty.util.ReferenceCountUtil
 import io.rsocket.Closeable
 import io.rsocket.ConnectionSetupPayload
+import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketServer
 import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
+import io.rsocket.loadbalance.LoadbalanceStrategy
 import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
@@ -23,17 +26,19 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.mono
+import org.reactivestreams.Publisher
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 internal class BrokerServerEntity(
   private var server: BrokerServer,
-  private val serverRSocket: RSocket,
-  private val authProvider: AuthenticationProvider? = null,
-) : BaseCoroutineVerticle(), SocketAcceptor {
+  private val brokerRSocket: RSocket,
+  private val authProvider: AuthenticationProvider?,
+  private val lbStrategy: LoadbalanceStrategy,
+) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
   private lateinit var closeable: Closeable
-
-  internal fun currentState(): BrokerServer = server
+  internal val entityId by server::id
 
   override suspend fun start() {
     super.start()
@@ -90,6 +95,34 @@ internal class BrokerServerEntity(
       }
     }
     log.debug("setup: {}", dto)
-    serverRSocket
+    this@BrokerServerEntity
   }
+
+  override fun metadataPush(payload: Payload): Mono<Void> =
+    mono { BrokerContext(payload).pickRSocket(server, lbStrategy, brokerRSocket) }
+      .doOnError { ReferenceCountUtil.safeRelease(payload) }
+      .flatMap { it.metadataPush(payload) }
+
+  override fun fireAndForget(payload: Payload): Mono<Void> =
+    mono { BrokerContext(payload).pickRSocket(server, lbStrategy, brokerRSocket) }
+      .doOnError { ReferenceCountUtil.safeRelease(payload) }
+      .flatMap { it.fireAndForget(payload) }
+
+  override fun requestResponse(payload: Payload): Mono<Payload> =
+    mono { BrokerContext(payload).pickRSocket(server, lbStrategy, brokerRSocket) }
+      .doOnError { ReferenceCountUtil.safeRelease(payload) }
+      .flatMap { it.requestResponse(payload) }
+
+  override fun requestStream(payload: Payload): Flux<Payload> =
+    mono { BrokerContext(payload).pickRSocket(server, lbStrategy, brokerRSocket) }
+      .doOnError { ReferenceCountUtil.safeRelease(payload) }
+      .flatMapMany { it.requestStream(payload) }
+
+  override fun requestChannel(payloads: Publisher<Payload>): Flux<Payload> =
+    Flux.from(payloads).switchOnFirst { signal, flux ->
+      val payload = signal.get()
+      mono { BrokerContext(requireNotNull(payload)).pickRSocket(server, lbStrategy, brokerRSocket) }
+        .doOnError { ReferenceCountUtil.safeRelease(payload) }
+        .flatMapMany { it.requestStream(payload) }
+    }
 }
