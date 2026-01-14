@@ -1,7 +1,6 @@
 package com.github.ixtf.broker
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.ixtf.core.MAPPER
+import com.github.ixtf.vertx.readValue
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider
@@ -11,7 +10,6 @@ import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
-import java.nio.charset.StandardCharsets
 
 val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
@@ -20,15 +18,9 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
 inline fun <reified T> ByteArray.readValueOrNull(): T? {
   if (isEmpty()) return null
   return when (T::class) {
-    ByteArray::class -> this
-    Buffer::class -> Buffer.buffer(this)
-    JsonObject::class -> Buffer.buffer(this).toJsonArray()
-    JsonArray::class -> Buffer.buffer(this).toJsonArray()
-    CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(this)
-    String::class -> String(this, StandardCharsets.UTF_8)
-    else -> MAPPER.readValue(this)
+    CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(this) as T
+    else -> Buffer.buffer(this).readValue()
   }
-    as T
 }
 
 inline fun <reified T> CloudEvent.readValueOrNull(): T? = data?.toBytes()?.readValueOrNull()
