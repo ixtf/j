@@ -70,7 +70,7 @@ internal class BrokerServerEntity(
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     val dto = MAPPER.readValue<SetupDTO>(setup.toBuffer().bytes)
-    if (authProvider != null) {
+    authProvider?.also { _ ->
       require(dto.token.isNullOrBlank().not())
       authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
       if (dto.service.isNullOrBlank().not()) {

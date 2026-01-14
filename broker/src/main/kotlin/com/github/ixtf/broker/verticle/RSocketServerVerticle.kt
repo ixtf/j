@@ -1,13 +1,10 @@
 package com.github.ixtf.broker.verticle
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ixtf.broker.BrokerKit.toBuffer
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.defaultAuthProvider
 import com.github.ixtf.broker.internal.domain.RSocketServer
 import com.github.ixtf.core.J
-import com.github.ixtf.core.MAPPER
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
 import io.rsocket.ConnectionSetupPayload
@@ -17,6 +14,7 @@ import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
+import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Duration
 import kotlin.getValue
 import kotlinx.coroutines.reactor.awaitSingle
@@ -51,8 +49,11 @@ abstract class RSocketServerVerticle(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val dto = MAPPER.readValue<SetupDTO>(setup.toBuffer().bytes)
-    jwtAuth?.authenticate(TokenCredentials(dto.token))?.coAwait()
+    jwtAuth?.also { authProvider ->
+      val token = setup.toBuffer().toString(UTF_8)
+      val credentials = TokenCredentials(token)
+      authProvider.authenticate(credentials)?.coAwait()
+    }
     this@RSocketServerVerticle
   }
 }
