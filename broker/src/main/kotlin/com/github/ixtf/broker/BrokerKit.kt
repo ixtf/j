@@ -15,6 +15,12 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
 }
 
+fun CloudEvent.toPayload(): Payload = CLOUD_EVENT_FORMAT.serialize(this).toPayload()
+
+inline fun <reified T> CloudEvent.readValueOrNull(): T? = data?.toBytes()?.readValueOrNull()
+
+fun ByteArray.toPayload(): Payload = DefaultPayload.create(this)
+
 inline fun <reified T> ByteArray.readValueOrNull(): T? {
   if (isEmpty()) return null
   return when (T::class) {
@@ -23,15 +29,11 @@ inline fun <reified T> ByteArray.readValueOrNull(): T? {
   }
 }
 
-inline fun <reified T> CloudEvent.readValueOrNull(): T? = data?.toBytes()?.readValueOrNull()
-
 inline fun <reified T> Payload.readValueOrNull(): T? = data().array().readValueOrNull()
 
 inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
 
-fun CloudEvent.toPayload(): Payload = DefaultPayload.create(CLOUD_EVENT_FORMAT.serialize(this))
-
-fun Buffer.toPayload(): Payload = DefaultPayload.create(bytes)
+fun Buffer.toPayload(): Payload = bytes.toPayload()
 
 fun JsonObject.toPayload(): Payload = toBuffer().toPayload()
 
