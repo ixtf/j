@@ -21,8 +21,8 @@ internal object InternalKit {
     buffer: String? = IXTF_API_BROKER_AUTH
   ): AuthenticationProvider? {
     if (buffer.isNullOrBlank()) return null
-    val pubSecKey = pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer)
-    val config = jwtAuthOptionsOf(pubSecKeys = listOf(pubSecKey))
+    val key = pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer)
+    val config = jwtAuthOptionsOf(pubSecKeys = listOf(key))
     return JWTAuth.create(this, config)
   }
 
