@@ -19,6 +19,7 @@ import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.rsocket.util.DefaultPayload
 import io.vertx.kotlin.core.json.jsonObjectOf
+import io.vertx.kotlin.ext.auth.jwtOptionsOf
 import java.time.Duration
 import kotlin.properties.Delegates
 import kotlinx.coroutines.reactor.mono
@@ -53,7 +54,11 @@ abstract class BrokerServiceVerticle(
               service = service,
               instance = instance,
               tags = tags,
-              token = jwtAuth?.generateToken(jsonObjectOf()),
+              token =
+                jwtAuth?.generateToken(
+                  jsonObjectOf("sub" to instance),
+                  jwtOptionsOf(noTimestamp = true),
+                ),
             )
           )
         )
