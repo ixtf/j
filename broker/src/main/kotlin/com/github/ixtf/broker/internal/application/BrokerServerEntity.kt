@@ -123,6 +123,6 @@ internal class BrokerServerEntity(
       val payload = signal.get()
       mono { BrokerContext(requireNotNull(payload)).pickRSocket(server, lbStrategy, brokerRSocket) }
         .doOnError { ReferenceCountUtil.safeRelease(payload) }
-        .flatMapMany { it.requestStream(payload) }
+        .flatMapMany { it.requestChannel(payloads) }
     }
 }
