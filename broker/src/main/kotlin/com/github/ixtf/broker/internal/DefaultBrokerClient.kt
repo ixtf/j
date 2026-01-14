@@ -2,7 +2,7 @@ package com.github.ixtf.broker.internal
 
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClientOptions
-import com.github.ixtf.broker.RouteOptions
+import com.github.ixtf.broker.BrokerRouteOptions
 import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
@@ -53,7 +53,7 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
     )
   }
 
-  override fun route(route: RouteOptions) = DefaultBrokerRoute(this, route)
+  override fun route(route: BrokerRouteOptions) = DefaultBrokerRoute(this, route)
 
   override fun fireAndForget(payloadMono: Mono<Payload>): Mono<Void> =
     delegate.fireAndForget(payloadMono)

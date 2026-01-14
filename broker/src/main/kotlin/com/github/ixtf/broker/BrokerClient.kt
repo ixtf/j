@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 interface BrokerClient : Disposable {
   val target: String
 
-  fun route(route: RouteOptions): BrokerRoute
+  fun route(route: BrokerRouteOptions): BrokerRoute
 
   fun fireAndForget(payloadMono: Mono<Payload>): Mono<Void>
 
