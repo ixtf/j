@@ -5,9 +5,11 @@ import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
+import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
+import io.rsocket.ConnectionSetupPayload
 import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
@@ -15,11 +17,21 @@ import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
 import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
+import io.rsocket.util.DefaultPayload
 import io.vertx.kotlin.core.json.jsonObjectOf
 import java.time.Duration
+import kotlin.properties.Delegates
+import kotlinx.coroutines.reactor.mono
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+
+enum class BrokerServiceStatus {
+  INIT,
+  UP,
+  DOWN,
+  DISPOSE,
+}
 
 abstract class BrokerServiceVerticle(
   service: String,
@@ -61,6 +73,34 @@ abstract class BrokerServiceVerticle(
         )
         .connect(tcpClientTransport(target))
     )
+  }
+  protected var status: BrokerServiceStatus by
+    Delegates.observable(BrokerServiceStatus.INIT) { prop, old, new ->
+      if (old == new) return@observable
+      log.warn("${this@BrokerServiceVerticle}: $old -> $new")
+      if (rSocketClient.isDisposed) {
+        status = BrokerServiceStatus.DISPOSE
+        return@observable
+      }
+      when (new) {
+        BrokerServiceStatus.INIT,
+        BrokerServiceStatus.UP,
+        BrokerServiceStatus.DISPOSE -> Unit
+        BrokerServiceStatus.DOWN -> reConnect()
+      }
+    }
+    private set
+
+  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
+    vertx.runOnContext { status = BrokerServiceStatus.UP }
+    sendingSocket.doAfterTerminate { vertx.runOnContext { status = BrokerServiceStatus.DOWN } }
+    this@BrokerServiceVerticle
+  }
+
+  private fun reConnect() {
+    rSocketClient
+      .fireAndForget(mono { DefaultPayload.create(DefaultPayload.EMPTY_BUFFER) })
+      .subscribe()
   }
 
   override suspend fun start() {
