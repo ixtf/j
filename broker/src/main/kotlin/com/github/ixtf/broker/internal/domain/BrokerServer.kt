@@ -31,13 +31,4 @@ internal data class BrokerServer(
       modifyDateTime = event.fireDateTime,
     )
   }
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    other as BrokerServer
-    return id == other.id
-  }
-
-  override fun hashCode() = id.hashCode()
 }

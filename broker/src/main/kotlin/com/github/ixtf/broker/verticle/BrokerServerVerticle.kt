@@ -18,10 +18,11 @@ import reactor.core.publisher.Mono
 
 private val SERVER_CACHE = Caffeine.newBuilder().build<String, BrokerServerEntity>()
 
-abstract class BrokerServerVerticle : BaseCoroutineVerticle(), RSocket {
-  protected open val id: String = J.objectId()
-  protected open val name: String = "Broker"
-  protected open val target: String = IXTF_API_BROKER_TARGET
+abstract class BrokerServerVerticle(
+  id: String = J.objectId(),
+  name: String = "Broker",
+  target: String = IXTF_API_BROKER_TARGET,
+) : BaseCoroutineVerticle(), RSocket {
   protected open val jwtAuth by lazy { vertx.defaultAuthProvider() }
   private val entity by lazy {
     val (host, port) = target.split(":")
@@ -33,7 +34,7 @@ abstract class BrokerServerVerticle : BaseCoroutineVerticle(), RSocket {
     super.start()
     val options = deploymentOptionsOf(threadingModel = VIRTUAL_THREAD)
     vertx.deployVerticle(entity, options).coAwait()
-    SERVER_CACHE.put(id, entity)
+    SERVER_CACHE.put(entity.currentState().id, entity)
   }
 
   override fun metadataPush(payload: Payload): Mono<Void> {

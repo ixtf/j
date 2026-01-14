@@ -1,6 +1,8 @@
 package com.github.ixtf.broker.internal.domain
 
 import io.rsocket.RSocket
+import io.rsocket.transport.ServerTransport
+import io.rsocket.transport.netty.server.TcpServerTransport
 import java.time.Instant
 
 internal data class RSocketServer(
@@ -11,13 +13,5 @@ internal data class RSocketServer(
   val createDateTime: Instant = Instant.now(),
   val modifyDateTime: Instant = createDateTime,
 ) : RSocket {
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    other as BrokerServer
-    return id == other.id
-  }
-
-  override fun hashCode() = id.hashCode()
+  internal fun transport(): ServerTransport<*> = TcpServerTransport.create(host, port)
 }

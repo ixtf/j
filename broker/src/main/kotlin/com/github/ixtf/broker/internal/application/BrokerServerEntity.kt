@@ -35,6 +35,8 @@ internal class BrokerServerEntity(
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
   private lateinit var closeable: Closeable
 
+  internal fun currentState(): BrokerServer = server
+
   override suspend fun start() {
     super.start()
     closeable =
