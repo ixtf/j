@@ -2,23 +2,25 @@ package com.github.ixtf.broker.internal
 
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClientOptions
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
-import com.github.ixtf.core.J
 import io.cloudevents.CloudEvent
 import io.rsocket.Payload
 import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
 import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
+import io.vertx.core.Vertx
 import java.time.Duration
 import kotlinx.coroutines.flow.Flow
 import reactor.core.publisher.Mono
 
-internal class DefaultBrokerClient(options: BrokerClientOptions) : BrokerClient {
-  override val target = options.host?.takeIf { it.isNotBlank() } ?: IXTF_API_BROKER_TARGET
+internal class DefaultBrokerClient(
+  private val vertx: Vertx,
+  private val options: BrokerClientOptions,
+) : BrokerClient {
+  override val target by options::target
   private val rSocketClient: RSocketClient by lazy {
     RSocketClient.from(
       RSocketConnector.create()
@@ -26,7 +28,7 @@ internal class DefaultBrokerClient(options: BrokerClientOptions) : BrokerClient 
         .setupPayload(
           buildConnectionSetupPayload(
             SetupDTO(
-              host = options.host?.takeIf { it.isNotBlank() } ?: J.localIp(),
+              host = options.host,
               service = options.service?.takeIf { it.isNotBlank() },
               instance = options.instance?.takeIf { it.isNotBlank() },
               tags = options.tags?.takeIf { it.isNotEmpty() },
@@ -64,7 +66,7 @@ internal class DefaultBrokerClient(options: BrokerClientOptions) : BrokerClient 
     TODO("Not yet implemented")
   }
 
-  override suspend fun requestStream(block: () -> Flow<CloudEvent>): Flow<Payload> {
+  override suspend fun requestStream(block: suspend () -> CloudEvent): Flow<Payload> {
     TODO("Not yet implemented")
   }
 
