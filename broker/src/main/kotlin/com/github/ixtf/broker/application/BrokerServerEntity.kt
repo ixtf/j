@@ -1,11 +1,11 @@
 package com.github.ixtf.broker.application
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.ixtf.broker.BrokerKit.toBuffer
 import com.github.ixtf.broker.domain.BrokerServer
 import com.github.ixtf.broker.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.dto.SetupDTO
-import com.github.ixtf.broker.internal.doAfterTerminate
-import com.github.ixtf.broker.toBuffer
+import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.core.MAPPER
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable

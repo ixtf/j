@@ -4,9 +4,9 @@ import cn.hutool.log.Log
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.RSocketStatus.*
 import com.github.ixtf.broker.internal.ConnectionSetupPayloadBuilder.Companion.buildConnectionSetupPayload
-import com.github.ixtf.broker.internal.InternalBrokerKit
-import com.github.ixtf.broker.internal.doAfterTerminate
-import com.github.ixtf.broker.internal.tcpClientTransport
+import com.github.ixtf.broker.internal.InternalKit
+import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
+import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
 import com.github.ixtf.core.J
 import io.rsocket.ConnectionSetupPayload
 import io.rsocket.Payload
@@ -41,7 +41,7 @@ class BrokerClient(val service: String, val principal: String = J.objectId()) :
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(buildConnectionSetupPayload(service, principal) {})
         .reconnect(
-          InternalBrokerKit.defaultRetry().doBeforeRetry { signal ->
+          InternalKit.defaultRetry().doBeforeRetry { signal ->
             log.warn("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
           }
         )
@@ -50,7 +50,7 @@ class BrokerClient(val service: String, val principal: String = J.objectId()) :
           Resume()
             .sessionDuration(Duration.ofMinutes(5)) // 允许服务端宕机 5 分钟内恢复 Session
             .retry(
-              InternalBrokerKit.defaultRetry().doBeforeRetry { signal ->
+              InternalKit.defaultRetry().doBeforeRetry { signal ->
                 log.warn("${this@BrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
               }
             )

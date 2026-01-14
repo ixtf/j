@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal
 
-import com.github.ixtf.broker.toPayload
+import com.github.ixtf.broker.BrokerKit.toPayload
 import com.github.ixtf.core.J
 import io.rsocket.Payload
 import io.vertx.core.json.JsonObject
