@@ -25,8 +25,8 @@ abstract class BrokerServiceVerticle(
   service: String,
   principal: String,
   tags: Set<String>? = null,
-  target: String = IXTF_API_BROKER_TARGET,
   host: String = J.localIp(),
+  target: String = IXTF_API_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   protected open val jwtAuth by lazy { vertx.defaultAuth() }
   private val rSocketClient: RSocketClient by lazy {
@@ -66,6 +66,11 @@ abstract class BrokerServiceVerticle(
   override suspend fun start() {
     super.start()
     rSocketClient.connect()
+  }
+
+  override suspend fun stop() {
+    rSocketClient.dispose()
+    super.stop()
   }
 
   override fun metadataPush(payload: Payload): Mono<Void> {
