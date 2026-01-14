@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono
 
 abstract class BrokerServiceVerticle(
   service: String,
-  principal: String,
+  instance: String,
   tags: Set<String>? = null,
   host: String = J.localIp(),
   target: String = IXTF_API_BROKER_TARGET,
@@ -39,7 +39,7 @@ abstract class BrokerServiceVerticle(
             SetupDTO(
               host = host,
               service = service,
-              principal = principal,
+              instance = instance,
               tags = tags,
               token = jwtAuth?.generateToken(jsonObjectOf()),
             )

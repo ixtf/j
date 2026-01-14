@@ -6,7 +6,7 @@ import java.io.Serializable
 data class SetupDTO(
   val host: String,
   val service: String? = null,
-  val principal: String? = null,
+  val instance: String? = null,
   val tags: Set<String>? = null,
   val token: String? = null,
 ) : Serializable
