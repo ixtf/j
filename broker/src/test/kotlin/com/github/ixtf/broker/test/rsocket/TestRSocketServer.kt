@@ -1,4 +1,4 @@
-package rsocket
+package com.github.ixtf.broker.test.rsocket
 
 import com.github.ixtf.broker.verticle.RSocketServerVerticle
 import io.vertx.core.Vertx

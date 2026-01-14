@@ -89,6 +89,7 @@ internal class BrokerServerEntity(
         }
       }
     }
+    log.debug("setup: {}", dto)
     serverRSocket
   }
 }

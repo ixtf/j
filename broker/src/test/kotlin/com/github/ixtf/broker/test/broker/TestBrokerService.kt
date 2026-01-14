@@ -1,7 +1,6 @@
-package broker
+package com.github.ixtf.broker.test.broker
 
-import com.github.ixtf.broker.BrokerClient
-import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
+import com.github.ixtf.broker.verticle.BrokerServiceVerticle
 import io.vertx.core.Vertx
 import io.vertx.kotlin.coroutines.coAwait
 
@@ -13,9 +12,7 @@ suspend fun main() {
   println("success")
 }
 
-private class TestBrokerService : BaseCoroutineVerticle() {
-  private val brokerClient = BrokerClient("test", "test")
-
+private class TestBrokerService : BrokerServiceVerticle(service = "test", instance = "test") {
   override suspend fun start() {
     super.start()
   }

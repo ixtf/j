@@ -1,4 +1,4 @@
-package broker
+package com.github.ixtf.broker.test.broker
 
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.ConnectionSetupPayload

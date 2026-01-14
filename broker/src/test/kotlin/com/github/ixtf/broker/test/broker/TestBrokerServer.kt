@@ -1,4 +1,4 @@
-package broker
+package com.github.ixtf.broker.test.broker
 
 import com.github.ixtf.broker.verticle.BrokerServerVerticle
 import io.vertx.core.Vertx
