@@ -15,21 +15,23 @@ internal class DefaultBrokerRoute(
   private val brokerClient: DefaultBrokerClient,
   private val options: BrokerRouteOptions,
 ) : BrokerRoute {
+  private fun metadata() = options.routing()
+
   override suspend fun fireAndForget(block: suspend () -> CloudEvent) {
-    brokerClient.fireAndForget(mono { block().toPayload() }).awaitSingleOrNull()
+    brokerClient.fireAndForget(mono { block().toPayload(metadata()) }).awaitSingleOrNull()
   }
 
   override suspend fun requestResponse(block: suspend () -> CloudEvent): Payload =
-    brokerClient.requestResponse(mono { block().toPayload() }).awaitSingle()
+    brokerClient.requestResponse(mono { block().toPayload(metadata()) }).awaitSingle()
 
   override fun requestStream(block: suspend () -> CloudEvent): Flow<Payload> =
-    brokerClient.requestResponse(mono { block().toPayload() }).asFlow()
+    brokerClient.requestResponse(mono { block().toPayload(metadata()) }).asFlow()
 
   override fun requestChannel(block: () -> Flow<CloudEvent>): Flow<Payload> {
     TODO("Not yet implemented")
   }
 
   override suspend fun metadataPush(block: suspend () -> CloudEvent) {
-    brokerClient.metadataPush(mono { block().toPayload() }).awaitSingleOrNull()
+    brokerClient.metadataPush(mono { block().toPayload(metadata()) }).awaitSingleOrNull()
   }
 }

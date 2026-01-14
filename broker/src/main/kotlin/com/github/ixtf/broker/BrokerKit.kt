@@ -5,6 +5,8 @@ import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider
 import io.cloudevents.protobuf.ProtobufFormat.PROTO_CONTENT_TYPE
+import io.netty.buffer.CompositeByteBuf
+import io.netty.buffer.Unpooled.wrappedBuffer
 import io.rsocket.Payload
 import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
@@ -15,11 +17,14 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
 }
 
-fun CloudEvent.toPayload(): Payload = CLOUD_EVENT_FORMAT.serialize(this).toPayload()
+fun CloudEvent.toPayload(metadata: CompositeByteBuf?): Payload =
+  CLOUD_EVENT_FORMAT.serialize(this).toPayload(metadata)
 
 inline fun <reified T> CloudEvent.readValueOrNull(): T? = data?.toBytes()?.readValueOrNull()
 
-fun ByteArray.toPayload(): Payload = DefaultPayload.create(this)
+fun ByteArray.toPayload(metadata: CompositeByteBuf?): Payload =
+  if (metadata == null) DefaultPayload.create(this)
+  else DefaultPayload.create(wrappedBuffer(this), metadata)
 
 inline fun <reified T> ByteArray.readValueOrNull(): T? {
   if (isEmpty()) return null
@@ -33,10 +38,8 @@ inline fun <reified T> Payload.readValueOrNull(): T? = data().array().readValueO
 
 inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
 
-fun Buffer.toPayload(): Payload = bytes.toPayload()
+fun Buffer.toPayload(metadata: CompositeByteBuf?): Payload = bytes.toPayload(metadata)
 
-fun JsonObject.toPayload(): Payload = toBuffer().toPayload()
+fun JsonObject.toPayload(metadata: CompositeByteBuf?): Payload = toBuffer().toPayload(metadata)
 
-fun JsonArray.toPayload(): Payload = toBuffer().toPayload()
-
-fun JsonArray.toJsonArray(): JsonArray = toBuffer().toJsonArray()
+fun JsonArray.toPayload(metadata: CompositeByteBuf?): Payload = toBuffer().toPayload(metadata)
