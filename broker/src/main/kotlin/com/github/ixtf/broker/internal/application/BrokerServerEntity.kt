@@ -32,9 +32,9 @@ import reactor.core.publisher.Mono
 
 internal class BrokerServerEntity(
   private var server: BrokerServer,
-  private val brokerRSocket: RSocket,
   private val authProvider: AuthenticationProvider?,
   private val lbStrategy: LoadbalanceStrategy,
+  private val brokerRSocket: RSocket,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
   private lateinit var closeable: Closeable
