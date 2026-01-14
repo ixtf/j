@@ -2,10 +2,10 @@ package com.github.ixtf.broker.internal
 
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClientOptions
+import com.github.ixtf.broker.RouteOptions
 import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
-import io.cloudevents.CloudEvent
 import io.rsocket.Payload
 import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
@@ -13,15 +13,14 @@ import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.vertx.core.Vertx
 import java.time.Duration
-import kotlinx.coroutines.flow.Flow
+import org.reactivestreams.Publisher
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-internal class DefaultBrokerClient(
-  private val vertx: Vertx,
-  private val options: BrokerClientOptions,
-) : BrokerClient {
+internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOptions) :
+  BrokerClient {
   override val target by options::target
-  private val rSocketClient: RSocketClient by lazy {
+  private val delegate: RSocketClient by lazy {
     RSocketClient.from(
       RSocketConnector.create()
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
@@ -54,27 +53,24 @@ internal class DefaultBrokerClient(
     )
   }
 
-  override fun dispose() = rSocketClient.dispose()
+  override fun route(route: RouteOptions) = DefaultBrokerRoute(this, route)
 
-  override fun isDisposed(): Boolean = rSocketClient.isDisposed
+  override fun fireAndForget(payloadMono: Mono<Payload>): Mono<Void> =
+    delegate.fireAndForget(payloadMono)
 
-  override suspend fun fireAndForget(block: suspend () -> CloudEvent) {
-    TODO("Not yet implemented")
-  }
+  override fun requestResponse(payloadMono: Mono<Payload>): Mono<Payload> =
+    delegate.requestResponse(payloadMono)
 
-  override suspend fun requestResponse(block: suspend () -> CloudEvent): Mono<Payload> {
-    TODO("Not yet implemented")
-  }
+  override fun requestStream(payloadMono: Mono<Payload>): Flux<Payload> =
+    delegate.requestStream(payloadMono)
 
-  override suspend fun requestStream(block: suspend () -> CloudEvent): Flow<Payload> {
-    TODO("Not yet implemented")
-  }
+  override fun requestChannel(payloads: Publisher<Payload>): Flux<Payload> =
+    delegate.requestChannel(payloads)
 
-  override suspend fun requestChannel(block: () -> Flow<CloudEvent>): Flow<Payload> {
-    TODO("Not yet implemented")
-  }
+  override fun metadataPush(payloadMono: Mono<Payload>): Mono<Void> =
+    delegate.metadataPush(payloadMono)
 
-  override suspend fun metadataPush(block: suspend () -> CloudEvent) {
-    TODO("Not yet implemented")
-  }
+  override fun dispose() = delegate.dispose()
+
+  override fun isDisposed(): Boolean = delegate.isDisposed
 }

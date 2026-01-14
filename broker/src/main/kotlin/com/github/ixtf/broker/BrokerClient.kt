@@ -1,25 +1,27 @@
 package com.github.ixtf.broker
 
 import com.github.ixtf.broker.internal.DefaultBrokerClient
-import io.cloudevents.CloudEvent
 import io.rsocket.Payload
 import io.vertx.core.Vertx
-import kotlinx.coroutines.flow.Flow
+import org.reactivestreams.Publisher
 import reactor.core.Disposable
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface BrokerClient : Disposable {
   val target: String
 
-  suspend fun fireAndForget(block: suspend () -> CloudEvent)
+  fun route(route: RouteOptions): BrokerRoute
 
-  suspend fun requestResponse(block: suspend () -> CloudEvent): Mono<Payload>
+  fun fireAndForget(payloadMono: Mono<Payload>): Mono<Void>
 
-  suspend fun requestStream(block: suspend () -> CloudEvent): Flow<Payload>
+  fun requestResponse(payloadMono: Mono<Payload>): Mono<Payload>
 
-  suspend fun requestChannel(block: () -> Flow<CloudEvent>): Flow<Payload>
+  fun requestStream(payloadMono: Mono<Payload>): Flux<Payload>
 
-  suspend fun metadataPush(block: suspend () -> CloudEvent)
+  fun requestChannel(payloads: Publisher<Payload>): Flux<Payload>
+
+  fun metadataPush(payloadMono: Mono<Payload>): Mono<Void>
 
   companion object {
     fun create(vertx: Vertx, options: BrokerClientOptions = BrokerClientOptions()): BrokerClient =

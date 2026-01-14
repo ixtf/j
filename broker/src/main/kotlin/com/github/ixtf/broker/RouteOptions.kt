@@ -1,12 +1,11 @@
-package com.github.ixtf.broker.dto
+package com.github.ixtf.broker
 
 import java.io.Serializable
 
 @JvmRecord
-data class RouteDTO(
-  val host: String,
+data class RouteOptions(
   val service: String? = null,
-  val principal: String? = null,
+  val instance: String? = null,
   val tags: Set<String>? = null,
   val token: String? = null,
 ) : Serializable
