@@ -4,7 +4,7 @@ import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
-import com.github.ixtf.broker.readValueOrNull
+import com.github.ixtf.broker.readValue
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
 import io.rsocket.ConnectionSetupPayload
@@ -67,7 +67,7 @@ internal class BrokerServerEntity(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val dto = setup.readValueOrNull<SetupDTO>()
+    val dto = setup.readValue<SetupDTO>()
     authProvider?.also { _ ->
       require(dto.token.isNullOrBlank().not())
       authProvider.authenticate(TokenCredentials(dto.token)).coAwait()

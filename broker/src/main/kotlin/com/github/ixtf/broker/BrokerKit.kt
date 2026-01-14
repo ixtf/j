@@ -11,6 +11,7 @@ import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
+import java.nio.charset.StandardCharsets
 
 val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
@@ -24,6 +25,7 @@ inline fun <reified T> ByteArray.readValueOrNull(): T? {
     JsonObject::class -> Buffer.buffer(this).toJsonArray()
     JsonArray::class -> Buffer.buffer(this).toJsonArray()
     CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(this)
+    String::class -> String(this, StandardCharsets.UTF_8)
     else -> MAPPER.readValue(this)
   }
     as T
@@ -32,6 +34,8 @@ inline fun <reified T> ByteArray.readValueOrNull(): T? {
 inline fun <reified T> CloudEvent.readValueOrNull(): T? = data?.toBytes()?.readValueOrNull()
 
 inline fun <reified T> Payload.readValueOrNull(): T? = data().array().readValueOrNull()
+
+inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
 
 fun CloudEvent.toPayload(): Payload = DefaultPayload.create(CLOUD_EVENT_FORMAT.serialize(this))
 
