@@ -23,9 +23,7 @@ abstract class BrokerServerVerticle : BaseCoroutineVerticle(), RSocket {
   protected open val id: String = J.objectId()
   protected open val name: String = "Broker"
   protected open val target: String = IXTF_API_BROKER_TARGET
-  protected open val authProvider: AuthenticationProvider? by lazy {
-    vertx.defaultAuthProvider()
-  }
+  protected open val authProvider: AuthenticationProvider? by lazy { vertx.defaultAuthProvider() }
   private val entity by lazy {
     val (host, port) = target.split(":")
     val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())

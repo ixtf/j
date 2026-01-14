@@ -21,17 +21,17 @@ internal object InternalKit {
     buffer: String? = IXTF_API_BROKER_AUTH
   ): AuthenticationProvider? {
     if (buffer.isNullOrBlank()) return null
-    return JWTAuth.create(
-      this,
+    val config =
       jwtAuthOptionsOf().apply {
         addPubSecKey(pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer))
-      },
-    )
+      }
+    return JWTAuth.create(this, config)
   }
 
   internal fun RSocket.doAfterTerminate(block: () -> Unit) {
     onClose().doAfterTerminate(block).subscribeOn(Schedulers.boundedElastic()).subscribe()
   }
+
   internal fun tcpServerTransport(target: String): ServerTransport<*> {
     val (bindAddress, port) = target.split(":")
     return TcpServerTransport.create(bindAddress, port.toInt())

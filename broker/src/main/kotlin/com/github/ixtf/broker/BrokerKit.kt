@@ -2,10 +2,6 @@ package com.github.ixtf.broker
 
 import io.cloudevents.CloudEvent
 import io.rsocket.Payload
-import io.rsocket.transport.ClientTransport
-import io.rsocket.transport.ServerTransport
-import io.rsocket.transport.netty.client.TcpClientTransport
-import io.rsocket.transport.netty.server.TcpServerTransport
 import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonArray
