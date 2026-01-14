@@ -1,10 +1,10 @@
 package com.github.ixtf.broker.verticle
 
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.dto.BrokerServiceSetupDTO
+import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
-import com.github.ixtf.broker.internal.InternalKit.defaultAuthProvider
+import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
@@ -28,7 +28,7 @@ abstract class BrokerServiceVerticle(
   target: String = IXTF_API_BROKER_TARGET,
   host: String = J.localIp(),
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
-  protected open val jwtAuth by lazy { vertx.defaultAuthProvider() }
+  protected open val jwtAuth by lazy { vertx.defaultAuth() }
   private val rSocketClient: RSocketClient by lazy {
     RSocketClient.from(
       RSocketConnector.create()
@@ -36,7 +36,7 @@ abstract class BrokerServiceVerticle(
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(
           buildConnectionSetupPayload(
-            BrokerServiceSetupDTO(
+            SetupDTO(
               host = host,
               service = service,
               principal = principal,

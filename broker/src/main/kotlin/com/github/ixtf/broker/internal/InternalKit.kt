@@ -1,9 +1,9 @@
 package com.github.ixtf.broker.internal
 
 import cn.hutool.core.util.ReflectUtil
-import com.github.ixtf.broker.BrokerKit.toPayload
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
-import com.github.ixtf.broker.dto.BrokerServiceSetupDTO
+import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.toPayload
 import io.rsocket.DuplexConnection
 import io.rsocket.Payload
 import io.rsocket.RSocket
@@ -25,7 +25,7 @@ import reactor.util.retry.Retry
 import reactor.util.retry.RetryBackoffSpec
 
 internal object InternalKit {
-  internal fun Vertx.defaultAuthProvider(buffer: String? = IXTF_API_BROKER_AUTH): JWTAuth? {
+  internal fun Vertx.defaultAuth(buffer: String? = IXTF_API_BROKER_AUTH): JWTAuth? {
     if (buffer.isNullOrBlank()) return null
     val key = pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer)
     val config = jwtAuthOptionsOf(pubSecKeys = listOf(key))
@@ -46,7 +46,7 @@ internal object InternalKit {
     return TcpServerTransport.create(bindAddress, port.toInt())
   }
 
-  internal fun buildConnectionSetupPayload(dto: BrokerServiceSetupDTO): Mono<Payload> = mono {
+  internal fun buildConnectionSetupPayload(dto: SetupDTO): Mono<Payload> = mono {
     JsonObject.mapFrom(dto).toPayload()
   }
 

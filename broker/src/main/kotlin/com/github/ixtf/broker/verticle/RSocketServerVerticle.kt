@@ -1,9 +1,10 @@
 package com.github.ixtf.broker.verticle
 
-import com.github.ixtf.broker.BrokerKit.toBuffer
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.internal.InternalKit.defaultAuthProvider
+import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.domain.RSocketServer
+import com.github.ixtf.broker.readValue
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
@@ -14,7 +15,6 @@ import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
-import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Duration
 import kotlin.getValue
 import kotlinx.coroutines.reactor.awaitSingle
@@ -26,7 +26,7 @@ abstract class RSocketServerVerticle(
   name: String = "RSocket",
   target: String = IXTF_API_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
-  protected open val jwtAuth by lazy { vertx.defaultAuthProvider() }
+  protected open val jwtAuth by lazy { vertx.defaultAuth() }
   private val server by lazy {
     val (host, port) = target.split(":")
     RSocketServer(id = id, name = name, host = host, port = port.toInt())
@@ -50,9 +50,10 @@ abstract class RSocketServerVerticle(
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     jwtAuth?.also { authProvider ->
-      val token = setup.toBuffer().toString(UTF_8)
-      val credentials = TokenCredentials(token)
-      authProvider.authenticate(credentials)?.coAwait()
+      val dto = setup.readValue<SetupDTO>()
+      require(dto.token.isNullOrBlank().not())
+      val credentials = TokenCredentials(dto.token)
+      authProvider.authenticate(credentials).coAwait()
     }
     this@RSocketServerVerticle
   }

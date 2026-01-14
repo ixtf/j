@@ -1,6 +1,9 @@
 package com.github.ixtf.vertx
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.ixtf.core.MAPPER
 import io.vertx.core.Expectation
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpResponseExpectation
 import io.vertx.ext.web.client.HttpResponse
 
@@ -11,3 +14,5 @@ object ScSuccess : Expectation<HttpResponse<*>> {
     return RuntimeException(value?.bodyAsString())
   }
 }
+
+inline fun <reified T> Buffer.readValue(): T = MAPPER.readValue<T>(bytes)

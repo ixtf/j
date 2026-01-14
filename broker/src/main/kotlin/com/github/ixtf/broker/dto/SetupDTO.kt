@@ -3,10 +3,10 @@ package com.github.ixtf.broker.dto
 import java.io.Serializable
 
 @JvmRecord
-data class BrokerServiceSetupDTO(
+data class SetupDTO(
   val host: String,
-  val service: String,
-  val principal: String,
+  val service: String? = null,
+  val principal: String? = null,
   val tags: Set<String>? = null,
   val token: String? = null,
 ) : Serializable

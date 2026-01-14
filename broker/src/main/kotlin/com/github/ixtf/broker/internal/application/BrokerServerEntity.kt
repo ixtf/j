@@ -1,12 +1,10 @@
 package com.github.ixtf.broker.internal.application
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.ixtf.broker.BrokerKit.toBuffer
-import com.github.ixtf.broker.dto.BrokerServiceSetupDTO
+import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
-import com.github.ixtf.core.MAPPER
+import com.github.ixtf.broker.readValue
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
 import io.rsocket.ConnectionSetupPayload
@@ -69,7 +67,7 @@ internal class BrokerServerEntity(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val dto = MAPPER.readValue<BrokerServiceSetupDTO>(setup.toBuffer().bytes)
+    val dto = setup.readValue<SetupDTO>()
     authProvider?.also { _ ->
       require(dto.token.isNullOrBlank().not())
       authProvider.authenticate(TokenCredentials(dto.token)).coAwait()

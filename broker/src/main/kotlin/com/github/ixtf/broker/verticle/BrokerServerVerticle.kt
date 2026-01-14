@@ -2,7 +2,7 @@ package com.github.ixtf.broker.verticle
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.internal.InternalKit.defaultAuthProvider
+import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.application.BrokerServerEntity
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.core.J
@@ -23,7 +23,7 @@ abstract class BrokerServerVerticle(
   name: String = "Broker",
   target: String = IXTF_API_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), RSocket {
-  protected open val jwtAuth by lazy { vertx.defaultAuthProvider() }
+  protected open val jwtAuth by lazy { vertx.defaultAuth() }
   private val entity by lazy {
     val (host, port) = target.split(":")
     val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())
