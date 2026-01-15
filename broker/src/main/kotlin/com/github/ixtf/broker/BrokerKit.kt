@@ -49,7 +49,7 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
 }
 
-fun CloudEvent.toPayload(metadata: CompositeByteBuf?): Payload =
+fun CloudEvent.toPayload(metadata: CompositeByteBuf? = null): Payload =
   CLOUD_EVENT_FORMAT.serialize(this).toPayload(metadata)
 
 inline fun <reified T> CloudEvent.readValueOrNull(): T? =
