@@ -11,11 +11,9 @@ import io.rsocket.Closeable
 import io.rsocket.ConnectionSetupPayload
 import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
-import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
-import java.time.Duration
 import kotlin.getValue
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.mono
@@ -38,7 +36,7 @@ abstract class RSocketServerVerticle(
     closeable =
       io.rsocket.core.RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        .resume(Resume().sessionDuration(Duration.ofMinutes(5)))
+        // .resume(Resume().sessionDuration(Duration.ofMinutes(5)))
         .bind(server.transport())
         .awaitSingle()
   }

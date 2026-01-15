@@ -13,14 +13,12 @@ import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketServer
-import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.rsocket.loadbalance.LoadbalanceStrategy
 import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.coroutines.receiveChannelHandler
-import java.time.Duration
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
@@ -45,7 +43,7 @@ internal class BrokerServerEntity(
     closeable =
       RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        .resume(Resume().sessionDuration(Duration.ofMinutes(5)))
+        // .resume(Resume().sessionDuration(Duration.ofMinutes(5)))
         .bind(server.transport())
         .awaitSingle()
 
@@ -71,32 +69,34 @@ internal class BrokerServerEntity(
     super.stop()
   }
 
-  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val dto = setup.readValue<SetupDTO>()
-    authProvider?.also { _ ->
-      require(dto.token.isNullOrBlank().not())
-      authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
-      if (dto.service.isNullOrBlank().not()) {
-        require(dto.instance.isNullOrBlank().not())
-        channel.handle(
-          BrokerServerEvent.Connected(
-            rSocket = sendingSocket,
-            instance = dto.instance,
-            service = dto.service,
-            host = dto.host,
-            tags = dto.tags,
-          )
-        )
-        sendingSocket.doAfterTerminate {
-          channel.handle(
-            BrokerServerEvent.DisConnected(service = dto.service, instance = dto.instance)
-          )
+  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> =
+    mono {
+        val dto = setup.readValue<SetupDTO>()
+        authProvider?.also { _ ->
+          require(dto.token.isNullOrBlank().not())
+          authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
+          if (dto.service.isNullOrBlank().not()) {
+            require(dto.instance.isNullOrBlank().not())
+            channel.handle(
+              BrokerServerEvent.Connected(
+                rSocket = sendingSocket,
+                instance = dto.instance,
+                service = dto.service,
+                host = dto.host,
+                tags = dto.tags,
+              )
+            )
+            sendingSocket.doAfterTerminate {
+              channel.handle(
+                BrokerServerEvent.DisConnected(service = dto.service, instance = dto.instance)
+              )
+            }
+          }
         }
+        log.warn("setup: {}", dto)
+        this@BrokerServerEntity as RSocket
       }
-    }
-    log.debug("setup: {}", dto)
-    this@BrokerServerEntity
-  }
+      .doOnError { log.error(it) }
 
   override fun metadataPush(payload: Payload): Mono<Void> =
     mono { BrokerContext(payload).pickRSocket(server, lbStrategy, brokerRSocket) }

@@ -1,10 +1,15 @@
 package com.github.ixtf.broker
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.ixtf.core.MAPPER
 import com.github.ixtf.vertx.readValue
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider
 import io.cloudevents.protobuf.ProtobufFormat.PROTO_CONTENT_TYPE
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufInputStream
+import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.CompositeByteBuf
 import io.netty.buffer.Unpooled.wrappedBuffer
 import io.rsocket.Payload
@@ -12,6 +17,7 @@ import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
+import java.nio.charset.StandardCharsets
 
 val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
@@ -20,21 +26,28 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
 fun CloudEvent.toPayload(metadata: CompositeByteBuf?): Payload =
   CLOUD_EVENT_FORMAT.serialize(this).toPayload(metadata)
 
-inline fun <reified T> CloudEvent.readValueOrNull(): T? = data?.toBytes()?.readValueOrNull()
+inline fun <reified T> CloudEvent.readValueOrNull(): T? =
+  data?.toBytes()?.let { Buffer.buffer(it).readValue() }
 
 fun ByteArray.toPayload(metadata: CompositeByteBuf?): Payload =
   if (metadata == null) DefaultPayload.create(this)
   else DefaultPayload.create(wrappedBuffer(this), metadata)
 
-inline fun <reified T> ByteArray.readValueOrNull(): T? {
-  if (isEmpty()) return null
-  return when (T::class) {
-    CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(this) as T
-    else -> Buffer.buffer(this).readValue()
-  }
-}
+inline fun <reified T> ByteBuf.readValueOrNull(): T? =
+  if (this.readableBytes() <= 0) null
+  else
+    when (T::class) {
+      CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
+      String::class -> toString(StandardCharsets.UTF_8)
+      ByteArray::class -> ByteBufUtil.getBytes(this)
+      Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
+      JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
+      JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
+      else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
+    }
+      as T
 
-inline fun <reified T> Payload.readValueOrNull(): T? = data().array().readValueOrNull()
+inline fun <reified T> Payload.readValueOrNull(): T? = data().readValueOrNull()
 
 inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
 

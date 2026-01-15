@@ -5,16 +5,17 @@ import com.github.ixtf.broker.verticle.BrokerServiceVerticle
 import io.rsocket.Payload
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
+import io.vertx.kotlin.core.vertxOptionsOf
 import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
-private val vertx = Vertx.vertx()
+private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
 
 suspend fun main() {
   vertx.deployVerticle(TestBrokerService()).coAwait()
 
-  println("success")
+  println("isNativeTransportEnabled: ${vertx.isNativeTransportEnabled}")
 }
 
 private class TestBrokerService : BrokerServiceVerticle(service = "test", instance = "test") {
@@ -22,7 +23,7 @@ private class TestBrokerService : BrokerServiceVerticle(service = "test", instan
     mono {
         val dataUtf8 = payload.dataUtf8
         val buffer = Buffer.buffer(dataUtf8)
-        buffer.toPayload()
+        buffer.toPayload(null)
       }
       .doAfterTerminate { payload.release() }
 }

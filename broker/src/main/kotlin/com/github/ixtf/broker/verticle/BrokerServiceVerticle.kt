@@ -2,7 +2,6 @@ package com.github.ixtf.broker.verticle
 
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.dto.SetupDTO
-import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
@@ -14,12 +13,10 @@ import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
-import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.rsocket.util.DefaultPayload
 import io.vertx.kotlin.core.json.jsonObjectOf
 import io.vertx.kotlin.ext.auth.jwtOptionsOf
-import java.time.Duration
 import kotlin.properties.Delegates
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
@@ -59,20 +56,22 @@ abstract class BrokerServiceVerticle(
             )
           )
         )
-        .reconnect(
-          InternalKit.defaultRetry().doBeforeRetry { signal ->
-            log.warn("${this@BrokerServiceVerticle}，第 ${signal.totalRetries() + 1} 次 Reconnect...")
-          }
-        )
-        .resume(
-          Resume()
-            .sessionDuration(Duration.ofMinutes(5)) // 允许服务端宕机 5 分钟内恢复 Session
-            .retry(
-              InternalKit.defaultRetry().doBeforeRetry { signal ->
-                log.warn("${this@BrokerServiceVerticle}，第 ${signal.totalRetries() + 1} 次 Resume...")
-              }
-            )
-        )
+        //        .reconnect(
+        //          InternalKit.defaultRetry().doBeforeRetry { signal ->
+        //            log.warn("${this@BrokerServiceVerticle}，第 ${signal.totalRetries() + 1} 次
+        // Reconnect...")
+        //          }
+        //        )
+        //        .resume(
+        //          Resume()
+        //            .sessionDuration(Duration.ofMinutes(5)) // 允许服务端宕机 5 分钟内恢复 Session
+        //            .retry(
+        //              InternalKit.defaultRetry().doBeforeRetry { signal ->
+        //                log.warn("${this@BrokerServiceVerticle}，第 ${signal.totalRetries() + 1} 次
+        // Resume...")
+        //              }
+        //            )
+        //        )
         .connect(tcpClientTransport(target))
     )
   }

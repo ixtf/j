@@ -9,10 +9,8 @@ import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
 import io.rsocket.Payload
 import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
-import io.rsocket.core.Resume
 import io.rsocket.frame.decoder.PayloadDecoder
 import io.vertx.core.Vertx
-import java.time.Duration
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -23,6 +21,7 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
   private val delegate: RSocketClient by lazy {
     RSocketClient.from(
       RSocketConnector.create()
+        // .acceptor(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(
           buildConnectionSetupPayload(
@@ -40,18 +39,24 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
             println("${this@DefaultBrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
           }
         )
-        .resume(
-          Resume()
-            .sessionDuration(Duration.ofMinutes(5))
-            .retry(
-              InternalKit.defaultRetry().doBeforeRetry { signal ->
-                println("${this@DefaultBrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
-              }
-            )
-        )
+        //        .resume(
+        //          Resume()
+        //            .sessionDuration(Duration.ofMinutes(5))
+        //            .retry(
+        //              InternalKit.defaultRetry().doBeforeRetry { signal ->
+        //                println("${this@DefaultBrokerClient}，尝试第 ${signal.totalRetries() + 1}
+        // 次重连...")
+        //              }
+        //            )
+        //        )
         .connect(tcpClientTransport(target))
     )
   }
+
+  //  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> {
+  //    println("test")
+  //    return Mono.just(EMPTY_RSOCKET)
+  //  }
 
   override fun route(route: BrokerRouteOptions) = DefaultBrokerRoute(this, route)
 

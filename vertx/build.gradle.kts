@@ -28,5 +28,7 @@ dependencies {
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
+  implementation("io.netty:netty-transport-native-io_uring:linux-x86_64")
+
   testImplementation("net.openhft:chronicle-queue:5.27ea11")
 }

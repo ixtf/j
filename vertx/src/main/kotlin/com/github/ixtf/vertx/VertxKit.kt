@@ -12,10 +12,10 @@ inline fun <reified T> Buffer.readValueOrNull(): T? {
   return when (T::class) {
     Buffer::class -> this
     ByteArray::class -> bytes
-    JsonObject::class -> toJsonArray()
+    JsonObject::class -> toJsonObject()
     JsonArray::class -> toJsonArray()
     String::class -> toString(StandardCharsets.UTF_8)
-    else -> MAPPER.readValue(bytes)
+    else -> MAPPER.readValue<T>(bytes)
   }
     as T
 }

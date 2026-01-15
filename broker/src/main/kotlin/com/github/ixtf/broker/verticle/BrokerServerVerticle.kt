@@ -24,20 +24,21 @@ abstract class BrokerServerVerticle(
   protected open val jwtAuth by lazy { vertx.defaultAuth() }
   protected open val lbStrategy: LoadbalanceStrategy by lazy { RoundRobinLoadbalanceStrategy() }
   private val entity by lazy {
-    val (host, port) = target.split(":")
-    val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())
-    BrokerServerEntity(
-      server = server,
-      authProvider = jwtAuth,
-      lbStrategy = lbStrategy,
-      brokerRSocket = this,
-    )
+    SERVER_CACHE.get(id) { _ ->
+      val (host, port) = target.split(":")
+      val server = BrokerServer(id = id, name = name, host = host, port = port.toInt())
+      BrokerServerEntity(
+        server = server,
+        authProvider = jwtAuth,
+        lbStrategy = lbStrategy,
+        brokerRSocket = this,
+      )
+    }
   }
 
   override suspend fun start() {
     super.start()
     val options = deploymentOptionsOf(threadingModel = VIRTUAL_THREAD)
     vertx.deployVerticle(entity, options).coAwait()
-    SERVER_CACHE.put(entity.entityId, entity)
   }
 }
