@@ -71,6 +71,7 @@ internal class BrokerServerEntity(
     launch {
       channel.consumeEach { event ->
         runCatching {
+            log.debug("{}", event)
             when (event) {
               is BrokerServerEvent.Connected -> server.onEvent(event)
               is BrokerServerEvent.DisConnected -> server.onEvent(event)

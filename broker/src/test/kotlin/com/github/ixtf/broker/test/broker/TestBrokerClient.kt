@@ -19,5 +19,6 @@ suspend fun main() {
     brokerRoute.requestResponse {
       CloudEventBuilder.v1().withId("1").withType("test").withSource(URI("client")).build()
     }
+  brokerClient.dispose()
   println(payload.dataUtf8)
 }

@@ -58,7 +58,6 @@ abstract class BrokerServiceVerticle(
           )
         )
         .reconnect(InternalKit.defaultRetry(this@BrokerServiceVerticle))
-        .resume(InternalKit.defaultResume(this@BrokerServiceVerticle))
         .connect(tcpClientTransport(target))
     )
   }

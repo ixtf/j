@@ -63,5 +63,6 @@ internal object InternalKit {
       .doBeforeRetry { println("$source，尝试第 ${it.totalRetries() + 1} 次重连...") }
 
   internal fun defaultResume(source: Any): Resume =
-    Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
+    // Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
+    Resume().sessionDuration(Duration.ofSeconds(3)).retry(defaultRetry(source))
 }

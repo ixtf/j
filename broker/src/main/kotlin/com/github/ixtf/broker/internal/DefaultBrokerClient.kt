@@ -35,7 +35,7 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
           )
         )
         .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
-        .resume(InternalKit.defaultResume(this@DefaultBrokerClient))
+        // .resume(InternalKit.defaultResume(this@DefaultBrokerClient))
         .connect(tcpClientTransport(target))
     )
   }
