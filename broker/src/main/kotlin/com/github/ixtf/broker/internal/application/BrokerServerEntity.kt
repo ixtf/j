@@ -70,34 +70,32 @@ internal class BrokerServerEntity(
     super.stop()
   }
 
-  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> =
-    mono {
-        val dto = setup.readValue<SetupDTO>()
-        authProvider?.also { _ ->
-          require(dto.token.isNullOrBlank().not())
-          authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
-          if (dto.service.isNullOrBlank().not()) {
-            require(dto.instance.isNullOrBlank().not())
-            channel.handle(
-              BrokerServerEvent.Connected(
-                rSocket = sendingSocket,
-                instance = dto.instance,
-                service = dto.service,
-                host = dto.host,
-                tags = dto.tags,
-              )
-            )
-            sendingSocket.doAfterTerminate {
-              channel.handle(
-                BrokerServerEvent.DisConnected(service = dto.service, instance = dto.instance)
-              )
-            }
-          }
+  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
+    val dto = setup.readValue<SetupDTO>()
+    authProvider?.also { _ ->
+      require(dto.token.isNullOrBlank().not())
+      authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
+      if (dto.service.isNullOrBlank().not()) {
+        require(dto.instance.isNullOrBlank().not())
+        channel.handle(
+          BrokerServerEvent.Connected(
+            rSocket = sendingSocket,
+            instance = dto.instance,
+            service = dto.service,
+            host = dto.host,
+            tags = dto.tags,
+          )
+        )
+        sendingSocket.doAfterTerminate {
+          channel.handle(
+            BrokerServerEvent.DisConnected(service = dto.service, instance = dto.instance)
+          )
         }
-        log.debug("{}", dto)
-        this@BrokerServerEntity as RSocket
       }
-      .doOnError { log.error(it) }
+    }
+    log.debug("{}", dto)
+    this@BrokerServerEntity
+  }
 
   override fun metadataPush(payload: Payload): Mono<Void> =
     mono { BrokerContext(payload).pickRSocket(server, lbStrategy, brokerRSocket) }
