@@ -59,6 +59,11 @@ class KotlinJvmConventionPlugin : Plugin<Project> {
       }
 
       tasks.withType<Test>().configureEach {
+        jvmArgs(
+          "--add-opens",
+          "java.base/java.lang=ALL-UNNAMED",
+          "--enable-native-access=ALL-UNNAMED",
+        )
         useJUnitPlatform()
         failOnNoDiscoveredTests = false
         testLogging { events("passed", "skipped", "failed") }

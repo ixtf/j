@@ -37,13 +37,13 @@ abstract class BrokerServiceVerticle(
   target: String = IXTF_API_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   protected open val jwtAuth by lazy { vertx.defaultAuth() }
-  private val rSocketClient: RSocketClient by lazy {
+  private val rSocketClient =
     RSocketClient.from(
       RSocketConnector.create()
         .acceptor(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(
-          buildConnectionSetupPayload(
+          buildConnectionSetupPayload {
             SetupDTO(
               host = host,
               service = service,
@@ -55,14 +55,13 @@ abstract class BrokerServiceVerticle(
                   jwtOptionsOf(noTimestamp = true),
                 ),
             )
-          )
+          }
         )
         .reconnect(InternalKit.defaultRetry(this@BrokerServiceVerticle))
         .connect(tcpClientTransport(target))
     )
-  }
   protected var status: BrokerServiceStatus by
-    Delegates.observable(BrokerServiceStatus.INIT) { prop, old, new ->
+    Delegates.observable(BrokerServiceStatus.INIT) { _, old, new ->
       if (old == new) return@observable
       log.warn("${this@BrokerServiceVerticle}: $old -> $new")
       if (rSocketClient.isDisposed) {

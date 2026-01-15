@@ -47,8 +47,8 @@ internal object InternalKit {
     return TcpServerTransport.create(bindAddress, port.toInt())
   }
 
-  internal fun buildConnectionSetupPayload(dto: SetupDTO): Mono<Payload> = mono {
-    JsonObject.mapFrom(dto).toPayload()
+  internal fun buildConnectionSetupPayload(block: suspend () -> SetupDTO): Mono<Payload> = mono {
+    JsonObject.mapFrom(block()).toPayload()
   }
 
   internal fun tcpClientTransport(target: String): ClientTransport {

@@ -23,7 +23,7 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
       RSocketConnector.create()
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(
-          buildConnectionSetupPayload(
+          buildConnectionSetupPayload {
             SetupDTO(
               host = options.host,
               service = options.service?.takeIf { it.isNotBlank() },
@@ -31,7 +31,7 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
               tags = options.tags?.takeIf { it.isNotEmpty() },
               token = options.token?.takeIf { it.isNotBlank() },
             )
-          )
+          }
         )
         .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
         .connect(tcpClientTransport(target))
