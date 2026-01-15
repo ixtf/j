@@ -1,7 +1,9 @@
 package com.github.ixtf.broker.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.io.Serializable
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JvmRecord
 data class SetupDTO(
   val host: String,
