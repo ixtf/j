@@ -33,23 +33,35 @@ inline fun <reified T> Payload.readValueOrNull(): T? = data().readValueOrNull()
 
 inline fun <reified T> ByteBuf.readValueOrNull(): T? =
   if (readableBytes() <= 0) null
-  else {
-    markReaderIndex()
-    try {
-      when (T::class) {
-        CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
-        String::class -> toString(StandardCharsets.UTF_8)
-        ByteArray::class -> ByteBufUtil.getBytes(this)
-        Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
-        JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
-        JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
-        else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
-      }
-        as T
-    } finally {
-      resetReaderIndex()
+  else
+    when (T::class) {
+      CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
+      String::class -> toString(StandardCharsets.UTF_8)
+      ByteArray::class -> ByteBufUtil.getBytes(this)
+      Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
+      JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
+      JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
+      else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
     }
-  }
+      as T
+
+//  else {
+//   // markReaderIndex()
+//    try {
+//      when (T::class) {
+//        CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
+//        String::class -> toString(StandardCharsets.UTF_8)
+//        ByteArray::class -> ByteBufUtil.getBytes(this)
+//        Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
+//        JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
+//        JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
+//        else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
+//      }
+//        as T
+//    } finally {
+//    //  resetReaderIndex()
+//    }
+//  }
 
 val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
