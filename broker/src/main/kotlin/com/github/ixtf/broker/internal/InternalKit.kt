@@ -68,6 +68,5 @@ internal object InternalKit {
    * - client：可以Resume
    */
   internal fun defaultResume(source: Any): Resume =
-    // Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
-    Resume().sessionDuration(Duration.ofSeconds(3)).retry(defaultRetry(source))
+    Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
 }
