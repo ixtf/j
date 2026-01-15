@@ -18,19 +18,9 @@ private val brokerRoute = brokerClient.route(BrokerRouteOptions("test"))
 suspend fun main() {
   println("isNativeTransportEnabled: ${vertx.isNativeTransportEnabled}")
 
-  //  val payload =
-  //    brokerRoute.requestResponse {
-  //      CloudEventBuilder.v1().withId("1").withType("test").withSource(URI("client")).build()
-  //    }
-  //  println(payload.dataUtf8)
-
-  vertx.deployVerticle(object : AbstractVerticle() {})
-
-  delay(3.seconds)
-
-  val payload =
-    brokerRoute.requestResponse {
-      CloudEventBuilder.v1().withId("1").withType("test").withSource(URI("client")).build()
-    }
-  println(payload.dataUtf8)
+    val payload =
+      brokerRoute.requestResponse {
+        CloudEventBuilder.v1().withId("1").withType("test").withSource(URI("client")).build()
+      }
+    println(payload.dataUtf8)
 }

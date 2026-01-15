@@ -1,6 +1,7 @@
 package com.github.ixtf.broker.internal.application
 
 import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
@@ -43,7 +44,7 @@ internal class BrokerServerEntity(
     closeable =
       RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        // .resume(Resume().sessionDuration(Duration.ofMinutes(5)))
+        .resume(InternalKit.defaultResume(this))
         .bind(server.transport())
         .awaitSingle()
 
@@ -93,7 +94,7 @@ internal class BrokerServerEntity(
             }
           }
         }
-        log.warn("setup: {}", dto)
+        log.debug("{}", dto)
         this@BrokerServerEntity as RSocket
       }
       .doOnError { log.error(it) }

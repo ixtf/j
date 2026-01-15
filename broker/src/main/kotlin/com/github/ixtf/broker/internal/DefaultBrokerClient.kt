@@ -34,21 +34,8 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
             )
           )
         )
-        .reconnect(
-          InternalKit.defaultRetry().doBeforeRetry { signal ->
-            println("${this@DefaultBrokerClient}，尝试第 ${signal.totalRetries() + 1} 次重连...")
-          }
-        )
-        //        .resume(
-        //          Resume()
-        //            .sessionDuration(Duration.ofMinutes(5))
-        //            .retry(
-        //              InternalKit.defaultRetry().doBeforeRetry { signal ->
-        //                println("${this@DefaultBrokerClient}，尝试第 ${signal.totalRetries() + 1}
-        // 次重连...")
-        //              }
-        //            )
-        //        )
+        .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
+        .resume(InternalKit.defaultResume(this@DefaultBrokerClient))
         .connect(tcpClientTransport(target))
     )
   }

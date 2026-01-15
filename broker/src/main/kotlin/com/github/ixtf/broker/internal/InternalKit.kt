@@ -7,6 +7,7 @@ import com.github.ixtf.broker.toPayload
 import io.rsocket.DuplexConnection
 import io.rsocket.Payload
 import io.rsocket.RSocket
+import io.rsocket.core.Resume
 import io.rsocket.transport.ClientTransport
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
@@ -55,8 +56,12 @@ internal object InternalKit {
     return TcpClientTransport.create(bindAddress, port.toInt())
   }
 
-  internal fun defaultRetry(): RetryBackoffSpec =
+  internal fun defaultRetry(source: Any): RetryBackoffSpec =
     Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(1))
       .maxBackoff(Duration.ofSeconds(3))
       .jitter(0.5)
+      .doBeforeRetry { println("$source，尝试第 ${it.totalRetries() + 1} 次重连...") }
+
+  internal fun defaultResume(source: Any): Resume =
+    Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
 }
