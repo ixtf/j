@@ -62,6 +62,11 @@ internal object InternalKit {
       .jitter(0.5)
       .doBeforeRetry { println("$source，尝试第 ${it.totalRetries() + 1} 次重连...") }
 
+  /**
+   * - server：需要Resume
+   * - service：不要Resume，否则连接断开会延迟到Resume过期
+   * - client：可以Resume
+   */
   internal fun defaultResume(source: Any): Resume =
     // Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
     Resume().sessionDuration(Duration.ofSeconds(3)).retry(defaultRetry(source))
