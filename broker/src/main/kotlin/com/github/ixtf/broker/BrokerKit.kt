@@ -19,6 +19,24 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import java.nio.charset.StandardCharsets
 
+inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
+
+inline fun <reified T> Payload.readValueOrNull(): T? = data().readValueOrNull()
+
+inline fun <reified T> ByteBuf.readValueOrNull(): T? =
+  if (readableBytes() <= 0) null
+  else
+    when (T::class) {
+      CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
+      String::class -> toString(StandardCharsets.UTF_8)
+      ByteArray::class -> ByteBufUtil.getBytes(this)
+      Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
+      JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
+      JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
+      else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
+    }
+      as T
+
 val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
 }
@@ -32,24 +50,6 @@ inline fun <reified T> CloudEvent.readValueOrNull(): T? =
 fun ByteArray.toPayload(metadata: CompositeByteBuf?): Payload =
   if (metadata == null) DefaultPayload.create(this)
   else DefaultPayload.create(wrappedBuffer(this), metadata)
-
-inline fun <reified T> ByteBuf.readValueOrNull(): T? =
-  if (this.readableBytes() <= 0) null
-  else
-    when (T::class) {
-      CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
-      String::class -> toString(StandardCharsets.UTF_8)
-      ByteArray::class -> ByteBufUtil.getBytes(this)
-      Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
-      JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
-      JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
-      else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
-    }
-      as T
-
-inline fun <reified T> Payload.readValueOrNull(): T? = data().readValueOrNull()
-
-inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
 
 fun Buffer.toPayload(metadata: CompositeByteBuf?): Payload = bytes.toPayload(metadata)
 
