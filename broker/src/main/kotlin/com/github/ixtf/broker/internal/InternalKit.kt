@@ -48,7 +48,7 @@ internal object InternalKit {
   }
 
   internal fun buildConnectionSetupPayload(dto: SetupDTO): Mono<Payload> = mono {
-    JsonObject.mapFrom(dto).toPayload(null)
+    JsonObject.mapFrom(dto).toPayload()
   }
 
   internal fun tcpClientTransport(target: String): ClientTransport {

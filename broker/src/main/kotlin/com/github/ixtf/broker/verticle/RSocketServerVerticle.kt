@@ -47,8 +47,8 @@ abstract class RSocketServerVerticle(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
+    val dto = setup.readValue<SetupDTO>()
     jwtAuth?.also { authProvider ->
-      val dto = setup.readValue<SetupDTO>()
       require(dto.token.isNullOrBlank().not())
       val credentials = TokenCredentials(dto.token)
       authProvider.authenticate(credentials).coAwait()

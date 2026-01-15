@@ -20,14 +20,16 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import java.nio.charset.StandardCharsets
 
-inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
-
-inline fun <reified T> Payload.readValueOrNull(): T? =
+inline fun <reified T> Payload.readValueAndRelease(): T =
   try {
-    data().readValueOrNull()
+    readValue()
   } finally {
     ReferenceCountUtil.safeRelease(this)
   }
+
+inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
+
+inline fun <reified T> Payload.readValueOrNull(): T? = data().readValueOrNull()
 
 inline fun <reified T> ByteBuf.readValueOrNull(): T? =
   if (readableBytes() <= 0) null
@@ -53,12 +55,14 @@ fun CloudEvent.toPayload(metadata: CompositeByteBuf?): Payload =
 inline fun <reified T> CloudEvent.readValueOrNull(): T? =
   data?.toBytes()?.let { Buffer.buffer(it).readValue() }
 
-fun ByteArray.toPayload(metadata: CompositeByteBuf?): Payload =
+fun ByteArray.toPayload(metadata: CompositeByteBuf? = null): Payload =
   if (metadata == null) DefaultPayload.create(this)
   else DefaultPayload.create(wrappedBuffer(this), metadata)
 
-fun Buffer.toPayload(metadata: CompositeByteBuf?): Payload = bytes.toPayload(metadata)
+fun Buffer.toPayload(metadata: CompositeByteBuf? = null): Payload = bytes.toPayload(metadata)
 
-fun JsonObject.toPayload(metadata: CompositeByteBuf?): Payload = toBuffer().toPayload(metadata)
+fun JsonObject.toPayload(metadata: CompositeByteBuf? = null): Payload =
+  toBuffer().toPayload(metadata)
 
-fun JsonArray.toPayload(metadata: CompositeByteBuf?): Payload = toBuffer().toPayload(metadata)
+fun JsonArray.toPayload(metadata: CompositeByteBuf? = null): Payload =
+  toBuffer().toPayload(metadata)
