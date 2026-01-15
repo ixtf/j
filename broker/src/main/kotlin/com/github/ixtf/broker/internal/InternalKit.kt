@@ -2,7 +2,6 @@ package com.github.ixtf.broker.internal
 
 import cn.hutool.core.util.ReflectUtil
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
-import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.toPayload
 import io.rsocket.DuplexConnection
 import io.rsocket.Payload
@@ -13,7 +12,7 @@ import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
 import io.vertx.core.Vertx
-import io.vertx.core.json.JsonObject
+import io.vertx.core.buffer.Buffer
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.kotlin.ext.auth.jwt.jwtAuthOptionsOf
 import io.vertx.kotlin.ext.auth.pubSecKeyOptionsOf
@@ -26,11 +25,21 @@ import reactor.util.retry.Retry
 import reactor.util.retry.RetryBackoffSpec
 
 internal object InternalKit {
-  internal fun Vertx.defaultAuth(buffer: String? = IXTF_API_BROKER_AUTH): JWTAuth? {
-    if (buffer.isNullOrBlank()) return null
+  internal fun Vertx.defaultAuth(buffer: String = IXTF_API_BROKER_AUTH): JWTAuth {
+    require(buffer.isNotBlank())
     val key = pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer)
     val config = jwtAuthOptionsOf(pubSecKeys = listOf(key))
     return JWTAuth.create(this, config)
+  }
+
+  internal fun serverTransport(target: String): ServerTransport<*> {
+    val (bindAddress, port) = target.split(":")
+    return TcpServerTransport.create(bindAddress, port.toInt())
+  }
+
+  internal fun clientTransport(target: String): ClientTransport {
+    val (bindAddress, port) = target.split(":")
+    return TcpClientTransport.create(bindAddress, port.toInt())
   }
 
   internal fun RSocket.remoteAddress(): SocketAddress? =
@@ -42,18 +51,8 @@ internal object InternalKit {
     onClose().doAfterTerminate(block).subscribeOn(Schedulers.boundedElastic()).subscribe()
   }
 
-  internal fun tcpServerTransport(target: String): ServerTransport<*> {
-    val (bindAddress, port) = target.split(":")
-    return TcpServerTransport.create(bindAddress, port.toInt())
-  }
-
-  internal fun buildConnectionSetupPayload(block: suspend () -> SetupDTO): Mono<Payload> = mono {
-    JsonObject.mapFrom(block()).toPayload()
-  }
-
-  internal fun tcpClientTransport(target: String): ClientTransport {
-    val (bindAddress, port) = target.split(":")
-    return TcpClientTransport.create(bindAddress, port.toInt())
+  internal fun buildConnectionSetupPayload(token: String): Mono<Payload> = mono {
+    Buffer.buffer(token).toPayload()
   }
 
   internal fun defaultRetry(source: Any): RetryBackoffSpec =

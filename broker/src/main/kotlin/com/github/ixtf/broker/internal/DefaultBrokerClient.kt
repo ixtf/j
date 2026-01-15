@@ -1,11 +1,9 @@
 package com.github.ixtf.broker.internal
 
 import com.github.ixtf.broker.BrokerClient
-import com.github.ixtf.broker.BrokerClientOptions
 import com.github.ixtf.broker.BrokerRouteOptions
-import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
-import com.github.ixtf.broker.internal.InternalKit.tcpClientTransport
+import com.github.ixtf.broker.internal.InternalKit.clientTransport
 import io.rsocket.Payload
 import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
@@ -15,26 +13,14 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOptions) :
-  BrokerClient {
-  override val target by options::target
+internal class DefaultBrokerClient(val vertx: Vertx, token: String, target: String) : BrokerClient {
   private val delegate =
     RSocketClient.from(
       RSocketConnector.create()
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        .setupPayload(
-          buildConnectionSetupPayload {
-            SetupDTO(
-              host = options.host,
-              service = options.service?.takeIf { it.isNotBlank() },
-              instance = options.instance?.takeIf { it.isNotBlank() },
-              tags = options.tags?.takeIf { it.isNotEmpty() },
-              token = options.token?.takeIf { it.isNotBlank() },
-            )
-          }
-        )
+        .setupPayload(buildConnectionSetupPayload(token))
         .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
-        .connect(tcpClientTransport(target))
+        .connect(clientTransport(target))
     )
 
   override fun route(route: BrokerRouteOptions) = DefaultBrokerRoute(this, route)

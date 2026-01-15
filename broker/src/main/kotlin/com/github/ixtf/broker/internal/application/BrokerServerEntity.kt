@@ -1,6 +1,7 @@
 package com.github.ixtf.broker.internal.application
 
 import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.internal.BrokerContext
 import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.domain.BrokerServer
@@ -30,35 +31,12 @@ import reactor.core.publisher.Mono
 
 internal class BrokerServerEntity(
   private var server: BrokerServer,
-  private val authProvider: AuthenticationProvider?,
+  private val authProvider: AuthenticationProvider,
   private val lbStrategy: LoadbalanceStrategy,
   private val brokerRSocket: RSocket,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
   private lateinit var closeable: Closeable
-  internal val entityId by server::id
-
-  internal fun accept(setup: SetupDTO, sendingSocket: RSocket) {
-    if (setup.service.isNullOrBlank()) {
-      log.debug("{}", setup)
-    } else {
-      require(setup.instance.isNullOrBlank().not())
-      channel.handle(
-        BrokerServerEvent.Connected(
-          rSocket = sendingSocket,
-          instance = setup.instance,
-          service = setup.service,
-          host = setup.host,
-          tags = setup.tags,
-        )
-      )
-      sendingSocket.doAfterTerminate {
-        channel.handle(
-          BrokerServerEvent.DisConnected(service = setup.service, instance = setup.instance)
-        )
-      }
-    }
-  }
 
   override suspend fun start() {
     super.start()
@@ -66,7 +44,7 @@ internal class BrokerServerEntity(
       RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .resume(InternalKit.defaultResume(this))
-        .bind(server.transport())
+        .bind(InternalKit.serverTransport(server.target))
         .awaitSingle()
 
     launch {
@@ -90,13 +68,33 @@ internal class BrokerServerEntity(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val dto = setup.readValue<SetupDTO>()
-    authProvider?.apply {
-      require(dto.token.isNullOrBlank().not())
-      authenticate(TokenCredentials(dto.token)).coAwait()
-    }
+    val credentials = TokenCredentials(setup.readValue<String>())
+    val user = authProvider.authenticate(credentials).coAwait()
+    val dto = user.principal().mapTo(SetupDTO::class.java)
     accept(dto, sendingSocket)
     this@BrokerServerEntity
+  }
+
+  internal fun accept(setup: SetupDTO, sendingSocket: RSocket) {
+    if (setup.service.isNullOrBlank()) {
+      log.debug("client: {}", setup)
+    } else {
+      require(setup.instance.isNullOrBlank().not())
+      channel.handle(
+        BrokerServerEvent.Connected(
+          rSocket = sendingSocket,
+          instance = setup.instance,
+          service = setup.service,
+          host = setup.host,
+          tags = setup.tags,
+        )
+      )
+      sendingSocket.doAfterTerminate {
+        channel.handle(
+          BrokerServerEvent.DisConnected(service = setup.service, instance = setup.instance)
+        )
+      }
+    }
   }
 
   override fun metadataPush(payload: Payload): Mono<Void> =

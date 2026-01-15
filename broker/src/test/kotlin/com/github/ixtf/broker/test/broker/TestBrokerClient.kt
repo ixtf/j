@@ -2,8 +2,10 @@ package com.github.ixtf.broker.test.broker
 
 import cn.hutool.log.Log
 import com.github.ixtf.broker.BrokerClient
-import com.github.ixtf.broker.BrokerClientOptions
 import com.github.ixtf.broker.BrokerRouteOptions
+import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
+import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.dto.SetupDTO.Companion.brokerToken
 import com.github.ixtf.broker.readValueAndRelease
 import com.github.ixtf.core.J
 import io.cloudevents.core.builder.CloudEventBuilder
@@ -15,8 +17,12 @@ import java.time.OffsetDateTime
 
 private val log = Log.get()
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
-private val brokerClient = BrokerClient.create(vertx, BrokerClientOptions())
-private val brokerRoute = brokerClient.route(BrokerRouteOptions("test"))
+private val brokerRoute by lazy {
+  IXTF_API_BROKER_AUTH = "test"
+  val token = vertx.brokerToken(SetupDTO())
+  val brokerClient = BrokerClient.create(vertx, token)
+  brokerClient.route(BrokerRouteOptions("test"))
+}
 
 fun main() {
   test("test")

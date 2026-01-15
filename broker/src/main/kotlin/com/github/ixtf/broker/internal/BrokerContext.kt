@@ -1,7 +1,6 @@
-package com.github.ixtf.broker.internal.application
+package com.github.ixtf.broker.internal
 
 import cn.hutool.core.collection.CollUtil
-import com.github.ixtf.broker.Constant.BROKER_ROUTE
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import io.rsocket.Payload
 import io.rsocket.RSocket
@@ -9,6 +8,7 @@ import io.rsocket.loadbalance.LoadbalanceStrategy
 import io.rsocket.metadata.CompositeMetadata
 import io.rsocket.metadata.RoutingMetadata
 import io.rsocket.metadata.WellKnownMimeType
+import kotlin.collections.get
 
 internal class BrokerContext(payload: Payload) {
   private val metadataStore =
@@ -34,7 +34,7 @@ internal class BrokerContext(payload: Payload) {
     lbStrategy: LoadbalanceStrategy,
     brokerRSocket: RSocket,
   ): RSocket {
-    if (service.isNullOrBlank() || service == BROKER_ROUTE) return brokerRSocket
+    if (service.isNullOrBlank()) return brokerRSocket
     val rSockets = server.groupMap[service]?.instances
     require(rSockets.isNullOrEmpty().not())
     if (tags.isNullOrEmpty()) return lbStrategy.select(rSockets)

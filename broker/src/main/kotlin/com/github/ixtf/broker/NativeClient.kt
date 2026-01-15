@@ -7,8 +7,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface NativeClient : Disposable {
-  val target: String
-
   fun fireAndForget(payloadMono: Mono<Payload>): Mono<Void>
 
   fun requestResponse(payloadMono: Mono<Payload>): Mono<Payload>

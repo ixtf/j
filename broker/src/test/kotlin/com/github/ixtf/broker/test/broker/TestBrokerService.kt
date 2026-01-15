@@ -1,6 +1,9 @@
 package com.github.ixtf.broker.test.broker
 
 import cn.hutool.core.util.RandomUtil
+import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
+import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.dto.SetupDTO.Companion.brokerToken
 import com.github.ixtf.broker.readValueAndRelease
 import com.github.ixtf.broker.readValueOrNull
 import com.github.ixtf.broker.toPayload
@@ -18,6 +21,10 @@ import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
+private val token by lazy {
+  IXTF_API_BROKER_AUTH = "test"
+  vertx.brokerToken(SetupDTO(service = "test", instance = "test"))
+}
 
 suspend fun main() {
   vertx.deployVerticle(TestBrokerService()).coAwait()
@@ -25,7 +32,7 @@ suspend fun main() {
   println("isNativeTransportEnabled: ${vertx.isNativeTransportEnabled}")
 }
 
-private class TestBrokerService : BrokerServiceVerticle(service = "test", instance = "test") {
+private class TestBrokerService : BrokerServiceVerticle(token) {
   override fun requestResponse(payload: Payload): Mono<Payload> = mono {
     val ce = payload.readValueAndRelease<CloudEvent>()
     log.info("requestResponse: ${ce.type}")

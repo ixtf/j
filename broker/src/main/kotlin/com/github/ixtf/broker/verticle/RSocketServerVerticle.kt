@@ -1,9 +1,11 @@
 package com.github.ixtf.broker.verticle
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.domain.RSocketServer
+import com.github.ixtf.broker.internal.domain.RSocketServer.Companion.RSocketServerId
 import com.github.ixtf.broker.readValue
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
@@ -24,10 +26,16 @@ abstract class RSocketServerVerticle(
   name: String = "RSocket",
   target: String = IXTF_API_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
+  companion object {
+    private val SERVER_CACHE = Caffeine.newBuilder().build<RSocketServerId, RSocketServer>()
+  }
+
   protected open val jwtAuth by lazy { vertx.defaultAuth() }
-  private val server by lazy {
-    val (host, port) = target.split(":")
-    RSocketServer(id = id, name = name, host = host, port = port.toInt())
+  private val rSocketServerId = RSocketServerId(id)
+  private val rSocketServer by lazy {
+    SERVER_CACHE.get(rSocketServerId) { _ ->
+      RSocketServer(id = rSocketServerId, target = target, name = name)
+    }
   }
   private lateinit var closeable: Closeable
 
@@ -36,8 +44,8 @@ abstract class RSocketServerVerticle(
     closeable =
       io.rsocket.core.RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        // .resume(InternalKit.defaultResume(this))
-        .bind(server.transport())
+        .resume(InternalKit.defaultResume(this))
+        .bind(InternalKit.serverTransport(rSocketServer.target))
         .awaitSingle()
   }
 
@@ -47,12 +55,8 @@ abstract class RSocketServerVerticle(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val dto = setup.readValue<SetupDTO>()
-    jwtAuth?.also { authProvider ->
-      require(dto.token.isNullOrBlank().not())
-      val credentials = TokenCredentials(dto.token)
-      authProvider.authenticate(credentials).coAwait()
-    }
+    val credentials = TokenCredentials(setup.readValue<String>())
+    jwtAuth.authenticate(credentials).coAwait()
     this@RSocketServerVerticle
   }
 }
