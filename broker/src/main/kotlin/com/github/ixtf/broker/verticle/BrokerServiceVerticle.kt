@@ -84,6 +84,7 @@ abstract class BrokerServiceVerticle(
   }
 
   private fun reConnect() {
+    if (rSocketClient.isDisposed || status == BrokerServiceStatus.DISPOSE) return
     rSocketClient
       .fireAndForget(mono { DefaultPayload.create(DefaultPayload.EMPTY_BUFFER) })
       .subscribe()
