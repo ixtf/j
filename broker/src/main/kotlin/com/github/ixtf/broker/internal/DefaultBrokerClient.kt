@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono
 internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOptions) :
   BrokerClient {
   override val target by options::target
-  private val delegate: RSocketClient by lazy {
+  private val delegate =
     RSocketClient.from(
       RSocketConnector.create()
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
@@ -36,7 +36,6 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
         .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
         .connect(tcpClientTransport(target))
     )
-  }
 
   override fun route(route: BrokerRouteOptions) = DefaultBrokerRoute(this, route)
 
