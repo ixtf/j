@@ -21,7 +21,6 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
   private val delegate: RSocketClient by lazy {
     RSocketClient.from(
       RSocketConnector.create()
-        // .acceptor(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(
           buildConnectionSetupPayload(
@@ -35,15 +34,9 @@ internal class DefaultBrokerClient(val vertx: Vertx, val options: BrokerClientOp
           )
         )
         .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
-        // .resume(InternalKit.defaultResume(this@DefaultBrokerClient))
         .connect(tcpClientTransport(target))
     )
   }
-
-  //  override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> {
-  //    println("test")
-  //    return Mono.just(EMPTY_RSOCKET)
-  //  }
 
   override fun route(route: BrokerRouteOptions) = DefaultBrokerRoute(this, route)
 
