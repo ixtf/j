@@ -12,10 +12,10 @@ import java.io.Serializable
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JvmRecord
 data class SetupDTO(
-  val host: String = J.localIp(),
   val service: String? = null,
   val instance: String? = null,
   val tags: Set<String>? = null,
+  val host: String = J.localIp(),
   val extra: JsonNode? = null,
 ) : Serializable {
   companion object {
