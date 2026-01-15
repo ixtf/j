@@ -1,9 +1,9 @@
 package com.github.ixtf.broker.internal.domain
 
+import cn.hutool.log.Log
 import com.github.ixtf.broker.internal.InternalKit.remoteAddress
 import io.rsocket.RSocket
 import io.rsocket.util.RSocketProxy
-import java.net.SocketAddress
 import java.time.Instant
 
 internal data class BrokerServiceInstance(
@@ -13,9 +13,9 @@ internal data class BrokerServiceInstance(
   val tags: Set<String>? = null,
   val createDateTime: Instant = Instant.now(),
 ) : RSocketProxy(rSocket) {
-  val remoteAddress: SocketAddress? = runCatching { rSocket.remoteAddress() }.getOrNull()
+  val remoteAddress by lazy { runCatching { rSocket.remoteAddress() }.getOrNull() }
 
   init {
-    println("remoteAddress: $remoteAddress")
+    Log.get().info("remoteAddress: {}", remoteAddress)
   }
 }
