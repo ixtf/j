@@ -12,6 +12,7 @@ import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.CompositeByteBuf
 import io.netty.buffer.Unpooled.wrappedBuffer
+import io.netty.util.ReferenceCountUtil
 import io.rsocket.Payload
 import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
@@ -24,18 +25,22 @@ inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull()
 inline fun <reified T> Payload.readValueOrNull(): T? = data().readValueOrNull()
 
 inline fun <reified T> ByteBuf.readValueOrNull(): T? =
-  if (readableBytes() <= 0) null
-  else
-    when (T::class) {
-      CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
-      String::class -> toString(StandardCharsets.UTF_8)
-      ByteArray::class -> ByteBufUtil.getBytes(this)
-      Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
-      JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
-      JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
-      else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
-    }
-      as T
+  try {
+    if (readableBytes() <= 0) null
+    else
+      when (T::class) {
+        CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
+        String::class -> toString(StandardCharsets.UTF_8)
+        ByteArray::class -> ByteBufUtil.getBytes(this)
+        Buffer::class -> Buffer.buffer(ByteBufUtil.getBytes(this))
+        JsonObject::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonObject()
+        JsonArray::class -> Buffer.buffer(ByteBufUtil.getBytes(this)).toJsonArray()
+        else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
+      }
+        as T
+  } finally {
+    ReferenceCountUtil.safeRelease(this)
+  }
 
 val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
