@@ -57,6 +57,7 @@ internal class BrokerServerEntity(
         )
       }
     }
+    log.debug("{}", setup)
   }
 
   override suspend fun start() {
@@ -97,7 +98,6 @@ internal class BrokerServerEntity(
       authenticate(TokenCredentials(dto.token)).coAwait()
     }
     accept(dto, sendingSocket)
-    log.debug("{}", dto)
     this@BrokerServerEntity
   }
 
