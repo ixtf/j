@@ -1,5 +1,6 @@
 package com.github.ixtf.broker.test.broker
 
+import cn.hutool.log.Log
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClientOptions
 import com.github.ixtf.broker.BrokerRouteOptions
@@ -8,29 +9,28 @@ import com.github.ixtf.core.J
 import io.cloudevents.core.builder.CloudEventBuilder
 import io.vertx.core.Vertx
 import io.vertx.kotlin.core.vertxOptionsOf
+import io.vertx.kotlin.coroutines.vertxFuture
 import java.net.URI
 import java.time.OffsetDateTime
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
+private val log = Log.get()
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
 private val brokerClient = BrokerClient.create(vertx, BrokerClientOptions())
 private val brokerRoute = brokerClient.route(BrokerRouteOptions("test"))
 
 fun main() {
-  runBlocking {
-    println("isNativeTransportEnabled: ${vertx.isNativeTransportEnabled}")
-
-    launch { requestResponse("test") }
-    launch { requestResponse("other1") }
-    launch { requestResponse("other2") }
-    launch { requestResponse("other3") }
-  }
+  test("test")
+  test("other1")
+  test("other2")
+  test("other3")
 }
 
-private suspend fun requestResponse(type: String) {
-  val payload =
-    brokerRoute.requestResponse {
+private fun test(type: String) =
+  vertxFuture(vertx) { requestResponse(type) }.onSuccess { log.info(it) }
+
+private suspend fun requestResponse(type: String): String =
+  brokerRoute
+    .requestResponse {
       CloudEventBuilder.v1()
         .withId(J.objectId())
         .withTime(OffsetDateTime.now())
@@ -38,5 +38,4 @@ private suspend fun requestResponse(type: String) {
         .withType(type)
         .build()
     }
-  println(payload.readValueAndRelease<String>())
-}
+    .readValueAndRelease()

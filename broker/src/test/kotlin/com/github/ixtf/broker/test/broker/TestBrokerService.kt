@@ -11,11 +11,11 @@ import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.kotlin.core.vertxOptionsOf
 import io.vertx.kotlin.coroutines.coAwait
+import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
-import java.util.concurrent.TimeUnit
 
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
 
@@ -37,7 +37,7 @@ private class TestBrokerService : BrokerServiceVerticle(service = "test", instan
         }
         else -> {
           TimeUnit.MILLISECONDS.sleep(RandomUtil.randomLong(500, 3000))
-          //delay(RandomUtil.randomLong(500, 3000))
+          // delay(RandomUtil.randomLong(500, 3000))
           ce.readValueOrNull() ?: "requestResponse: ${ce.type}"
         }
       }
