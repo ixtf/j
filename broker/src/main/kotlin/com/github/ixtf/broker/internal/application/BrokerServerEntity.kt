@@ -39,6 +39,26 @@ internal class BrokerServerEntity(
   private lateinit var closeable: Closeable
   internal val entityId by server::id
 
+  internal fun accept(setup: SetupDTO, sendingSocket: RSocket) {
+    if (setup.service.isNullOrBlank().not()) {
+      require(setup.instance.isNullOrBlank().not())
+      channel.handle(
+        BrokerServerEvent.Connected(
+          rSocket = sendingSocket,
+          instance = setup.instance,
+          service = setup.service,
+          host = setup.host,
+          tags = setup.tags,
+        )
+      )
+      sendingSocket.doAfterTerminate {
+        channel.handle(
+          BrokerServerEvent.DisConnected(service = setup.service, instance = setup.instance)
+        )
+      }
+    }
+  }
+
   override suspend fun start() {
     super.start()
     closeable =
@@ -72,27 +92,11 @@ internal class BrokerServerEntity(
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     val dto = setup.readValue<SetupDTO>()
-    authProvider?.also { _ ->
+    authProvider?.apply {
       require(dto.token.isNullOrBlank().not())
-      authProvider.authenticate(TokenCredentials(dto.token)).coAwait()
-      if (dto.service.isNullOrBlank().not()) {
-        require(dto.instance.isNullOrBlank().not())
-        channel.handle(
-          BrokerServerEvent.Connected(
-            rSocket = sendingSocket,
-            instance = dto.instance,
-            service = dto.service,
-            host = dto.host,
-            tags = dto.tags,
-          )
-        )
-        sendingSocket.doAfterTerminate {
-          channel.handle(
-            BrokerServerEvent.DisConnected(service = dto.service, instance = dto.instance)
-          )
-        }
-      }
+      authenticate(TokenCredentials(dto.token)).coAwait()
     }
+    accept(dto, sendingSocket)
     log.debug("{}", dto)
     this@BrokerServerEntity
   }
