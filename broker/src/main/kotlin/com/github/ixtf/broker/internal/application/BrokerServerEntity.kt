@@ -39,7 +39,9 @@ internal class BrokerServerEntity(
   internal val entityId by server::id
 
   internal fun accept(setup: SetupDTO, sendingSocket: RSocket) {
-    if (setup.service.isNullOrBlank().not()) {
+    if (setup.service.isNullOrBlank()) {
+      log.debug("{}", setup)
+    } else {
       require(setup.instance.isNullOrBlank().not())
       channel.handle(
         BrokerServerEvent.Connected(
@@ -56,7 +58,6 @@ internal class BrokerServerEntity(
         )
       }
     }
-    log.debug("{}", setup)
   }
 
   override suspend fun start() {
