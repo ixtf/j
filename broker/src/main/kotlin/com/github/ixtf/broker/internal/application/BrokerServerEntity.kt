@@ -20,7 +20,6 @@ import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.coroutines.receiveChannelHandler
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactor.awaitSingle
@@ -71,17 +70,14 @@ internal class BrokerServerEntity(
 
     launch {
       channel.consumeEach { event ->
-        try {
-          server =
+        runCatching {
             when (event) {
               is BrokerServerEvent.Connected -> server.onEvent(event)
               is BrokerServerEvent.DisConnected -> server.onEvent(event)
             }
-        } catch (_: CancellationException) {
-          // ignore
-        } catch (t: Throwable) {
-          log.error(t, "state: {}", server)
-        }
+          }
+          .onSuccess { server = it }
+          .onFailure { log.error(it, "state: {}", server) }
       }
     }
   }
