@@ -17,17 +17,13 @@ internal data class BrokerServer(
 
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServer {
     val group = groupMap[event.service] ?: BrokerServiceGroup(event.service, event.fireDateTime)
-    return copy(
-      groupMap = groupMap + (group.id to group.onEvent(event)),
-      modifyDateTime = event.fireDateTime,
-    )
+    val entry = group.id to group.onEvent(event)
+    return copy(groupMap = groupMap + entry, modifyDateTime = event.fireDateTime)
   }
 
   internal fun onEvent(event: BrokerServerEvent.DisConnected): BrokerServer {
     val group = groupMap[event.service] ?: return this
-    return copy(
-      groupMap = groupMap + (group.id to group.onEvent(event)),
-      modifyDateTime = event.fireDateTime,
-    )
+    val entry = group.id to group.onEvent(event)
+    return copy(groupMap = groupMap + entry, modifyDateTime = event.fireDateTime)
   }
 }
