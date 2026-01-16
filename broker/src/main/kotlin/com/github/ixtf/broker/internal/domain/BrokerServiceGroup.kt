@@ -28,13 +28,4 @@ internal data class BrokerServiceGroup(
       instances = instances.filter { it.id != event.instance },
       modifyDateTime = event.fireDateTime,
     )
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-    other as BrokerServiceGroup
-    return id == other.id
-  }
-
-  override fun hashCode() = id.hashCode()
 }
