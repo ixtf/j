@@ -25,6 +25,8 @@ abstract class BrokerServerVerticle(
     private val SERVER_CACHE = Caffeine.newBuilder().build<BrokerServerId, BrokerServerEntity>()
   }
 
+  protected open val jwtAuth: JWTAuth by lazy { vertx.defaultAuth() }
+  protected open val lbStrategy: LoadbalanceStrategy = RoundRobinLoadbalanceStrategy()
   private val brokerServerId = BrokerServerId(id)
   private val entity by lazy {
     SERVER_CACHE.get(brokerServerId) { _ ->
@@ -36,8 +38,6 @@ abstract class BrokerServerVerticle(
       )
     }
   }
-  protected open val jwtAuth: JWTAuth by lazy { vertx.defaultAuth() }
-  protected open val lbStrategy: LoadbalanceStrategy by lazy { RoundRobinLoadbalanceStrategy() }
 
   override suspend fun start() {
     super.start()

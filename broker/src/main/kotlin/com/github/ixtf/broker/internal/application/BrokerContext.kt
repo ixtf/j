@@ -1,4 +1,4 @@
-package com.github.ixtf.broker.internal
+package com.github.ixtf.broker.internal.application
 
 import cn.hutool.core.collection.CollUtil
 import com.github.ixtf.broker.internal.domain.BrokerServer
@@ -10,7 +10,7 @@ import io.rsocket.metadata.RoutingMetadata
 import io.rsocket.metadata.WellKnownMimeType
 import kotlin.collections.get
 
-internal class BrokerContext(payload: Payload) {
+internal class BrokerContext(private val server: BrokerServer, payload: Payload) {
   private val metadataStore =
     if (payload.hasMetadata().not()) emptyList()
     else CompositeMetadata(payload.metadata(), false).toList()
@@ -29,11 +29,7 @@ internal class BrokerContext(payload: Payload) {
   private fun CompositeMetadata.Entry.test(wellKnownMimeType: WellKnownMimeType) =
     this is CompositeMetadata.WellKnownMimeTypeEntry && type == wellKnownMimeType
 
-  internal fun pickRSocket(
-    server: BrokerServer,
-    lbStrategy: LoadbalanceStrategy,
-    brokerRSocket: RSocket,
-  ): RSocket {
+  internal fun pickRSocket(lbStrategy: LoadbalanceStrategy, brokerRSocket: RSocket): RSocket {
     if (service.isNullOrBlank()) return brokerRSocket
     val rSockets = server.groupMap[service]?.instances
     require(rSockets.isNullOrEmpty().not())
