@@ -28,11 +28,10 @@ abstract class BrokerServerVerticle(
 
   protected open val jwtAuth: JWTAuth by lazy { vertx.defaultAuth() }
   protected open val lbStrategy: LoadbalanceStrategy = RoundRobinLoadbalanceStrategy()
-  private val brokerServerId = BrokerServerId(id)
   private val entity by lazy {
-    SERVER_CACHE.get(brokerServerId) { _ ->
+    SERVER_CACHE.get(BrokerServerId(id)) { id ->
       BrokerServerEntity(
-        server = BrokerServer(id = brokerServerId, target = ServerTarget(target), name = name),
+        server = BrokerServer(id = id, target = ServerTarget(target), name = name),
         authProvider = jwtAuth,
         lbStrategy = lbStrategy,
         brokerRSocket = this,
