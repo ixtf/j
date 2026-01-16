@@ -31,6 +31,6 @@ inline fun <reified T> ByteBuf.readValueOrNull(): T? =
       Buffer::class -> BufferInternal.buffer(slice())
       JsonObject::class -> BufferInternal.buffer(slice()).toJsonObject()
       JsonArray::class -> BufferInternal.buffer(slice()).toJsonArray()
-      else -> ByteBufInputStream(this).use { MAPPER.readValue<T>(it) }
+      else -> ByteBufInputStream(duplicate()).use { MAPPER.readValue<T>(it) }
     }
       as T
