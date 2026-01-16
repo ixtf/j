@@ -15,7 +15,7 @@ internal class DefaultBrokerRoute(
   private val brokerClient: DefaultBrokerClient,
   private val options: BrokerRouteOptions,
 ) : BrokerRoute {
-  private fun metadata() = options.routing()
+  private fun metadata() = options.encodeMetadata()
 
   override suspend fun fireAndForget(block: suspend () -> CloudEvent) {
     brokerClient.fireAndForget(mono { block().toPayload(metadata()) }).awaitSingleOrNull()

@@ -5,7 +5,7 @@ import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider
 import io.cloudevents.protobuf.ProtobufFormat.PROTO_CONTENT_TYPE
-import io.netty.buffer.CompositeByteBuf
+import io.netty.buffer.ByteBuf
 import io.rsocket.Payload
 import io.vertx.core.buffer.Buffer
 
@@ -13,7 +13,7 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
   EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
 }
 
-fun CloudEvent.toPayload(metadata: CompositeByteBuf? = null): Payload =
+fun CloudEvent.toPayload(metadata: ByteBuf? = null): Payload =
   CLOUD_EVENT_FORMAT.serialize(this).toPayload(metadata)
 
 inline fun <reified T> CloudEvent.readValueOrNull(): T? =
