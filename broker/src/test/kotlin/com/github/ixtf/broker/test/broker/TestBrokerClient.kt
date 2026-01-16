@@ -32,7 +32,9 @@ fun main() {
 }
 
 private fun test(type: String) =
-  vertxFuture(vertx) { requestResponse(type) }.onSuccess { log.info(it) }
+  vertxFuture(vertx) { requestResponse(type) }
+    .onSuccess { log.info(it) }
+    .onFailure { log.error(it) }
 
 private suspend fun requestResponse(type: String): String =
   brokerRoute

@@ -2,7 +2,6 @@ package com.github.ixtf.broker.verticle
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.domain.RSocketServer
@@ -43,7 +42,7 @@ abstract class RSocketServerVerticle(
     closeable =
       io.rsocket.core.RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        .resume(InternalKit.defaultResume(this))
+        // .resume(InternalKit.defaultResume(this))
         .bind(rSocketServer.target.transport())
         .awaitSingle()
   }

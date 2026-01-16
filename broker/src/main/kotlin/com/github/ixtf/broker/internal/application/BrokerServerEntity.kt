@@ -1,7 +1,6 @@
 package com.github.ixtf.broker.internal.application
 
 import com.github.ixtf.broker.SetupInfo
-import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.doOnClose
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
@@ -41,7 +40,7 @@ internal class BrokerServerEntity(
     closeable =
       RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
-        .resume(InternalKit.defaultResume(this))
+        // .resume(InternalKit.defaultResume(this))
         .bind(server.target.transport())
         .awaitSingle()
 

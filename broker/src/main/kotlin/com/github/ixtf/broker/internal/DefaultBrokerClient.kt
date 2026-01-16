@@ -19,7 +19,8 @@ internal class DefaultBrokerClient(val vertx: Vertx, token: String, target: Clie
       RSocketConnector.create()
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(buildConnectionSetupPayload(token))
-        .reconnect(InternalKit.defaultRetry(this@DefaultBrokerClient))
+        .reconnect(InternalKit.defaultRetry(this))
+        // .resume(InternalKit.defaultResume(this))
         .connect(target.transport())
     )
 
