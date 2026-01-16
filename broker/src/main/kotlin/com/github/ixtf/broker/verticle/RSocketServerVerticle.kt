@@ -7,7 +7,6 @@ import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.domain.RSocketServer
 import com.github.ixtf.broker.internal.domain.RSocketServer.Companion.RSocketServerId
-import com.github.ixtf.broker.readValue
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable
@@ -55,7 +54,7 @@ abstract class RSocketServerVerticle(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val credentials = TokenCredentials(setup.readValue<String>())
+    val credentials = TokenCredentials(setup.dataUtf8)
     jwtAuth.authenticate(credentials).coAwait()
     this@RSocketServerVerticle
   }

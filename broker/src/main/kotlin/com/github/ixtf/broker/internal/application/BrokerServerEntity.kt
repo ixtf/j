@@ -5,7 +5,6 @@ import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
-import com.github.ixtf.broker.readValue
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.netty.util.ReferenceCountUtil
 import io.rsocket.Closeable
@@ -67,7 +66,7 @@ internal class BrokerServerEntity(
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    val credentials = TokenCredentials(setup.readValue<String>())
+    val credentials = TokenCredentials(setup.dataUtf8)
     val user = authProvider.authenticate(credentials).coAwait()
     val info = user.principal().mapTo(SetupInfo::class.java)
     accept(info, sendingSocket)
