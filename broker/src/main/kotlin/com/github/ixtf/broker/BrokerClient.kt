@@ -19,9 +19,6 @@ interface BrokerClient : NativeClient {
 
     fun Vertx.brokerToken(info: SetupInfo): String = defaultAuth().brokerToken(info)
 
-    fun Vertx.brokerToken(info: SetupInfo, buffer: String): String =
-      defaultAuth(buffer).brokerToken(info)
-
     fun create(vertx: Vertx, token: String, target: String = IXTF_API_BROKER_TARGET): BrokerClient =
       DefaultBrokerClient(vertx, token, target)
   }
