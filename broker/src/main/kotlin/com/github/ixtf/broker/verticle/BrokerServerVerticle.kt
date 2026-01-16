@@ -3,6 +3,7 @@ package com.github.ixtf.broker.verticle
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
+import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.application.BrokerServerEntity
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.BrokerServer.Companion.BrokerServerId
@@ -31,7 +32,7 @@ abstract class BrokerServerVerticle(
   private val entity by lazy {
     SERVER_CACHE.get(brokerServerId) { _ ->
       BrokerServerEntity(
-        server = BrokerServer(id = brokerServerId, target = target, name = name),
+        server = BrokerServer(id = brokerServerId, target = ServerTarget(target), name = name),
         authProvider = jwtAuth,
         lbStrategy = lbStrategy,
         brokerRSocket = this,
