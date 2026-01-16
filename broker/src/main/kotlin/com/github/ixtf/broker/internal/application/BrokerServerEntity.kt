@@ -43,7 +43,7 @@ internal class BrokerServerEntity(
       RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .resume(InternalKit.defaultResume(this))
-        .bind(InternalKit.serverTransport(server.target))
+        .bind(server.target.transport())
         .awaitSingle()
 
     launch {

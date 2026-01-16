@@ -3,6 +3,7 @@ package com.github.ixtf.broker
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.internal.ClientTarget
 import com.github.ixtf.broker.internal.DefaultBrokerClient
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
 import com.github.ixtf.core.J
@@ -20,7 +21,7 @@ interface BrokerClient : NativeClient {
     fun Vertx.brokerToken(info: SetupInfo): String = defaultAuth().brokerToken(info)
 
     fun create(vertx: Vertx, token: String, target: String = IXTF_API_BROKER_TARGET): BrokerClient =
-      DefaultBrokerClient(vertx, token, target)
+      DefaultBrokerClient(vertx, token, ClientTarget(target))
   }
 }
 

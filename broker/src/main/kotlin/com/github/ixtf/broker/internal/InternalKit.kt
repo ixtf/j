@@ -7,7 +7,6 @@ import io.rsocket.DuplexConnection
 import io.rsocket.Payload
 import io.rsocket.RSocket
 import io.rsocket.core.Resume
-import io.rsocket.transport.ClientTransport
 import io.rsocket.transport.ServerTransport
 import io.rsocket.transport.netty.client.TcpClientTransport
 import io.rsocket.transport.netty.server.TcpServerTransport
@@ -30,16 +29,6 @@ internal object InternalKit {
     val key = pubSecKeyOptionsOf(algorithm = "HS256").setBuffer(buffer)
     val config = jwtAuthOptionsOf(pubSecKeys = listOf(key))
     return JWTAuth.create(this, config)
-  }
-
-  internal fun serverTransport(target: String): ServerTransport<*> {
-    val (bindAddress, port) = target.split(":")
-    return TcpServerTransport.create(bindAddress, port.toInt())
-  }
-
-  internal fun clientTransport(target: String): ClientTransport {
-    val (bindAddress, port) = target.split(":")
-    return TcpClientTransport.create(bindAddress, port.toInt())
   }
 
   internal fun RSocket.remoteAddress(): SocketAddress? =
@@ -68,4 +57,20 @@ internal object InternalKit {
    */
   internal fun defaultResume(source: Any): Resume =
     Resume().sessionDuration(Duration.ofMinutes(5)).retry(defaultRetry(source))
+}
+
+@JvmInline
+internal value class ServerTarget(val target: String) {
+  fun transport(): ServerTransport<*> {
+    val (bindAddress, port) = target.split(":")
+    return TcpServerTransport.create(bindAddress, port.toInt())
+  }
+}
+
+@JvmInline
+internal value class ClientTarget(val target: String) {
+  fun transport(): TcpClientTransport {
+    val (bindAddress, port) = target.split(":")
+    return TcpClientTransport.create(bindAddress, port.toInt())
+  }
 }

@@ -1,9 +1,9 @@
 package com.github.ixtf.broker.verticle
 
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.internal.ClientTarget
 import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
-import com.github.ixtf.broker.internal.InternalKit.clientTransport
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.ConnectionSetupPayload
@@ -33,7 +33,7 @@ abstract class BrokerServiceVerticle(token: String, target: String = IXTF_API_BR
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .setupPayload(buildConnectionSetupPayload(token))
         .reconnect(InternalKit.defaultRetry(this@BrokerServiceVerticle))
-        .connect(clientTransport(target))
+        .connect(ClientTarget(target).transport())
     )
   protected var status: BrokerServiceStatus by
     Delegates.observable(BrokerServiceStatus.INIT) { _, old, new ->

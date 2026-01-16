@@ -1,11 +1,12 @@
 package com.github.ixtf.broker.internal.domain
 
+import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import java.time.Instant
 
 internal data class BrokerServer(
   val id: BrokerServerId,
-  val target: String,
+  val target: ServerTarget,
   val name: String,
   val groupMap: Map<String, BrokerServiceGroup> = emptyMap(),
   val createDateTime: Instant = Instant.now(),

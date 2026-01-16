@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.defaultAuth
+import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.domain.RSocketServer
 import com.github.ixtf.broker.internal.domain.RSocketServer.Companion.RSocketServerId
 import com.github.ixtf.broker.readValue
@@ -34,7 +35,7 @@ abstract class RSocketServerVerticle(
   private val rSocketServerId = RSocketServerId(id)
   private val rSocketServer by lazy {
     SERVER_CACHE.get(rSocketServerId) { _ ->
-      RSocketServer(id = rSocketServerId, target = target, name = name)
+      RSocketServer(id = rSocketServerId, target = ServerTarget(target), name = name)
     }
   }
   private lateinit var closeable: Closeable
@@ -45,7 +46,7 @@ abstract class RSocketServerVerticle(
       io.rsocket.core.RSocketServer.create(this)
         .payloadDecoder(PayloadDecoder.ZERO_COPY)
         .resume(InternalKit.defaultResume(this))
-        .bind(InternalKit.serverTransport(rSocketServer.target))
+        .bind(rSocketServer.target.transport())
         .awaitSingle()
   }
 
