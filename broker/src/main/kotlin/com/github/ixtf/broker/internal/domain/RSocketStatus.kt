@@ -4,5 +4,5 @@ enum class RSocketStatus {
   INIT,
   UP,
   DOWN,
-  DISPOSE,
+  STOP,
 }

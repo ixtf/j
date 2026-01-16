@@ -19,7 +19,6 @@ import java.net.SocketAddress
 import java.time.Duration
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import reactor.util.retry.Retry
 import reactor.util.retry.RetryBackoffSpec
 
@@ -36,8 +35,8 @@ internal object InternalKit {
       .map { (it as? DuplexConnection)?.remoteAddress() }
       .getOrDefault(null)
 
-  internal fun RSocket.doAfterTerminate(block: () -> Unit) {
-    onClose().doAfterTerminate(block).subscribeOn(Schedulers.boundedElastic()).subscribe()
+  internal fun RSocket.doOnClose(block: () -> Unit) {
+    onClose().doFinally { block() }.subscribe()
   }
 
   internal fun buildConnectionSetupPayload(token: String): Mono<Payload> = mono {

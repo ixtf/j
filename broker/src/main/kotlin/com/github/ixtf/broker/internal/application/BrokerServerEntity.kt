@@ -2,7 +2,7 @@ package com.github.ixtf.broker.internal.application
 
 import com.github.ixtf.broker.SetupInfo
 import com.github.ixtf.broker.internal.InternalKit
-import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
+import com.github.ixtf.broker.internal.InternalKit.doOnClose
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
@@ -87,7 +87,7 @@ internal class BrokerServerEntity(
           tags = setup.tags,
         )
       )
-      sendingSocket.doAfterTerminate {
+      sendingSocket.doOnClose {
         channel.handle(
           BrokerServerEvent.DisConnected(service = setup.service, instance = setup.instance)
         )
