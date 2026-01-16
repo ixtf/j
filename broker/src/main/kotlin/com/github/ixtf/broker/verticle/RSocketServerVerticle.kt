@@ -32,10 +32,9 @@ abstract class RSocketServerVerticle(
   }
 
   protected open val jwtAuth by lazy { vertx.defaultAuth() }
-  private val rSocketServerId = RSocketServerId(id)
   private val rSocketServer by lazy {
-    SERVER_CACHE.get(rSocketServerId) { _ ->
-      RSocketServer(id = rSocketServerId, target = ServerTarget(target), name = name)
+    SERVER_CACHE.get(RSocketServerId(id)) { id ->
+      RSocketServer(id = id, target = ServerTarget(target), name = name)
     }
   }
   private lateinit var closeable: Closeable
