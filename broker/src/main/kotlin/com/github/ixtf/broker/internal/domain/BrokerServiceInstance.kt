@@ -1,7 +1,7 @@
 package com.github.ixtf.broker.internal.domain
 
 import cn.hutool.log.Log
-import com.github.ixtf.broker.internal.InternalKit.remoteAddress
+import com.github.ixtf.broker.internal.kit.remoteAddress
 import io.rsocket.RSocket
 import io.rsocket.util.RSocketProxy
 import java.time.Instant

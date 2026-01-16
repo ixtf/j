@@ -1,6 +1,6 @@
 package test
 
-import com.github.ixtf.broker.readValueOrNull
+import com.github.ixtf.broker.kit.readValueOrNull
 import io.netty.buffer.Unpooled
 import io.rsocket.util.DefaultPayload
 import org.junit.jupiter.api.Assertions.*

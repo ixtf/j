@@ -1,20 +1,13 @@
-package com.github.ixtf.broker
+package com.github.ixtf.broker.kit
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ixtf.core.MAPPER
-import com.github.ixtf.vertx.readValue
 import io.cloudevents.CloudEvent
-import io.cloudevents.core.format.EventFormat
-import io.cloudevents.core.provider.EventFormatProvider
-import io.cloudevents.protobuf.ProtobufFormat.PROTO_CONTENT_TYPE
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufUtil
-import io.netty.buffer.CompositeByteBuf
-import io.netty.buffer.Unpooled.wrappedBuffer
 import io.netty.util.ReferenceCountUtil
 import io.rsocket.Payload
-import io.rsocket.util.DefaultPayload
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
@@ -62,25 +55,3 @@ inline fun <reified T> ByteBuf.readValueOrNull(): T? =
 //    //  resetReaderIndex()
 //    }
 //  }
-
-val CLOUD_EVENT_FORMAT: EventFormat by lazy {
-  EventFormatProvider.getInstance().resolveFormat(PROTO_CONTENT_TYPE)!!
-}
-
-fun CloudEvent.toPayload(metadata: CompositeByteBuf? = null): Payload =
-  CLOUD_EVENT_FORMAT.serialize(this).toPayload(metadata)
-
-inline fun <reified T> CloudEvent.readValueOrNull(): T? =
-  data?.toBytes()?.let { Buffer.buffer(it).readValue() }
-
-fun ByteArray.toPayload(metadata: CompositeByteBuf? = null): Payload =
-  if (metadata == null) DefaultPayload.create(this)
-  else DefaultPayload.create(wrappedBuffer(this), metadata)
-
-fun Buffer.toPayload(metadata: CompositeByteBuf? = null): Payload = bytes.toPayload(metadata)
-
-fun JsonObject.toPayload(metadata: CompositeByteBuf? = null): Payload =
-  toBuffer().toPayload(metadata)
-
-fun JsonArray.toPayload(metadata: CompositeByteBuf? = null): Payload =
-  toBuffer().toPayload(metadata)

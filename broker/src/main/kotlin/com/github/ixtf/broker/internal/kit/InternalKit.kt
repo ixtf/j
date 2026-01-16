@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal.kit
 
-import com.github.ixtf.broker.toPayload
+import com.github.ixtf.broker.kit.toPayload
 import io.rsocket.Payload
 import io.rsocket.core.Resume
 import io.vertx.core.buffer.Buffer

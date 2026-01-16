@@ -5,7 +5,7 @@ import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
 import com.github.ixtf.broker.BrokerRouteOptions
 import com.github.ixtf.broker.SetupInfo
-import com.github.ixtf.broker.readValueAndRelease
+import com.github.ixtf.broker.kit.readValueAndRelease
 import com.github.ixtf.core.J
 import io.cloudevents.core.builder.CloudEventBuilder
 import io.vertx.core.Vertx
