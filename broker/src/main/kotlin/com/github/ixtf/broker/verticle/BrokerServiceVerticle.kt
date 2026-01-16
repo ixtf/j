@@ -32,7 +32,7 @@ abstract class BrokerServiceVerticle(token: String, target: String = IXTF_API_BR
   private var status: RSocketStatus by
     Delegates.observable(RSocketStatus.INIT) { _, old, new ->
       log.warn("$old -> $new")
-      if (status == RSocketStatus.DOWN) vertx.runOnContext { reConnect() }
+      if (new == RSocketStatus.DOWN) context.runOnContext { reConnect() }
     }
 
   private fun reConnect() {
@@ -49,9 +49,9 @@ abstract class BrokerServiceVerticle(token: String, target: String = IXTF_API_BR
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     sendingSocket.doOnClose(log) {
-      vertx.runOnContext { if (status != RSocketStatus.STOP) status = RSocketStatus.DOWN }
+      context.runOnContext { if (status != RSocketStatus.STOP) status = RSocketStatus.DOWN }
     }
-    vertx.runOnContext { status = RSocketStatus.UP }
+    context.runOnContext { status = RSocketStatus.UP }
     this@BrokerServiceVerticle
   }
 
