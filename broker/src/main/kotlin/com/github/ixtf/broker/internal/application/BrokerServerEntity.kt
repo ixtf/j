@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal.application
 
-import com.github.ixtf.broker.dto.SetupDTO
+import com.github.ixtf.broker.SetupInfo
 import com.github.ixtf.broker.internal.InternalKit
 import com.github.ixtf.broker.internal.InternalKit.doAfterTerminate
 import com.github.ixtf.broker.internal.domain.BrokerServer
@@ -69,12 +69,12 @@ internal class BrokerServerEntity(
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
     val credentials = TokenCredentials(setup.readValue<String>())
     val user = authProvider.authenticate(credentials).coAwait()
-    val dto = user.principal().mapTo(SetupDTO::class.java)
-    accept(dto, sendingSocket)
+    val info = user.principal().mapTo(SetupInfo::class.java)
+    accept(info, sendingSocket)
     this@BrokerServerEntity
   }
 
-  internal fun accept(setup: SetupDTO, sendingSocket: RSocket) {
+  internal fun accept(setup: SetupInfo, sendingSocket: RSocket) {
     if (setup.service.isNullOrBlank()) {
       log.debug("client: {}", setup)
     } else {
