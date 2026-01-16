@@ -118,8 +118,8 @@ internal class BrokerServerEntity(
 
   override fun requestChannel(payloads: Publisher<Payload>): Flux<Payload> =
     Flux.from(payloads).switchOnFirst { signal, flux ->
-      val payload = signal.get()
-      mono { BrokerContext(server, requireNotNull(payload)).pickRSocket(lbStrategy, brokerRSocket) }
+      val payload = requireNotNull(signal.get())
+      mono { BrokerContext(server, payload).pickRSocket(lbStrategy, brokerRSocket) }
         .doOnError { ReferenceCountUtil.safeRelease(payload) }
         .flatMapMany { it.requestChannel(payloads) }
     }
