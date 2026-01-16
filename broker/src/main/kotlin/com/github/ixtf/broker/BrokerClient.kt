@@ -34,7 +34,7 @@ interface BrokerClient : NativeClient {
 @JvmRecord
 data class SetupInfo(
   val service: String? = null,
-  val instance: String? = null,
+  val instance: String = J.objectId(),
   val tags: Set<String>? = null,
   val host: String = J.localIp(),
   val extra: JsonNode? = null,
