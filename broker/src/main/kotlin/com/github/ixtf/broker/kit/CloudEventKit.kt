@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.kit
 
-import com.github.ixtf.vertx.readValue
+import com.github.ixtf.vertx.kit.readValue
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider
