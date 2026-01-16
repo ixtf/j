@@ -10,13 +10,18 @@ import com.github.ixtf.core.J
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
+import io.vertx.kotlin.ext.auth.jwtOptionsOf
 import java.io.Serializable
 
 interface BrokerClient : NativeClient {
   fun route(route: BrokerRouteOptions): BrokerRoute
 
   companion object {
-    fun JWTAuth.brokerToken(info: SetupInfo): String = generateToken(JsonObject.mapFrom(info))
+    fun JWTAuth.brokerToken(info: SetupInfo): String =
+      generateToken(
+        JsonObject.mapFrom(info),
+        jwtOptionsOf(ignoreExpiration = true, noTimestamp = true),
+      )
 
     fun Vertx.brokerToken(info: SetupInfo): String = defaultAuth().brokerToken(info)
 

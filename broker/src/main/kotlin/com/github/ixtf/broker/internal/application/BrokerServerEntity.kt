@@ -13,7 +13,6 @@ import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketServer
 import io.rsocket.frame.decoder.PayloadDecoder
-import io.rsocket.loadbalance.LoadbalanceStrategy
 import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
@@ -29,7 +28,6 @@ import reactor.core.publisher.Mono
 internal class BrokerServerEntity(
   private var server: BrokerServer,
   private val authProvider: AuthenticationProvider,
-  private val lbStrategy: LoadbalanceStrategy,
   private val brokerRSocket: RSocket,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   private val channel by lazy { vertx.receiveChannelHandler<BrokerServerEvent>() }
@@ -94,30 +92,33 @@ internal class BrokerServerEntity(
     }
   }
 
+  private fun pickRSocket(payload: Payload): RSocket =
+    BrokerContext(server, payload).pickRSocket(brokerRSocket)
+
   override fun metadataPush(payload: Payload): Mono<Void> =
-    mono { BrokerContext(server, payload).pickRSocket(lbStrategy, brokerRSocket) }
+    mono { pickRSocket(payload) }
       .doOnError { ReferenceCountUtil.safeRelease(payload) }
       .flatMap { it.metadataPush(payload) }
 
   override fun fireAndForget(payload: Payload): Mono<Void> =
-    mono { BrokerContext(server, payload).pickRSocket(lbStrategy, brokerRSocket) }
+    mono { pickRSocket(payload) }
       .doOnError { ReferenceCountUtil.safeRelease(payload) }
       .flatMap { it.fireAndForget(payload) }
 
   override fun requestResponse(payload: Payload): Mono<Payload> =
-    mono { BrokerContext(server, payload).pickRSocket(lbStrategy, brokerRSocket) }
+    mono { pickRSocket(payload) }
       .doOnError { ReferenceCountUtil.safeRelease(payload) }
       .flatMap { it.requestResponse(payload) }
 
   override fun requestStream(payload: Payload): Flux<Payload> =
-    mono { BrokerContext(server, payload).pickRSocket(lbStrategy, brokerRSocket) }
+    mono { pickRSocket(payload) }
       .doOnError { ReferenceCountUtil.safeRelease(payload) }
       .flatMapMany { it.requestStream(payload) }
 
   override fun requestChannel(payloads: Publisher<Payload>): Flux<Payload> =
     Flux.from(payloads).switchOnFirst { signal, _ ->
       val payload = requireNotNull(signal.get())
-      mono { BrokerContext(server, payload).pickRSocket(lbStrategy, brokerRSocket) }
+      mono { pickRSocket(payload) }
         .doOnError { ReferenceCountUtil.safeRelease(payload) }
         .flatMapMany { it.requestChannel(payloads) }
     }

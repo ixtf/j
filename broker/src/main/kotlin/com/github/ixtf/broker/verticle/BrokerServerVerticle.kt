@@ -10,11 +10,7 @@ import com.github.ixtf.broker.internal.kit.defaultAuth
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.RSocket
-import io.rsocket.loadbalance.LoadbalanceStrategy
-import io.rsocket.loadbalance.RoundRobinLoadbalanceStrategy
-import io.vertx.core.ThreadingModel.VIRTUAL_THREAD
 import io.vertx.ext.auth.jwt.JWTAuth
-import io.vertx.kotlin.core.deploymentOptionsOf
 import io.vertx.kotlin.coroutines.coAwait
 
 abstract class BrokerServerVerticle(
@@ -27,13 +23,11 @@ abstract class BrokerServerVerticle(
   }
 
   protected open val jwtAuth: JWTAuth by lazy { vertx.defaultAuth() }
-  protected open val lbStrategy: LoadbalanceStrategy = RoundRobinLoadbalanceStrategy()
   private val entity by lazy {
     SERVER_CACHE.get(BrokerServerId(id)) { id ->
       BrokerServerEntity(
         server = BrokerServer(id = id, target = ServerTarget(target), name = name),
         authProvider = jwtAuth,
-        lbStrategy = lbStrategy,
         brokerRSocket = this,
       )
     }
@@ -41,7 +35,6 @@ abstract class BrokerServerVerticle(
 
   override suspend fun start() {
     super.start()
-    val options = deploymentOptionsOf(threadingModel = VIRTUAL_THREAD)
-    vertx.deployVerticle(entity, options).coAwait()
+    vertx.deployVerticle(entity).coAwait()
   }
 }
