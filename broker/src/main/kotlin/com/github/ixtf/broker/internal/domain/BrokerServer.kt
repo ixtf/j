@@ -1,7 +1,7 @@
 package com.github.ixtf.broker.internal.domain
 
-import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
+import com.github.ixtf.broker.internal.kit.ServerTarget
 import java.time.Instant
 
 internal data class BrokerServer(

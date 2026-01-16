@@ -1,9 +1,9 @@
 package com.github.ixtf.broker.internal.application
 
 import com.github.ixtf.broker.SetupInfo
-import com.github.ixtf.broker.internal.InternalKit.doOnClose
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
+import com.github.ixtf.broker.internal.kit.doOnClose
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.netty.util.ReferenceCountUtil
 import io.rsocket.Closeable

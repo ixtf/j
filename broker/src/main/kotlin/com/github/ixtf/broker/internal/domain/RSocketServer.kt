@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal.domain
 
-import com.github.ixtf.broker.internal.ServerTarget
+import com.github.ixtf.broker.internal.kit.ServerTarget
 import io.rsocket.RSocket
 import java.time.Instant
 

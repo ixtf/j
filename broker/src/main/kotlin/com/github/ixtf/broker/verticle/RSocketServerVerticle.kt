@@ -2,10 +2,10 @@ package com.github.ixtf.broker.verticle
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.internal.InternalKit.defaultAuth
-import com.github.ixtf.broker.internal.ServerTarget
 import com.github.ixtf.broker.internal.domain.RSocketServer
 import com.github.ixtf.broker.internal.domain.RSocketServer.Companion.RSocketServerId
+import com.github.ixtf.broker.internal.kit.ServerTarget
+import com.github.ixtf.broker.internal.kit.defaultAuth
 import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.rsocket.Closeable

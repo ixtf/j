@@ -3,9 +3,9 @@ package com.github.ixtf.broker
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.internal.ClientTarget
 import com.github.ixtf.broker.internal.DefaultBrokerClient
-import com.github.ixtf.broker.internal.InternalKit.defaultAuth
+import com.github.ixtf.broker.internal.kit.ClientTarget
+import com.github.ixtf.broker.internal.kit.defaultAuth
 import com.github.ixtf.core.J
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject

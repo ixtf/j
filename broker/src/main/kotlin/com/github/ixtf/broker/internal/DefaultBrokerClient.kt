@@ -2,7 +2,9 @@ package com.github.ixtf.broker.internal
 
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerRouteOptions
-import com.github.ixtf.broker.internal.InternalKit.buildConnectionSetupPayload
+import com.github.ixtf.broker.internal.kit.ClientTarget
+import com.github.ixtf.broker.internal.kit.InternalKit
+import com.github.ixtf.broker.internal.kit.InternalKit.buildConnectionSetupPayload
 import io.rsocket.Payload
 import io.rsocket.core.RSocketClient
 import io.rsocket.core.RSocketConnector
