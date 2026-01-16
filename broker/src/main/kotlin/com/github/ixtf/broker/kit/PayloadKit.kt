@@ -33,6 +33,7 @@ inline fun <reified T> ByteBuf.readValueOrNull(): T? =
       CloudEvent::class -> CLOUD_EVENT_FORMAT.deserialize(ByteBufUtil.getBytes(this))
       String::class -> toString(StandardCharsets.UTF_8)
       ByteArray::class -> ByteBufUtil.getBytes(this)
+      // {@link io.vertx.core.buffer.impl.BufferImpl#getByteBuf}
       Buffer::class -> BufferInternal.buffer(slice())
       JsonObject::class -> BufferInternal.buffer(slice()).toJsonObject()
       JsonArray::class -> BufferInternal.buffer(slice()).toJsonArray()
