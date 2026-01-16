@@ -15,7 +15,7 @@ interface BrokerClient : NativeClient {
   fun route(route: BrokerRouteOptions): BrokerRoute
 
   companion object {
-    fun JWTAuth.brokerToken(dto: SetupInfo): String = generateToken(JsonObject.mapFrom(dto))
+    fun JWTAuth.brokerToken(info: SetupInfo): String = generateToken(JsonObject.mapFrom(info))
 
     fun Vertx.brokerToken(info: SetupInfo): String = defaultAuth().brokerToken(info)
 
