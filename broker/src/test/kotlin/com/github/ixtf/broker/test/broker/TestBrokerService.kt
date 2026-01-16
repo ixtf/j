@@ -1,8 +1,8 @@
 package com.github.ixtf.broker.test.broker
 
 import cn.hutool.core.util.RandomUtil
+import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
 import com.github.ixtf.broker.SetupInfo
-import com.github.ixtf.broker.SetupInfo.Companion.brokerToken
 import com.github.ixtf.broker.readValueAndRelease
 import com.github.ixtf.broker.readValueOrNull
 import com.github.ixtf.broker.toPayload

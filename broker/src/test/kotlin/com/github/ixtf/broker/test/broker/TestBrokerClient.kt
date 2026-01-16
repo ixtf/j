@@ -2,9 +2,9 @@ package com.github.ixtf.broker.test.broker
 
 import cn.hutool.log.Log
 import com.github.ixtf.broker.BrokerClient
+import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
 import com.github.ixtf.broker.BrokerRouteOptions
 import com.github.ixtf.broker.SetupInfo
-import com.github.ixtf.broker.SetupInfo.Companion.brokerToken
 import com.github.ixtf.broker.readValueAndRelease
 import com.github.ixtf.core.J
 import io.cloudevents.core.builder.CloudEventBuilder
