@@ -1,7 +1,6 @@
 package com.github.ixtf.broker.test.broker
 
 import cn.hutool.core.util.RandomUtil
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
 import com.github.ixtf.broker.dto.SetupDTO
 import com.github.ixtf.broker.dto.SetupDTO.Companion.brokerToken
 import com.github.ixtf.broker.readValueAndRelease
@@ -21,10 +20,7 @@ import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
-private val token by lazy {
-  IXTF_API_BROKER_AUTH = "test"
-  vertx.brokerToken(SetupDTO(service = "test", instance = "test"))
-}
+private val token = vertx.brokerToken(SetupDTO(service = "test", instance = "test"))
 
 suspend fun main() {
   vertx.deployVerticle(TestBrokerService()).coAwait()
