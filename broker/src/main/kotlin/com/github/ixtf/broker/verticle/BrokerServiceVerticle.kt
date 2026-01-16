@@ -48,7 +48,7 @@ abstract class BrokerServiceVerticle(token: String, target: String = IXTF_API_BR
   }
 
   override fun accept(setup: ConnectionSetupPayload, sendingSocket: RSocket): Mono<RSocket> = mono {
-    sendingSocket.doOnClose {
+    sendingSocket.doOnClose(log) {
       vertx.runOnContext { if (status != RSocketStatus.STOP) status = RSocketStatus.DOWN }
     }
     vertx.runOnContext { status = RSocketStatus.UP }

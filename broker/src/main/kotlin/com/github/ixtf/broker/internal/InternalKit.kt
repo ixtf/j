@@ -1,6 +1,7 @@
 package com.github.ixtf.broker.internal
 
 import cn.hutool.core.util.ReflectUtil
+import cn.hutool.log.Log
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_AUTH
 import com.github.ixtf.broker.toPayload
 import io.rsocket.DuplexConnection
@@ -35,8 +36,8 @@ internal object InternalKit {
       .map { (it as? DuplexConnection)?.remoteAddress() }
       .getOrDefault(null)
 
-  internal fun RSocket.doOnClose(block: () -> Unit) {
-    onClose().doFinally { block() }.subscribe()
+  internal fun RSocket.doOnClose(log: Log, block: () -> Unit) {
+    onClose().doOnError { log.error(it) }.doFinally { block() }.subscribe()
   }
 
   internal fun buildConnectionSetupPayload(token: String): Mono<Payload> = mono {

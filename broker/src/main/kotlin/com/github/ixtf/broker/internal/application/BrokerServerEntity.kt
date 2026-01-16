@@ -86,7 +86,7 @@ internal class BrokerServerEntity(
           tags = setup.tags,
         )
       )
-      sendingSocket.doOnClose {
+      sendingSocket.doOnClose(log) {
         channel.handle(
           BrokerServerEvent.DisConnected(service = setup.service, instance = setup.instance)
         )
