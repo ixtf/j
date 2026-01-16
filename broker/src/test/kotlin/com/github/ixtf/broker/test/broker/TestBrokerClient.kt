@@ -13,6 +13,7 @@ import io.vertx.kotlin.core.vertxOptionsOf
 import io.vertx.kotlin.coroutines.vertxFuture
 import java.net.URI
 import java.time.OffsetDateTime
+import java.util.concurrent.atomic.AtomicInteger
 
 private val log = Log.get()
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
@@ -21,13 +22,12 @@ private val brokerRoute by lazy {
   val brokerClient = BrokerClient.create(vertx, token)
   brokerClient.route(BrokerRouteOptions("test"))
 }
+private val count = AtomicInteger()
 
 fun main() {
-  vertx.setPeriodic(0, 5000) {
-    test("test")
-    test("other1")
-    test("other2")
-    test("other3")
+  vertx.setPeriodic(0, 5000) { _ ->
+    test("test  [${count.incrementAndGet()}]")
+    test("other [${count.incrementAndGet()}]")
   }
 }
 

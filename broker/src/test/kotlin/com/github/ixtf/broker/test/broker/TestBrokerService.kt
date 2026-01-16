@@ -13,7 +13,6 @@ import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.kotlin.core.vertxOptionsOf
 import io.vertx.kotlin.coroutines.coAwait
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.reactor.mono
@@ -33,14 +32,13 @@ private class TestBrokerService : BrokerServiceVerticle(token) {
     val ce = payload.readValueAndRelease<CloudEvent>()
     log.info("requestResponse: ${ce.type}")
     val data =
-      when (ce.type) {
-        "test" -> {
+      when {
+        ce.type.startsWith("test") -> {
           delay(5.seconds)
           ce.readValueOrNull() ?: "requestResponse: ${ce.type}"
         }
         else -> {
-          TimeUnit.MILLISECONDS.sleep(RandomUtil.randomLong(500, 3000))
-          // delay(RandomUtil.randomLong(500, 3000))
+          delay(RandomUtil.randomLong(500, 3000))
           ce.readValueOrNull() ?: "requestResponse: ${ce.type}"
         }
       }
