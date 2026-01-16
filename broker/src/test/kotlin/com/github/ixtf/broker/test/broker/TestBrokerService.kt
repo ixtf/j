@@ -20,7 +20,7 @@ import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
-private val token = vertx.brokerToken(SetupInfo(service = "test", instance = "test"))
+private val token = vertx.brokerToken(SetupInfo(service = "test"))
 
 suspend fun main() {
   IXTF_API_BROKER_TARGET = "192.168.3.31:39998"
