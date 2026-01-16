@@ -14,10 +14,9 @@ fun ByteArray.toPayload(metadata: ByteBuf? = null): Payload =
   else DefaultPayload.create(wrappedBuffer(this), metadata)
 
 /**
- * [io.vertx.core.buffer.impl.BufferImpl.getByteBuf]
- *
- * 有可能出现 Unpooled.unreleasableBuffer 这会导致 RSocket 的 ZERO_COPY 机制在尝试回收内存时失效，进而引发 Direct Memory (堆外内存)
- * 泄漏 可以通过 internal?.byteBuf?.copy() 再复制一次
+ * 绕过 [io.vertx.core.buffer.impl.BufferImpl.getByteBuf] 以实现真正的零拷贝。
+ * * 注意：[io.vertx.core.buffer.impl.BufferImpl.getByteBuf] 内部可能使用 Unpooled.unreleasableBuffer 包装，导致
+ *   RSocket ZERO_COPY 模式下的引用计数回收失效。
  */
 fun Buffer.toPayload(metadata: ByteBuf? = null): Payload {
   val internal = this as? BufferInternal
