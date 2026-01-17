@@ -93,7 +93,7 @@ internal class BrokerServerEntity(
     }
   }
 
-  private fun pickRSocket(payload: Payload): Mono<RSocket> =
+  private fun rSocketMono(payload: Payload): Mono<RSocket> =
     mono { BrokerMetadata(server, payload).pickRSocket(brokerRSocket) }
       .doOnError {
         ReferenceCountUtil.safeRelease(payload)
@@ -101,19 +101,19 @@ internal class BrokerServerEntity(
       }
 
   override fun metadataPush(payload: Payload): Mono<Void> =
-    pickRSocket(payload).flatMap { it.metadataPush(payload) }
+    rSocketMono(payload).flatMap { it.metadataPush(payload) }
 
   override fun fireAndForget(payload: Payload): Mono<Void> =
-    pickRSocket(payload).flatMap { it.fireAndForget(payload) }
+    rSocketMono(payload).flatMap { it.fireAndForget(payload) }
 
   override fun requestResponse(payload: Payload): Mono<Payload> =
-    pickRSocket(payload).flatMap { it.requestResponse(payload) }
+    rSocketMono(payload).flatMap { it.requestResponse(payload) }
 
   override fun requestStream(payload: Payload): Flux<Payload> =
-    pickRSocket(payload).flatMapMany { it.requestStream(payload) }
+    rSocketMono(payload).flatMapMany { it.requestStream(payload) }
 
   override fun requestChannel(payloads: Publisher<Payload>): Flux<Payload> =
     Flux.from(payloads).switchOnFirst { signal, _ ->
-      pickRSocket(requireNotNull(signal.get())).flatMapMany { it.requestChannel(payloads) }
+      rSocketMono(requireNotNull(signal.get())).flatMapMany { it.requestChannel(payloads) }
     }
 }
