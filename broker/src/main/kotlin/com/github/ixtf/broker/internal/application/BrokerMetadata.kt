@@ -7,7 +7,7 @@ import com.github.ixtf.broker.internal.domain.BrokerServiceGroup
 import io.rsocket.Payload
 import io.rsocket.RSocket
 
-internal class BrokerContext(private val server: BrokerServer, payload: Payload) :
+internal class BrokerMetadata(private val server: BrokerServer, payload: Payload) :
   RSocketMetadata(payload) {
   private val service by lazy { routingMetadata?.firstOrNull() }
   private val tags by lazy { routingMetadata?.drop(1) }

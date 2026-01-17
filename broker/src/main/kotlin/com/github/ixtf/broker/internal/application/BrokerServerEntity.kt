@@ -94,7 +94,7 @@ internal class BrokerServerEntity(
   }
 
   private fun pickRSocket(payload: Payload): Mono<RSocket> =
-    mono { requireNotNull(BrokerContext(server, payload).pickRSocketOrNull(brokerRSocket)) }
+    mono { requireNotNull(BrokerMetadata(server, payload).pickRSocketOrNull(brokerRSocket)) }
       .doOnError { ReferenceCountUtil.safeRelease(payload) }
 
   override fun metadataPush(payload: Payload): Mono<Void> =
