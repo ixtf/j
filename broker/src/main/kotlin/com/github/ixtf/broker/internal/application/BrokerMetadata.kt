@@ -20,7 +20,6 @@ internal class BrokerMetadata(private val server: BrokerServer, payload: Payload
   private fun BrokerServiceGroup.pickRSocketOrNull(): RSocket? =
     when {
       rSockets.isEmpty() -> null
-      rSockets.size == 1 -> rSockets.first()
       tags.isNullOrEmpty() -> strategy.select(rSockets)
       else ->
         rSockets.firstOrNull { it.instance == instance }
