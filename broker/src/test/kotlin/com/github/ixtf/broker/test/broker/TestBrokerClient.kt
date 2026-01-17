@@ -3,9 +3,7 @@ package com.github.ixtf.broker.test.broker
 import cn.hutool.log.Log
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
-import com.github.ixtf.broker.BrokerRouteOptions
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.SetupInfo
 import com.github.ixtf.broker.internal.kit.ClientTarget
 import com.github.ixtf.broker.internal.kit.ServerTarget
 import com.github.ixtf.broker.kit.readValueAndRelease
@@ -22,9 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger
 private val log = Log.get()
 private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
 private val brokerRoute by lazy {
-  val token = vertx.brokerToken(SetupInfo())
-  val brokerClient = BrokerClient.create(vertx, token)
-  brokerClient.route(BrokerRouteOptions("test"))
+  val token = vertx.brokerToken()
+  BrokerClient.create(vertx, token).route("test")
 }
 private val count = AtomicInteger()
 
