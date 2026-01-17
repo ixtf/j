@@ -4,6 +4,7 @@ import com.github.ixtf.broker.SetupInfo
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.internal.kit.doOnClose
+import com.github.ixtf.core.J
 import com.github.ixtf.vertx.verticle.BaseCoroutineVerticle
 import io.netty.util.ReferenceCountUtil
 import io.rsocket.Closeable
@@ -74,19 +75,19 @@ internal class BrokerServerEntity(
     if (setup.service.isNullOrBlank()) {
       log.debug("client: {}", setup)
     } else {
-      require(setup.instance.isNullOrBlank().not())
+      val instance = if (setup.instance.isNullOrBlank()) J.objectId() else setup.instance
       channel.handle(
         BrokerServerEvent.Connected(
-          rSocket = sendingSocket,
-          instance = setup.instance,
+          instance = instance,
           service = setup.service,
           host = setup.host,
           tags = setup.tags,
+          rSocket = sendingSocket,
         )
       )
       sendingSocket.doOnClose(log) {
         channel.handle(
-          BrokerServerEvent.DisConnected(service = setup.service, instance = setup.instance)
+          BrokerServerEvent.DisConnected(service = setup.service, rSocket = sendingSocket)
         )
       }
     }

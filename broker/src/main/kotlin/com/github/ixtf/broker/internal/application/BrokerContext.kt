@@ -19,12 +19,12 @@ internal class BrokerContext(private val server: BrokerServer, payload: Payload)
 
   private fun BrokerServiceGroup.pickRSocketOrNull(): RSocket? =
     when {
-      instances.isEmpty() -> null
-      instances.size == 1 -> instances.first()
-      tags.isNullOrEmpty() -> lbStrategy.select(instances)
+      rSockets.isEmpty() -> null
+      rSockets.size == 1 -> rSockets.first()
+      tags.isNullOrEmpty() -> strategy.select(rSockets)
       else ->
-        instances.firstOrNull { it.id == instance }
-          ?: instances.maxBy {
+        rSockets.firstOrNull { it.id == instance }
+          ?: rSockets.maxBy {
             val intersection = CollUtil.intersection(it.tags, tags)
             intersection.size + it.availability()
           }

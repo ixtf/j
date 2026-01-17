@@ -32,17 +32,18 @@ abstract class BrokerServiceVerticle(token: String, target: String = IXTF_API_BR
   private var status: RSocketStatus by
     Delegates.observable(RSocketStatus.INIT) { _, old, new ->
       log.warn("$old -> $new")
-      if (new == RSocketStatus.DOWN) runOnContext { reConnect() }
+      if (new == RSocketStatus.DOWN) {
+        vertx.setTimer(RandomUtil.randomLong(1000, 3000)) { reConnect() }
+      }
     }
 
   private fun reConnect() {
     if (status == RSocketStatus.STOP) return
-    vertx.setTimer(RandomUtil.randomLong(1000, 3000)) {
-      if (status == RSocketStatus.DOWN) {
-        if (rSocketClient.connect().not()) {
-          log.error("reConnect failure")
-          // TODO 重新初始化 rSocketClient
-        }
+    if (status == RSocketStatus.DOWN) {
+      val connect = rSocketClient.connect()
+      if (!connect) {
+        log.error("reConnect failure")
+        // TODO 重新初始化 rSocketClient
       }
     }
   }

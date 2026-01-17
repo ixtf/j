@@ -9,13 +9,13 @@ internal data class BrokerServiceGroup(
   val id: String,
   val createDateTime: Instant,
   val modifyDateTime: Instant = createDateTime,
-  val instances: List<BrokerServiceInstance> = emptyList(),
-  val lbStrategy: LoadbalanceStrategy = RoundRobinLoadbalanceStrategy(),
+  val rSockets: List<BrokerServiceInstance> = emptyList(),
+  val strategy: LoadbalanceStrategy = RoundRobinLoadbalanceStrategy(),
 ) {
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServiceGroup =
     copy(
-      instances =
-        instances +
+      rSockets =
+        rSockets +
           BrokerServiceInstance(
             id = event.instance,
             rSocket = event.rSocket,
@@ -28,7 +28,7 @@ internal data class BrokerServiceGroup(
 
   internal fun onEvent(event: BrokerServerEvent.DisConnected): BrokerServiceGroup =
     copy(
-      instances = instances.filter { it.id != event.instance },
+      rSockets = rSockets.filter { it.rSocket != event.rSocket },
       modifyDateTime = event.fireDateTime,
     )
 }
