@@ -1,6 +1,7 @@
 package com.github.ixtf.broker.kit
 
 import com.github.ixtf.vertx.kit.readValue
+import com.github.ixtf.vertx.kit.readValueOrNull
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.format.EventFormat
 import io.cloudevents.core.provider.EventFormatProvider
@@ -15,6 +16,9 @@ val CLOUD_EVENT_FORMAT: EventFormat by lazy {
 
 fun CloudEvent.toPayload(metadata: ByteBuf? = null): Payload =
   CLOUD_EVENT_FORMAT.serialize(this).toPayload(metadata)
+
+inline fun <reified T> CloudEvent.readValue(): T =
+  requireNotNull(readValueOrNull()) { "CloudEvent.readValue<[${T::class.java}]>()" }
 
 inline fun <reified T> CloudEvent.readValueOrNull(): T? =
   data?.toBytes()?.let { Buffer.buffer(it).readValue() }

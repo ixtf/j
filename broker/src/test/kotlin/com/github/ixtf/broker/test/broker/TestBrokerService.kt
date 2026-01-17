@@ -32,18 +32,13 @@ suspend fun main() {
 private class TestBrokerService : BrokerServiceVerticle(token) {
   override fun requestResponse(payload: Payload): Mono<Payload> = mono {
     val ce = payload.readValueAndRelease<CloudEvent>()
-    log.info("requestResponse: ${ce.type}")
-    val data =
-      when {
-        ce.type.startsWith("test") -> {
-          delay(5.seconds)
-          ce.readValueOrNull() ?: "requestResponse: ${ce.type}"
-        }
-        else -> {
-          delay(RandomUtil.randomLong(500, 3000))
-          ce.readValueOrNull() ?: "requestResponse: ${ce.type}"
-        }
-      }
-    Buffer.buffer(data).toPayload()
+    val data = ce.readValueOrNull() ?: ce.type
+    val response = "requestResponse: $data"
+    log.info(response)
+    when {
+      ce.type.startsWith("test") -> delay(5.seconds)
+      else -> delay(RandomUtil.randomLong(500, 3000))
+    }
+    Buffer.buffer(response).toPayload()
   }
 }
