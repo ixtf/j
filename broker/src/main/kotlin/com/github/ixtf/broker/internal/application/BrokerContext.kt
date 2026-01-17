@@ -27,7 +27,7 @@ internal class BrokerContext(private val server: BrokerServer, payload: Payload)
   private fun CompositeMetadata.Entry.test(wellKnownMimeType: WellKnownMimeType) =
     this is CompositeMetadata.WellKnownMimeTypeEntry && type == wellKnownMimeType
 
-  internal fun pickRSocket(brokerRSocket: RSocket): RSocket =
+  internal fun pickRSocketOrNull(brokerRSocket: RSocket): RSocket? =
     if (service.isNullOrBlank()) brokerRSocket
-    else requireNotNull(server.groupMap[service]?.pickRSocket(instance, tags))
+    else server.groupMap[service]?.pickRSocketOrNull(instance, tags)
 }

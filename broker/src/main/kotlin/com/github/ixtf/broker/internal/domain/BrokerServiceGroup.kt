@@ -2,7 +2,6 @@ package com.github.ixtf.broker.internal.domain
 
 import cn.hutool.core.collection.CollUtil
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
-import com.github.ixtf.core.J
 import io.rsocket.RSocket
 import io.rsocket.loadbalance.LoadbalanceStrategy
 import io.rsocket.loadbalance.RoundRobinLoadbalanceStrategy
@@ -35,13 +34,13 @@ internal data class BrokerServiceGroup(
       modifyDateTime = event.fireDateTime,
     )
 
-  internal fun pickRSocket(instance: String?, tags: List<String>?): RSocket? =
-    if (J.isEmpty(instances)) null
+  internal fun pickRSocketOrNull(instance: String?, tags: List<String>?): RSocket? =
+    if (instances.isEmpty()) null
     else if (instances.size == 1) instances.first()
-    else if (instance.isNullOrBlank()) pickRSocket(tags)
-    else instances.firstOrNull { it.id == instance } ?: pickRSocket(tags)
+    else if (instance.isNullOrBlank()) pickRSocketOrNull(tags)
+    else instances.firstOrNull { it.id == instance } ?: pickRSocketOrNull(tags)
 
-  private fun pickRSocket(tags: List<String>?): RSocket? =
+  private fun pickRSocketOrNull(tags: List<String>?): RSocket? =
     if (tags.isNullOrEmpty()) lbStrategy.select(instances)
     else
       instances.maxBy {
