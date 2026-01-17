@@ -7,8 +7,8 @@ import io.rsocket.util.RSocketProxy
 import java.time.Instant
 
 internal data class BrokerServiceInstance(
-  val id: String,
   val rSocket: RSocket,
+  val instance: String,
   val host: String,
   val tags: Set<String>? = null,
   val createDateTime: Instant = Instant.now(),

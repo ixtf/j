@@ -23,7 +23,7 @@ internal class BrokerContext(private val server: BrokerServer, payload: Payload)
       rSockets.size == 1 -> rSockets.first()
       tags.isNullOrEmpty() -> strategy.select(rSockets)
       else ->
-        rSockets.firstOrNull { it.id == instance }
+        rSockets.firstOrNull { it.instance == instance }
           ?: rSockets.maxBy {
             val intersection = CollUtil.intersection(it.tags, tags)
             intersection.size + it.availability()

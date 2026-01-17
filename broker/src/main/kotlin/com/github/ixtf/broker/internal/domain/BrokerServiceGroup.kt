@@ -17,8 +17,8 @@ internal data class BrokerServiceGroup(
       rSockets =
         rSockets +
           BrokerServiceInstance(
-            id = event.instance,
             rSocket = event.rSocket,
+            instance = event.instance,
             host = event.host,
             tags = event.tags,
             createDateTime = event.fireDateTime,

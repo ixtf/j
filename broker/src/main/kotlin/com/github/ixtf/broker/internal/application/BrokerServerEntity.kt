@@ -78,11 +78,11 @@ internal class BrokerServerEntity(
       val instance = if (setup.instance.isNullOrBlank()) J.objectId() else setup.instance
       channel.handle(
         BrokerServerEvent.Connected(
-          instance = instance,
           service = setup.service,
+          rSocket = sendingSocket,
+          instance = instance,
           host = setup.host,
           tags = setup.tags,
-          rSocket = sendingSocket,
         )
       )
       sendingSocket.doOnClose(log) {
