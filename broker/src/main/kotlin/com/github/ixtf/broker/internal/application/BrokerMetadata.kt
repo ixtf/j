@@ -14,6 +14,9 @@ internal class BrokerMetadata(private val server: BrokerServer, payload: Payload
   // 可能是 tag，需要结合 BrokerService 自行 check
   private val instance by lazy { tags?.firstOrNull() }
 
+  internal fun pickRSocket(brokerRSocket: RSocket): RSocket =
+    requireNotNull(pickRSocketOrNull(brokerRSocket)) { "No RSocket found for $service" }
+
   internal fun pickRSocketOrNull(brokerRSocket: RSocket): RSocket? =
     if (service.isNullOrBlank()) brokerRSocket else server.groupMap[service]?.pickRSocketOrNull()
 
