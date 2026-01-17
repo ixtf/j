@@ -1,6 +1,7 @@
 package com.github.ixtf.broker.internal.application
 
 import com.github.ixtf.broker.SetupInfo
+import com.github.ixtf.broker.assember.BrokerServerInfo
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.internal.kit.doOnClose
@@ -54,6 +55,8 @@ internal class BrokerServerEntity(
           }
           .onSuccess { server = it }
           .onFailure { log.error(it, "state: {}", server) }
+
+        log.warn("{}", BrokerServerInfo(server))
       }
     }
   }

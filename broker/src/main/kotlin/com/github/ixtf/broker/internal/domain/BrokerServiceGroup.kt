@@ -3,6 +3,8 @@ package com.github.ixtf.broker.internal.domain
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import io.rsocket.loadbalance.LoadbalanceStrategy
 import io.rsocket.loadbalance.RoundRobinLoadbalanceStrategy
+import io.vertx.kotlin.core.json.json
+import io.vertx.kotlin.core.json.obj
 import java.time.Instant
 
 internal data class BrokerServiceGroup(
@@ -12,6 +14,15 @@ internal data class BrokerServiceGroup(
   val rSockets: List<BrokerServiceInstance> = emptyList(),
   val strategy: LoadbalanceStrategy = RoundRobinLoadbalanceStrategy(),
 ) {
+  override fun toString(): String =
+    json {
+        obj {
+          put("service", id)
+          put("instances", rSockets)
+        }
+      }
+      .encodePrettily()
+
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServiceGroup =
     copy(
       rSockets =

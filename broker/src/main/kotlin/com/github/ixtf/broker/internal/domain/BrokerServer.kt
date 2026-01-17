@@ -2,6 +2,8 @@ package com.github.ixtf.broker.internal.domain
 
 import com.github.ixtf.broker.internal.domain.event.BrokerServerEvent
 import com.github.ixtf.broker.internal.kit.ServerTarget
+import io.vertx.kotlin.core.json.json
+import io.vertx.kotlin.core.json.obj
 import java.time.Instant
 
 internal data class BrokerServer(
@@ -15,6 +17,17 @@ internal data class BrokerServer(
   companion object {
     @JvmInline value class BrokerServerId(val value: String)
   }
+
+  override fun toString(): String =
+    json {
+        obj {
+          put("id", id.value)
+          put("groups", groupMap.values)
+          put("target", target.value)
+          put("name", name)
+        }
+      }
+      .encodePrettily()
 
   internal fun onEvent(event: BrokerServerEvent.Connected): BrokerServer {
     val group =
