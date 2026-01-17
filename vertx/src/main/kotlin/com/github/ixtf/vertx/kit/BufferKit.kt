@@ -12,7 +12,8 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import java.nio.charset.StandardCharsets
 
-inline fun <reified T> Buffer.readValue(): T = requireNotNull(readValueOrNull())
+inline fun <reified T> Buffer.readValue(): T =
+  requireNotNull(readValueOrNull()) { "Buffer.readValue<[${T::class.java}]>()" }
 
 inline fun <reified T> Buffer.readValueOrNull(): T? =
   if (length() <= 0) null

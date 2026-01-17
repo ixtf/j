@@ -12,7 +12,8 @@ inline fun <reified T> Payload.readValueAndRelease(): T =
     ReferenceCountUtil.safeRelease(this)
   }
 
-inline fun <reified T> Payload.readValue(): T = requireNotNull(readValueOrNull())
+inline fun <reified T> Payload.readValue(): T =
+  requireNotNull(readValueOrNull()) { "Payload.readValue<[${T::class.java}]>()" }
 
 inline fun <reified T> Payload.readValueOrNull(): T? {
   val byteBuf = data()
