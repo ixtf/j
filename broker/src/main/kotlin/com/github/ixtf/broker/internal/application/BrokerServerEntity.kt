@@ -15,6 +15,7 @@ import io.rsocket.RSocket
 import io.rsocket.SocketAcceptor
 import io.rsocket.core.RSocketServer
 import io.rsocket.frame.decoder.PayloadDecoder
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.authentication.AuthenticationProvider
 import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.coroutines.coAwait
@@ -56,7 +57,10 @@ internal class BrokerServerEntity(
           .onSuccess { server = it }
           .onFailure { log.error(it, "state: {}", server) }
 
-        log.warn("{}", BrokerServerInfo(server))
+        if (log.isDebugEnabled) {
+          val info = JsonObject.mapFrom(BrokerServerInfo(server))
+          log.debug(info.encodePrettily())
+        }
       }
     }
   }
