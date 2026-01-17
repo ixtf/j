@@ -4,11 +4,8 @@ import cn.hutool.log.Log
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
-import com.github.ixtf.broker.internal.kit.ClientTarget
-import com.github.ixtf.broker.internal.kit.ServerTarget
 import com.github.ixtf.broker.kit.readValueAndRelease
 import com.github.ixtf.core.J
-import com.google.common.collect.Maps
 import io.cloudevents.core.builder.CloudEventBuilder
 import io.vertx.core.Vertx
 import io.vertx.kotlin.core.vertxOptionsOf
@@ -25,15 +22,7 @@ private val brokerRoute by lazy {
 }
 private val count = AtomicInteger()
 
-private val map = Maps.newConcurrentMap<Any, Any>()
-
 fun main() {
-  val clientTarget = ClientTarget("1")
-  val serverTarget = ServerTarget("1")
-  map[clientTarget] = clientTarget
-  map[serverTarget] = serverTarget
-  println(map.size)
-
   IXTF_API_BROKER_TARGET = "192.168.3.31:39998"
   vertx.setPeriodic(0, 5000) { _ ->
     test("test  [${count.incrementAndGet()}]")
