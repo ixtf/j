@@ -15,21 +15,27 @@ import java.nio.charset.StandardCharsets
 inline fun <reified T> Buffer.readValue(): T = requireNotNull(readValueOrNull())
 
 inline fun <reified T> Buffer.readValueOrNull(): T? =
-  when (T::class) {
-    String::class -> toString(StandardCharsets.UTF_8)
-    ByteArray::class -> bytes
-    Buffer::class -> this
-    JsonObject::class -> toJsonObject()
-    JsonArray::class -> toJsonArray()
-    else -> {
-      val internal = this as? BufferInternal
-      val dataBuf = internal?.byteBuf ?: wrappedBuffer(bytes)
-      dataBuf.readValueOrNull<T>()
+  if (length() <= 0) null
+  else
+    when (T::class) {
+      Buffer::class -> this
+      JsonObject::class -> toJsonObject()
+      JsonArray::class -> toJsonArray()
+      String::class -> toString(StandardCharsets.UTF_8)
+      ByteArray::class -> bytes
+      else -> {
+        val internal = this as? BufferInternal
+        val dataBuf = internal?.byteBuf ?: wrappedBuffer(bytes)
+        dataBuf.readValueOrNull<T>()
+      }
     }
-  }
-    as T?
+      as T?
 
-/** 支持重复读取的解析工具 使用 [slice] 确保不移动原始 ByteBuf 的 readerIndex */
+/**
+ * 支持重复读取的解析工具
+ *
+ * 使用 [slice] 确保不移动原始 ByteBuf 的 readerIndex
+ */
 inline fun <reified T> ByteBuf.readValueOrNull(): T? =
   if (readableBytes() <= 0) null
   else
