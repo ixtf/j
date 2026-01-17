@@ -1,17 +1,13 @@
 package com.github.ixtf.broker
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.databind.JsonNode
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.internal.DefaultBrokerClient
 import com.github.ixtf.broker.internal.kit.ClientTarget
 import com.github.ixtf.broker.internal.kit.defaultAuth
-import com.github.ixtf.core.J
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.kotlin.ext.auth.jwtOptionsOf
-import java.io.Serializable
 
 interface BrokerClient : NativeClient {
   fun route(route: BrokerRouteOptions): BrokerRoute
@@ -32,12 +28,3 @@ interface BrokerClient : NativeClient {
   }
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JvmRecord
-data class SetupInfo(
-  val service: String? = null,
-  val instance: String? = null,
-  val tags: Set<String>? = null,
-  val host: String = J.localIp(),
-  val extra: JsonNode? = null,
-) : Serializable
