@@ -1,58 +1,19 @@
 package com.github.ixtf.compiler
 
-import java.net.URI
-import java.util.jar.Manifest
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
 
 @Suppress("unused")
 class IxtfPlugin : Plugin<Project> {
-  private fun loadManifest(): java.util.jar.Attributes? {
-    // 技巧：获取当前类在 Classloader 中的路径，精准定位其对应的 MANIFEST.MF
-    val className = IxtfPlugin::class.java.simpleName + ".class"
-    val classPath = IxtfPlugin::class.java.getResource(className)?.toString() ?: return null
-
-    // 如果是 JAR 包，路径会以 jar:file: 开头
-    val manifestPath =
-      if (classPath.startsWith("jar")) {
-        classPath.substringBeforeLast("!") + "!/META-INF/MANIFEST.MF"
-      } else {
-        // 本地 IDE 运行环境（build/classes 目录）
-        classPath.substringBefore("com/github/ixtf/compiler") + "META-INF/MANIFEST.MF"
-      }
-
-    return try {
-      URI(manifestPath).toURL().openStream().use { Manifest(it).mainAttributes }
-    } catch (e: Exception) {
-      null
-    }
-  }
-
   override fun apply(target: Project): Unit =
     with(target) {
       val manifest = requireNotNull(loadManifest()) { "Could not find IxtfPlugin[MANIFEST.MF]" }
-      val rootVersion =
-        manifest.getValue("Implementation-Version").also {
-          require(it.isNotBlank()) { "Implementation-Version is missing in Manifest" }
-        }
+      val rootVersion = manifest.versionByName("Implementation-Version")
       val daggerVersionProvider =
         providers.provider {
-          try {
-            // 安全地获取目标项目的 Version Catalog (如果存在)
-            extensions
-              .getByType<VersionCatalogsExtension>()
-              .named("libs")
-              .findVersion("dagger")
-              .map { it.requiredVersion }
-              .get()
-          } catch (e: Exception) {
-            manifest.getValue("X-Dagger-Version").also {
-              require(it.isNotBlank()) { "X-Dagger-Version is missing in Manifest" }
-            }
-          }
+          runCatching { versionByName("dagger") }
+            .getOrElse { manifest.versionByName("X-Dagger-Version") }
         }
 
       plugins.withId("org.jetbrains.kotlin.jvm") {
