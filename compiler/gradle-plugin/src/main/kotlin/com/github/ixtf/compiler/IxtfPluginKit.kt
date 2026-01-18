@@ -37,4 +37,9 @@ internal val Project.versionCatalog: VersionCatalog
   get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 internal fun Project.versionByName(name: String) =
-  versionCatalog.findVersion(name).map { it.requiredVersion }.orNull()?.takeIf { it.isNotBlank() }
+  versionCatalog
+    .findVersion(name)
+    .map { it.requiredVersion }
+    .orNull()
+    ?.takeIf { it.isNotBlank() }
+    ?.also { require(it.isNotBlank()) { "$name is missing in VersionCatalog" } }
