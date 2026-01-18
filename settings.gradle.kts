@@ -21,8 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "j"
 
-include(":compiler")
-
 include(":core")
 
 include(":vertx")
@@ -32,3 +30,7 @@ include(":cqrs")
 include(":broker")
 
 include(":poi")
+
+include(":compiler:gradle-plugin")
+
+include(":compiler:ksp-processor")
