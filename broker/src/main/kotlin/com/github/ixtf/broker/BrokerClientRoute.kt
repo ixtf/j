@@ -4,7 +4,7 @@ import io.cloudevents.CloudEvent
 import io.rsocket.Payload
 import kotlinx.coroutines.flow.Flow
 
-interface BrokerRouteClient {
+interface BrokerClientRoute {
   suspend fun fireAndForget(block: suspend () -> CloudEvent)
 
   suspend fun requestResponse(block: suspend () -> CloudEvent): Payload
