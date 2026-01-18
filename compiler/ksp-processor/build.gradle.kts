@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-  api(project(":cqrs"))
+  implementation(project(":cqrs"))
+  implementation(project(":broker"))
 
   implementation(libs.ksp.api)
   implementation(libs.kotlinpoet)
