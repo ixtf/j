@@ -27,4 +27,3 @@ interface BrokerClient : NativeClient {
       DefaultBrokerClient(vertx, token, ClientTarget(target))
   }
 }
-
