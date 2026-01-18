@@ -11,7 +11,7 @@ junit = "6.0.1"
 
 ksp = "2.3.4"
 kotlinpoet = "2.2.0"
-dagger = "2.57.2"
+dagger = "2.58"
 
 [libraries]
 bom = { module = "com.gitee.ixtf:bom", version.ref = "bom" }
