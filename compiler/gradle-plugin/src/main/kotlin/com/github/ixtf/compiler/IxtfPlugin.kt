@@ -1,5 +1,6 @@
 package com.github.ixtf.compiler
 
+import java.net.URI
 import java.util.jar.Manifest
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -9,25 +10,26 @@ import org.gradle.kotlin.dsl.getByType
 
 @Suppress("unused")
 class IxtfPlugin : Plugin<Project> {
-  // 工具函数：读取 JAR 包中的 MANIFEST.MF
-  private fun loadManifest(): java.util.jar.Attributes? =
-    try {
-      val resources = javaClass.classLoader.getResources("META-INF/MANIFEST.MF")
-      while (resources.hasMoreElements()) {
-        val url = resources.nextElement()
-        url.openStream().use { stream ->
-          val manifest = Manifest(stream)
-          val attrs = manifest.mainAttributes
-          // 确保读到的是我们自己的插件 jar (通过 Title 匹配)
-          if (attrs.getValue("Implementation-Title")?.contains("gradle-plugin") == true) {
-            return attrs
-          }
-        }
+  private fun loadManifest(): java.util.jar.Attributes? {
+    // 技巧：获取当前类在 Classloader 中的路径，精准定位其对应的 MANIFEST.MF
+    val className = IxtfPlugin::class.java.simpleName + ".class"
+    val classPath = IxtfPlugin::class.java.getResource(className)?.toString() ?: return null
+
+    // 如果是 JAR 包，路径会以 jar:file: 开头
+    val manifestPath =
+      if (classPath.startsWith("jar")) {
+        classPath.substringBeforeLast("!") + "!/META-INF/MANIFEST.MF"
+      } else {
+        // 本地 IDE 运行环境（build/classes 目录）
+        classPath.substringBefore("com/github/ixtf/compiler") + "META-INF/MANIFEST.MF"
       }
-      null
+
+    return try {
+      URI(manifestPath).toURL().openStream().use { Manifest(it).mainAttributes }
     } catch (e: Exception) {
       null
     }
+  }
 
   override fun apply(target: Project): Unit =
     with(target) {
@@ -45,7 +47,6 @@ class IxtfPlugin : Plugin<Project> {
               .map { it.requiredVersion }
               .get()
           } catch (e: Exception) {
-            // 回退到 Manifest 中的硬编码版本
             manifest.getValue("X-Dagger-Version").also { require(it.isNotBlank()) }
           }
         }
