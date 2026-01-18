@@ -15,6 +15,10 @@ gradlePlugin {
   }
 }
 
+private val daggerVersion = libs.versions.dagger.get()
+
+tasks.withType<Jar> { manifest { attributes("X-Dagger-Version" to daggerVersion) } }
+
 dependencies {
   implementation(libs.ksp.gradlePlugin)
   implementation(kotlin("gradle-plugin"))
