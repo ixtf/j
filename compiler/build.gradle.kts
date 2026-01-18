@@ -9,7 +9,7 @@ plugins {
 gradlePlugin {
   plugins {
     register("IxtfPlugin") {
-      id = "com.github.ixtf.compiler"
+      id = "com.github.ixtf.j.compiler"
       implementationClass = "com.github.ixtf.compiler.IxtfPlugin"
     }
   }
