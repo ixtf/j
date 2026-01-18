@@ -33,8 +33,8 @@ internal fun loadManifest(): Attributes? {
 internal fun Attributes.versionByName(name: String) =
   getValue(name).also { require(it.isNotBlank()) { "$name is missing in Manifest" } }
 
-internal val Project.versionCatalog: VersionCatalog
-  get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
+internal fun Project.versionCatalog(): VersionCatalog =
+  extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-internal fun Project.versionByName(name: String) =
-  versionCatalog.findVersion(name).map { it.requiredVersion }.orNull()?.takeIf { it.isNotBlank() }
+internal fun VersionCatalog.versionByName(name: String) =
+  findVersion(name).map { it.requiredVersion }.orNull()?.takeIf { it.isNotBlank() }
