@@ -48,5 +48,5 @@ abstract class IxtfEnv<T>(val sysProp: String, val defaultV: String) : ReadWrite
   }
 
   override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) =
-      write(value.toString())
+    write(value.toString())
 }

@@ -5,16 +5,32 @@ import cn.hutool.core.collection.IterUtil
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.date.TimeInterval
 import cn.hutool.core.map.MapUtil
+import cn.hutool.core.net.NetUtil
 import cn.hutool.core.util.ArrayUtil
 import cn.hutool.core.util.IdUtil
 import cn.hutool.core.util.StrUtil
+import com.github.ixtf.core.kit.writeJson
 import jakarta.validation.ConstraintViolationException
 import java.io.File
+import java.net.DatagramSocket
+import java.net.Inet4Address
+import java.net.InetAddress
+import java.net.NetworkInterface
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 object J {
+  private lateinit var DI: Any
+
+  @Synchronized
+  fun initDI(block: () -> Any) {
+    require(!::DI.isInitialized)
+    DI = block()
+  }
+
+  @Suppress("UNCHECKED_CAST") fun <T> asDI(): T = DI as T
+
   fun timer(): TimeInterval = DateUtil.timer()
 
   @OptIn(ExperimentalContracts::class)
@@ -26,16 +42,38 @@ object J {
     return ret
   }
 
+  fun localIp(host: String = "8.8.8.8", port: Int = 53): String =
+    runCatching {
+        DatagramSocket().use {
+          it.connect(InetAddress.getByName(host), port)
+          it.localAddress.hostAddress ?: NetUtil.LOCAL_IP
+        }
+      }
+      .getOrElse { listLocalIp().firstOrNull() ?: NetUtil.LOCAL_IP }
+
+  fun listLocalIp(): List<String> =
+    runCatching {
+        NetworkInterface.getNetworkInterfaces()
+          .asSequence()
+          // 确保网卡是开启状态且非回环
+          .filter { it.isUp && !it.isLoopback }
+          .flatMap { it.inetAddresses.asSequence() }
+          .filter { !it.isLoopbackAddress && it is Inet4Address }
+          .map { it.hostAddress }
+          .toList()
+      }
+      .getOrDefault(emptyList())
+
   fun writeJson(s: String, o: Any) = File(s).writeJson(o)
 
   fun <T> inputCommand(o: T): T =
-      o.apply {
-        val violations = VALIDATOR.validate(o)
-        if (violations.isNotEmpty()) throw ConstraintViolationException(violations)
-      }
+    o.apply {
+      val violations = VALIDATOR.validate(o)
+      if (violations.isNotEmpty()) throw ConstraintViolationException(violations)
+    }
 
   fun blankToDefault(o: CharSequence?, default: String = StrUtil.EMPTY): String =
-      StrUtil.blankToDefault(o, default)
+    StrUtil.blankToDefault(o, default)
 
   @OptIn(ExperimentalContracts::class)
   fun isBlank(o: CharSequence?): Boolean {
