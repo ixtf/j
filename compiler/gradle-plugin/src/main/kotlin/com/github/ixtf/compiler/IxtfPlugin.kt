@@ -33,9 +33,11 @@ class IxtfPlugin : Plugin<Project> {
 
   override fun apply(target: Project): Unit =
     with(target) {
-      val manifest = requireNotNull(loadManifest()) { "Could not find MANIFEST.MF for IxtfPlugin" }
+      val manifest = requireNotNull(loadManifest()) { "Could not find IxtfPlugin[MANIFEST.MF]" }
       val rootVersion =
-        manifest.getValue("Implementation-Version").also { require(it.isNotBlank()) }
+        manifest.getValue("Implementation-Version").also {
+          require(it.isNotBlank()) { "Implementation-Version is missing in Manifest" }
+        }
       val daggerVersionProvider =
         providers.provider {
           try {
@@ -47,7 +49,9 @@ class IxtfPlugin : Plugin<Project> {
               .map { it.requiredVersion }
               .get()
           } catch (e: Exception) {
-            manifest.getValue("X-Dagger-Version").also { require(it.isNotBlank()) }
+            manifest.getValue("X-Dagger-Version").also {
+              require(it.isNotBlank()) { "X-Dagger-Version is missing in Manifest" }
+            }
           }
         }
 
