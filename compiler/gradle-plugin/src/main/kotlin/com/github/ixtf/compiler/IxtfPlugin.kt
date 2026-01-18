@@ -12,7 +12,7 @@ class IxtfPlugin : Plugin<Project> {
       val rootVersion = manifest.versionByName("Implementation-Version")
       val daggerVersion = manifest.versionByName("X-Dagger-Version")
       val daggerVersionProvider =
-        providers.provider { runCatching { versionByName("dagger") }.getOrElse { daggerVersion } }
+        providers.provider { runCatching { versionByName("dagger") }.getOrDefault(daggerVersion) }
 
       plugins.withId("org.jetbrains.kotlin.jvm") {
         if (!pluginManager.hasPlugin("com.google.devtools.ksp")) {
