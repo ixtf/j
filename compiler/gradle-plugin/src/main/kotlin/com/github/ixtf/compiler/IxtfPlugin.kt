@@ -21,6 +21,8 @@ class IxtfPlugin : Plugin<Project> {
 
       val currentVersion = "1.0.0"
       dependencies { add("ksp", "com.github.ixtf.j:ksp-processor:${currentVersion}") }
+      dependencies { add("api", "com.github.ixtf.j:cqrs:${currentVersion}") }
+      dependencies { add("api", "com.github.ixtf.j:broker:${currentVersion}") }
 
       val daggerVersion = "2.58"
       dependencies { add("implementation", "com.google.dagger:dagger:${daggerVersion}") }

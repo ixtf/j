@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-  api(project(":cqrs"))
+  api(project(":vertx"))
   api("io.vertx:vertx-auth-jwt")
 
   api("io.rsocket:rsocket-core")
