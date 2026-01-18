@@ -1,6 +1,6 @@
 package com.github.ixtf.broker.internal
 
-import com.github.ixtf.broker.BrokerRoute
+import com.github.ixtf.broker.BrokerRouteClient
 import com.github.ixtf.broker.BrokerRouteOptions
 import com.github.ixtf.broker.kit.toPayload
 import io.cloudevents.CloudEvent
@@ -11,11 +11,11 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.reactor.mono
 
-internal class DefaultBrokerRoute(
+internal class DefaultBrokerRouteClient(
   private val brokerClient: DefaultBrokerClient,
-  private val options: BrokerRouteOptions,
-) : BrokerRoute {
-  private fun metadata() = options.encodeMetadata()
+  private val route: BrokerRouteOptions,
+) : BrokerRouteClient {
+  private fun metadata() = route.encodeMetadata()
 
   override suspend fun fireAndForget(block: suspend () -> CloudEvent) {
     brokerClient.fireAndForget(mono { block().toPayload(metadata()) }).awaitSingleOrNull()

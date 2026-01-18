@@ -7,8 +7,9 @@ import io.rsocket.metadata.WellKnownMimeType
 import io.rsocket.metadata.WellKnownMimeType.MESSAGE_RSOCKET_ROUTING
 
 open class RSocketMetadata(payload: Payload) {
-  protected val metadataStore =
+  protected val metadataStore by lazy {
     if (payload.hasMetadata()) CompositeMetadata(payload.metadata(), false).toList() else null
+  }
 
   protected val routingMetadata by lazy {
     metadataStore

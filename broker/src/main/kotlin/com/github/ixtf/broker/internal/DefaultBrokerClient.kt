@@ -26,7 +26,7 @@ internal class DefaultBrokerClient(val vertx: Vertx, token: String, target: Clie
         .connect(target.transport())
     )
 
-  override fun route(route: BrokerRouteOptions) = DefaultBrokerRoute(this, route)
+  override fun route(route: BrokerRouteOptions) = DefaultBrokerRouteClient(this, route)
 
   override fun fireAndForget(payloadMono: Mono<Payload>): Mono<Void> =
     delegate.fireAndForget(payloadMono)

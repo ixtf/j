@@ -10,7 +10,7 @@ import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.kotlin.ext.auth.jwtOptionsOf
 
 interface BrokerClient : NativeClient {
-  fun route(route: BrokerRouteOptions): BrokerRoute
+  fun route(route: BrokerRouteOptions): BrokerRouteClient
 
   fun route(service: String) = route(BrokerRouteOptions(service = service))
 
