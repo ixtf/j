@@ -11,11 +11,8 @@ class IxtfPlugin : Plugin<Project> {
       val manifest = requireNotNull(loadManifest()) { "Could not find IxtfPlugin[MANIFEST.MF]" }
       val rootVersion = manifest.versionByName("Implementation-Version")
       val daggerVersion = manifest.versionByName("X-Dagger-Version")
-      val versionCatalog = versionCatalog()
       val daggerVersionProvider =
-        providers.provider {
-          runCatching { versionCatalog.versionByName("dagger") }.getOrElse { daggerVersion }
-        }
+        providers.provider { runCatching { versionByName("dagger") }.getOrElse { daggerVersion } }
 
       plugins.withId("org.jetbrains.kotlin.jvm") {
         if (!pluginManager.hasPlugin("com.google.devtools.ksp")) {
