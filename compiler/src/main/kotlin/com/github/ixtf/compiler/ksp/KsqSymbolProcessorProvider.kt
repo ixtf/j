@@ -9,7 +9,7 @@ class KsqSymbolProcessorProvider : SymbolProcessorProvider {
     return KsqSymbolProcessor(
       codeGenerator = environment.codeGenerator,
       logger = environment.logger,
-      options = environment.options,
+      options = KsqSymbolProcessorOptions(environment.options),
     )
   }
 }

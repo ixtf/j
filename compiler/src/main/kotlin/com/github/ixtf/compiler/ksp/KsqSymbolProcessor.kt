@@ -13,15 +13,10 @@ import com.google.devtools.ksp.validate
 class KsqSymbolProcessor(
   private val codeGenerator: CodeGenerator,
   private val logger: KSPLogger,
-  options: Map<String, String>,
+  private val options: KsqSymbolProcessorOptions,
 ) : SymbolProcessor {
   private val baseFactoryClassList =
     listOf(EventSourcedEntity::class, KeyValueEntity::class, Workflow::class)
-  private val enabled = options["cqrs.enabled"]?.toBoolean() ?: true
-  private val mode = options["cqrs.mode"] ?: "scan" // scan | annotation
-  private val excludedPackages =
-    options["cqrs.exclude.packages"]?.split(",")?.map { it.trim() } ?: emptyList()
-
   private var generated = false
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -29,7 +24,7 @@ class KsqSymbolProcessor(
       return emptyList()
     }
 
-    if (!enabled) {
+    if (!options.enabled) {
       logger.warn("KSP CQRS disabled by option")
       return emptyList()
     }
