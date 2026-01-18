@@ -47,7 +47,6 @@ fun Payload.mergeMetadata(vararg parts: ByteBuf): Payload {
           val component = original.component(i)
           composite.addComponent(true, component.slice().retain())
         }
-        original.forEach { composite.addComponent(true, it.slice().retain()) }
       } else {
         composite.addComponent(true, original.slice().retain())
       }
