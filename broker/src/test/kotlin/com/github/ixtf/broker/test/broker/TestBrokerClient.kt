@@ -5,10 +5,12 @@ import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
 import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
 import com.github.ixtf.broker.kit.readValueAndRelease
+import com.github.ixtf.broker.verticle.RSocketMonitorVerticle
 import com.github.ixtf.core.J
 import io.cloudevents.core.builder.CloudEventBuilder
 import io.vertx.core.Vertx
 import io.vertx.kotlin.core.vertxOptionsOf
+import io.vertx.kotlin.coroutines.coAwait
 import io.vertx.kotlin.coroutines.vertxFuture
 import java.net.URI
 import java.time.OffsetDateTime
@@ -22,12 +24,13 @@ private val brokerRoute by lazy {
 }
 private val count = AtomicInteger()
 
-fun main() {
+suspend fun main() {
   IXTF_API_BROKER_TARGET = "192.168.3.31:39998"
   vertx.setPeriodic(0, 5000) { _ ->
     test("test  [${count.incrementAndGet()}]")
     test("other [${count.incrementAndGet()}]")
   }
+  vertx.deployVerticle(RSocketMonitorVerticle).coAwait()
 }
 
 private fun test(type: String) =

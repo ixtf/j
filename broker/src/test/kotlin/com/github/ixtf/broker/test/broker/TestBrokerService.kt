@@ -8,6 +8,7 @@ import com.github.ixtf.broker.kit.readValueAndRelease
 import com.github.ixtf.broker.kit.readValueOrNull
 import com.github.ixtf.broker.kit.toPayload
 import com.github.ixtf.broker.verticle.BrokerServiceVerticle
+import com.github.ixtf.broker.verticle.RSocketMonitorVerticle
 import io.cloudevents.CloudEvent
 import io.rsocket.Payload
 import io.vertx.core.Vertx
@@ -25,6 +26,7 @@ private val token = vertx.brokerToken(SetupInfo(service = "test"))
 suspend fun main() {
   IXTF_API_BROKER_TARGET = "192.168.3.31:39998"
   vertx.deployVerticle(TestBrokerService()).coAwait()
+  vertx.deployVerticle(RSocketMonitorVerticle).coAwait()
 
   println("isNativeTransportEnabled: ${vertx.isNativeTransportEnabled}")
 }
