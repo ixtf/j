@@ -9,15 +9,15 @@ plugins {
 gradlePlugin {
   plugins {
     register("IxtfPlugin") {
-      id = "com.github.ixtf.j.compiler"
+      id = "com.github.ixtf.compiler"
       implementationClass = "com.github.ixtf.compiler.IxtfPlugin"
     }
   }
 }
 
 dependencies {
-  compileOnly(libs.ksp.gradlePlugin)
-  compileOnly(kotlin("gradle-plugin"))
+  implementation(libs.ksp.gradlePlugin)
+  implementation(kotlin("gradle-plugin"))
   compileOnly(kotlin("compiler"))
   //  compileOnly(kotlin("compiler-internal"))
   //  compileOnly(kotlin("compiler-fir"))

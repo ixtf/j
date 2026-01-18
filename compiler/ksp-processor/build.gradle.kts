@@ -12,4 +12,6 @@ dependencies {
   implementation(libs.kotlinpoet.ksp)
 
   testImplementation(kotlin("test"))
+
+  compileOnly(kotlin("compiler"))
 }
