@@ -1,7 +1,7 @@
 package com.github.ixtf.broker.verticle
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.IXTF_BROKER_TARGET
 import com.github.ixtf.broker.internal.application.BrokerServerEntity
 import com.github.ixtf.broker.internal.domain.BrokerServer
 import com.github.ixtf.broker.internal.domain.BrokerServer.Companion.BrokerServerId
@@ -16,7 +16,7 @@ import io.vertx.kotlin.coroutines.coAwait
 abstract class BrokerServerVerticle(
   id: String = J.objectId(),
   name: String = "Broker",
-  target: String = IXTF_API_BROKER_TARGET,
+  target: String = IXTF_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), RSocket {
   companion object {
     private val SERVER_CACHE = Caffeine.newBuilder().build<BrokerServerId, BrokerServerEntity>()

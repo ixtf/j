@@ -1,8 +1,9 @@
 package com.github.ixtf.broker.test.broker
 
 import cn.hutool.core.util.RandomUtil
+import cn.hutool.system.SystemUtil
 import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.IXTF_BROKER_TARGET
 import com.github.ixtf.broker.SetupInfo
 import com.github.ixtf.broker.kit.readValueAndRelease
 import com.github.ixtf.broker.kit.readValueOrNull
@@ -24,7 +25,10 @@ private val vertx = Vertx.vertx(vertxOptionsOf(preferNativeTransport = true))
 private val token = vertx.brokerToken(SetupInfo(service = "test"))
 
 suspend fun main() {
-  IXTF_API_BROKER_TARGET = "192.168.3.31:39998"
+  val osInfo = SystemUtil.getOsInfo()
+  if (osInfo.isMac) {
+    IXTF_BROKER_TARGET = "192.168.3.31:39998"
+  }
   vertx.deployVerticle(TestBrokerService()).coAwait()
   vertx.deployVerticle(RSocketMonitorVerticle).coAwait()
 

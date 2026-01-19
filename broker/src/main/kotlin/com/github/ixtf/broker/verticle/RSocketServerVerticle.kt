@@ -1,7 +1,7 @@
 package com.github.ixtf.broker.verticle
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.IXTF_BROKER_TARGET
 import com.github.ixtf.broker.internal.domain.RSocketServer
 import com.github.ixtf.broker.internal.domain.RSocketServer.Companion.RSocketServerId
 import com.github.ixtf.broker.internal.kit.ServerTarget
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono
 abstract class RSocketServerVerticle(
   id: String = J.objectId(),
   name: String = "RSocket",
-  target: String = IXTF_API_BROKER_TARGET,
+  target: String = IXTF_BROKER_TARGET,
 ) : BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   companion object {
     private val SERVER_CACHE = Caffeine.newBuilder().build<RSocketServerId, RSocketServer>()

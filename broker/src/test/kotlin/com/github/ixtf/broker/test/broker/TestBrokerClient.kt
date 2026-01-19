@@ -1,9 +1,10 @@
 package com.github.ixtf.broker.test.broker
 
 import cn.hutool.log.Log
+import cn.hutool.system.SystemUtil
 import com.github.ixtf.broker.BrokerClient
 import com.github.ixtf.broker.BrokerClient.Companion.brokerToken
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.IXTF_BROKER_TARGET
 import com.github.ixtf.broker.kit.readValueAndRelease
 import com.github.ixtf.broker.verticle.RSocketMonitorVerticle
 import com.github.ixtf.core.J
@@ -25,7 +26,10 @@ private val brokerRoute by lazy {
 private val count = AtomicInteger()
 
 suspend fun main() {
-  IXTF_API_BROKER_TARGET = "192.168.3.31:39998"
+  val osInfo = SystemUtil.getOsInfo()
+  if (osInfo.isMac) {
+    IXTF_BROKER_TARGET = "192.168.3.31:39998"
+  }
   vertx.setPeriodic(0, 5000) { _ ->
     test("test  [${count.incrementAndGet()}]")
     test("other [${count.incrementAndGet()}]")

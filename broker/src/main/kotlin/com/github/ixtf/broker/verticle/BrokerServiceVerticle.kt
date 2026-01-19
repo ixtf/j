@@ -1,7 +1,7 @@
 package com.github.ixtf.broker.verticle
 
 import cn.hutool.core.util.RandomUtil
-import com.github.ixtf.broker.Env.IXTF_API_BROKER_TARGET
+import com.github.ixtf.broker.IXTF_BROKER_TARGET
 import com.github.ixtf.broker.internal.domain.RSocketStatus
 import com.github.ixtf.broker.internal.kit.ClientTarget
 import com.github.ixtf.broker.internal.kit.InternalKit
@@ -18,7 +18,7 @@ import kotlin.properties.Delegates
 import kotlinx.coroutines.reactor.mono
 import reactor.core.publisher.Mono
 
-abstract class BrokerServiceVerticle(token: String, target: String = IXTF_API_BROKER_TARGET) :
+abstract class BrokerServiceVerticle(token: String, target: String = IXTF_BROKER_TARGET) :
   BaseCoroutineVerticle(), SocketAcceptor, RSocket {
   private val rSocketClient =
     RSocketClient.from(
