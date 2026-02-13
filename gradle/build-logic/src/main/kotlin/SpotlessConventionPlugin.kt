@@ -14,6 +14,7 @@ class SpotlessConventionPlugin : Plugin<Project> {
         mavenCentral()
         maven("https://plugins.gradle.org/m2")
         maven("https://jitpack.io")
+        maven("https://repo.akka.io/CLDJGqcFkY_87rUicOqyzLdS-W80gXkygSnrkmyvF-WNVdyF/secure")
       }
 
       extensions.configure<SpotlessExtension> {
