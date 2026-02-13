@@ -1,4 +1,4 @@
-package com.github.ixtf.compiler.model
+package com.github.ixtf.compiler.generator
 
 import com.google.devtools.ksp.symbol.KSFile
 import com.squareup.kotlinpoet.TypeName

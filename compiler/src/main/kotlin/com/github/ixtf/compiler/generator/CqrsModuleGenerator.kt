@@ -1,8 +1,5 @@
 package com.github.ixtf.compiler.generator
 
-import com.github.ixtf.compiler.ksp.CODEGEN_PACKAGE
-import com.github.ixtf.compiler.ksp.MODULE_NAME
-import com.github.ixtf.compiler.model.ComponentDescriptor
 import com.github.ixtf.cqrs.internal.codegen.CodegenCqrsModule
 import com.github.ixtf.cqrs.internal.codegen.ComponentInvoker
 import com.github.ixtf.cqrs.internal.codegen.EventSourcedEntityFactory
@@ -19,7 +16,7 @@ class CqrsModuleGenerator(private val codeGenerator: CodeGenerator, private val 
     if (descriptors.isEmpty()) return
 
     val moduleType =
-      TypeSpec.Companion.interfaceBuilder(MODULE_NAME)
+      TypeSpec.interfaceBuilder(MODULE_NAME)
         .addModifiers(KModifier.PUBLIC)
         .addAnnotation(
           AnnotationSpec.builder(Module::class)

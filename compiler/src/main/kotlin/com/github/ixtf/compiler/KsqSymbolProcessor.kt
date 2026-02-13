@@ -3,6 +3,8 @@ package com.github.ixtf.compiler
 import com.github.ixtf.compiler.generator.CqrsModuleGenerator
 import com.github.ixtf.compiler.generator.FactoryGenerator
 import com.github.ixtf.compiler.generator.InvokerGenerator
+import com.github.ixtf.compiler.generator.isConcreteComponent
+import com.github.ixtf.compiler.generator.toDescriptor
 import com.github.ixtf.cqrs.eventsourcedentity.EventSourcedEntity
 import com.github.ixtf.cqrs.keyvalueentity.KeyValueEntity
 import com.github.ixtf.cqrs.workflow.Workflow
