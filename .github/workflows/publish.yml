@@ -1,0 +1,36 @@
+name: Publish to GitHub Packages
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送标签如 v1.2.3 时触发
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # 必须有写权限才能发布包
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 从 TOML 中读取 java 版本号
+      - name: Extract Java version from TOML
+        id: java-version
+        run: |
+          VERSION=$(grep "java =" gradle/libs.versions.toml | cut -d'"' -f2)
+          echo "extracted_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ steps.java-version.outputs.extracted_version }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Publish with Gradle
+        run: ./gradlew publish
+        env:
+          # MavenPublishConventionPlugin 会通过环境变量读取这个 Token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
