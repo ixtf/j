@@ -28,7 +28,13 @@ dependencies {
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-  implementation("io.netty:netty-transport-native-io_uring:linux-x86_64")
+  implementation("io.netty:netty-transport-native-io_uring::linux-x86_64")
+  implementation("io.netty:netty-tcnative-boringssl-static::linux-x86_64")
 
   testImplementation("net.openhft:chronicle-queue:5.27ea11")
+
+  testImplementation("io.netty:netty-transport-native-kqueue::osx-x86_64")
+  testImplementation("io.netty:netty-transport-native-kqueue::osx-aarch_64")
+  testImplementation("io.netty:netty-tcnative-boringssl-static::osx-x86_64")
+  testImplementation("io.netty:netty-tcnative-boringssl-static::osx-aarch_64")
 }

@@ -3,16 +3,26 @@ package com.github.ixtf.conventions
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.*
 
+@Suppress("unused")
 class SpotlessConventionPlugin : Plugin<Project> {
   override fun apply(target: Project): Unit =
     with(target) {
       pluginManager.apply("com.diffplug.spotless")
 
+      repositories {
+        mavenLocal()
+        mavenCentral()
+        maven("https://plugins.gradle.org/m2")
+        maven("https://jitpack.io")
+        maven("https://repo.akka.io/CLDJGqcFkY_87rUicOqyzLdS-W80gXkygSnrkmyvF-WNVdyF/secure")
+      }
+
       extensions.configure<SpotlessExtension> {
+        // ratchetFrom("origin/main")
         java {
-          target("**/*.java")
+          target("src/**/*.java")
           targetExclude("**/build/**", "**/generated/**")
           googleJavaFormat()
           formatAnnotations()
@@ -21,15 +31,16 @@ class SpotlessConventionPlugin : Plugin<Project> {
           endWithNewline()
         }
         kotlin {
-          target("**/*.kt")
+          target("src/**/*.kt")
           targetExclude("**/build/**", "**/generated/**")
           ktfmt().googleStyle()
+          // ktlint()
           toggleOffOn()
           trimTrailingWhitespace()
           endWithNewline()
         }
         kotlinGradle {
-          target("*.gradle.kts", "gradle/**/*.gradle.kts")
+          target("*.gradle.kts", "**/build.gradle.kts", "gradle/**/*.gradle.kts")
           targetExclude("**/build/**", "**/generated/**")
           ktfmt().googleStyle()
           toggleOffOn()
@@ -37,7 +48,7 @@ class SpotlessConventionPlugin : Plugin<Project> {
           endWithNewline()
         }
         format("styling") {
-          target("**/resources/**/*.graphql", "**/resources/**/*.graphqls")
+          target("src/main/resources/**/*.graphql", "src/main/resources/**/*.graphqls")
           targetExclude("**/build/**", "**/generated/**")
           prettier()
           toggleOffOn()

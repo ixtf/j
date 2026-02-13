@@ -11,7 +11,6 @@ data class BrokerServerInfo(
   val createDateTime: Instant,
   val modifyDateTime: Instant,
   val name: String,
-  val target: String,
 ) {
   internal constructor(
     brokerServer: BrokerServer
@@ -21,7 +20,6 @@ data class BrokerServerInfo(
     createDateTime = brokerServer.createDateTime,
     modifyDateTime = brokerServer.modifyDateTime,
     name = brokerServer.name,
-    target = brokerServer.target.value,
   )
 }
 

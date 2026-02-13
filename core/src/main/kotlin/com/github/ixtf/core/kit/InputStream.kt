@@ -2,13 +2,13 @@ package com.github.ixtf.core.kit
 
 import cn.hutool.core.compress.Gzip
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.ixtf.core.MAPPER
+import com.github.ixtf.core.JSON_MAPPER
 import com.google.common.io.ByteStreams
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.charset.StandardCharsets.UTF_8
 
-inline fun <reified T> InputStream.readJson(): T = MAPPER.readValue<T>(this)
+inline fun <reified T> InputStream.readJson(): T = JSON_MAPPER.readValue<T>(this)
 
 fun InputStream.bytes(): ByteArray = use { ByteStreams.toByteArray(this) }
 

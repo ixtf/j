@@ -21,20 +21,22 @@ class KotlinJvmConventionPlugin : Plugin<Project> {
       group = "com.github.ixtf.j"
       version = "1.0.0"
 
+      val javaLanguageVersion =
+        JavaLanguageVersion.of(providers.gradleProperty("JAVA_LANGUAGE_VERSION").get())
+
       extensions.configure<JavaPluginExtension> {
-        // JavaVersion.VERSION_25.name
-        toolchain { languageVersion.assign(JavaLanguageVersion.of(25)) }
+        toolchain { languageVersion.assign(javaLanguageVersion) }
         withJavadocJar()
         withSourcesJar()
         tasks.withType<JavaCompile> {
-          options.release.set(25)
+          options.release.set(javaLanguageVersion.asInt())
           options.encoding = "UTF-8"
           // 自动生成代码无需警告
           options.compilerArgs.addAll(listOf("-Xlint:none", "-nowarn"))
         }
       }
       extensions.configure<KotlinJvmProjectExtension> {
-        jvmToolchain(25)
+        jvmToolchain(javaLanguageVersion.asInt())
         compilerOptions {
           freeCompilerArgs.add("-Xjsr305=strict")
           freeCompilerArgs.add("-Xemit-jvm-type-annotations")

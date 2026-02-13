@@ -1,7 +1,7 @@
 package com.github.ixtf.vertx.kit
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.ixtf.core.MAPPER
+import com.github.ixtf.core.JSON_MAPPER
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.ByteBufUtil
@@ -47,6 +47,6 @@ inline fun <reified T> ByteBuf.readValueOrNull(): T? =
       Buffer::class -> BufferInternal.buffer(slice())
       JsonObject::class -> BufferInternal.buffer(slice()).toJsonObject()
       JsonArray::class -> BufferInternal.buffer(slice()).toJsonArray()
-      else -> ByteBufInputStream(duplicate()).use { MAPPER.readValue<T>(it) }
+      else -> ByteBufInputStream(duplicate()).use { JSON_MAPPER.readValue<T>(it) }
     }
       as T

@@ -4,6 +4,7 @@ import com.github.ixtf.broker.BrokerClientRoute
 import com.github.ixtf.broker.BrokerRouteOptions
 import com.github.ixtf.broker.kit.toPayload
 import io.cloudevents.CloudEvent
+import io.netty.buffer.Unpooled
 import io.rsocket.Payload
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
@@ -15,7 +16,13 @@ internal class DefaultBrokerClientRoute(
   private val brokerClient: DefaultBrokerClient,
   private val route: BrokerRouteOptions,
 ) : BrokerClientRoute {
-  private fun metadata() = route.encodeMetadata()
+  private val metadata = Unpooled.unreleasableBuffer(route.encodeMetadata())
+
+  //  private val metadata = route.encodeMetadata()
+
+  override fun metadata() = metadata?.slice()
+
+  //    private fun metadata() = route.encodeMetadata()
 
   override suspend fun fireAndForget(block: suspend () -> CloudEvent) {
     brokerClient.fireAndForget(mono { block().toPayload(metadata()) }).awaitSingleOrNull()

@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
   api(project(":vertx"))
-
+  api("io.kurrent:kurrentdb-client")
   api("com.github.ben-manes.caffeine:caffeine")
   api(libs.dagger)
 

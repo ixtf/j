@@ -37,23 +37,18 @@ gradlePlugin {
 
 spotless {
   kotlin {
-    target("**/*.kt")
-    targetExclude(
-      "**/build/generated/**",
-      "**/build/generated-sources/**",
-      "**/generated/**",
-      "bin/**",
-    )
-    ktfmt()
+    target("src/**/*.kt")
+    targetExclude("**/build/**", "**/generated/**")
+    ktfmt().googleStyle()
     // 增加跳过标记，允许在源码中使用 // spotless:off 跳过特定复杂的代码块
     toggleOffOn()
     trimTrailingWhitespace()
     endWithNewline()
   }
   kotlinGradle {
-    target("*.gradle.kts", "**/java/**/*.gradle.kts", "**/kotlin/**/*.gradle.kts")
-    targetExclude("build/**/*.kts")
-    ktfmt()
+    target("*.gradle.kts", "**/build.gradle.kts", "gradle/**/*.gradle.kts")
+    targetExclude("**/build/**", "**/generated/**")
+    ktfmt().googleStyle()
     trimTrailingWhitespace()
     endWithNewline()
   }

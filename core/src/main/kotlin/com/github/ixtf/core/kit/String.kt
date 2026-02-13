@@ -3,7 +3,7 @@ package com.github.ixtf.core.kit
 import cn.hutool.core.io.FileUtil
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ixtf.core.J
-import com.github.ixtf.core.MAPPER
+import com.github.ixtf.core.JSON_MAPPER
 import java.io.File
 
 fun String.filename(): String = FileUtil.getName(this)
@@ -12,7 +12,7 @@ fun String.mainName(): String = FileUtil.mainName(this)
 
 fun String.extName(): String = FileUtil.extName(this)
 
-inline fun <reified T> String.readJson(): T = MAPPER.readValue<T>(this)
+inline fun <reified T> String.readJson(): T = JSON_MAPPER.readValue<T>(this)
 
 inline fun <reified T> String.inputCommand(): T = J.inputCommand(readJson<T>())
 

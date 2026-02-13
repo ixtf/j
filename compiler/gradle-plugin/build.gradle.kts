@@ -9,22 +9,19 @@ plugins {
 gradlePlugin {
   plugins {
     register("IxtfPlugin") {
-      id = "com.github.ixtf.j.compiler"
+      id = "com.github.ixtf.compiler"
       implementationClass = "com.github.ixtf.compiler.IxtfPlugin"
     }
   }
 }
 
+private val daggerVersion = libs.versions.dagger.get()
+
+tasks.withType<Jar> { manifest { attributes("X-Dagger-Version" to daggerVersion) } }
+
 dependencies {
-  implementation(project(":vertx"))
-  implementation(project(":cqrs"))
-
   implementation(libs.ksp.gradlePlugin)
-  implementation(libs.ksp.api)
-  implementation(libs.kotlinpoet)
-  implementation(libs.kotlinpoet.ksp)
-
-  compileOnly(kotlin("gradle-plugin"))
+  implementation(kotlin("gradle-plugin"))
   compileOnly(kotlin("compiler"))
   //  compileOnly(kotlin("compiler-internal"))
   //  compileOnly(kotlin("compiler-fir"))

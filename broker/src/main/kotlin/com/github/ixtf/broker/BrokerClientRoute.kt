@@ -1,10 +1,13 @@
 package com.github.ixtf.broker
 
 import io.cloudevents.CloudEvent
+import io.netty.buffer.ByteBuf
 import io.rsocket.Payload
 import kotlinx.coroutines.flow.Flow
 
 interface BrokerClientRoute {
+  fun metadata(): ByteBuf?
+
   suspend fun fireAndForget(block: suspend () -> CloudEvent)
 
   suspend fun requestResponse(block: suspend () -> CloudEvent): Payload

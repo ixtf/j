@@ -17,6 +17,7 @@ dependencies {
   api("com.fasterxml.jackson.datatype:jackson-datatype-guava")
   api("com.fasterxml.jackson.module:jackson-module-parameter-names")
   api("com.fasterxml.jackson.module:jackson-module-kotlin")
+  api("com.fasterxml.jackson.dataformat:jackson-dataformat-cbor")
   api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
   api("com.fasterxml.jackson.dataformat:jackson-dataformat-toml")
   api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
@@ -24,6 +25,7 @@ dependencies {
 
   testImplementation("org.bouncycastle:bcprov-jdk18on")
   testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+  testImplementation("net.openhft:zero-allocation-hashing:2026.0")
 
   testImplementation("io.lindstrom:m3u8-parser:0.30")
   testImplementation("io.vertx:vertx-web")
