@@ -19,10 +19,13 @@ class KspConventionPlugin : Plugin<Project> {
       }
 
       dependencies {
-        add("implementation", "com.google.devtools.ksp:symbol-processing-api:${BuildConfig.KSP}")
+        add("implementation", "com.github.ixtf:cqrs:${BuildConfig.DAGGER}")
+        add("implementation", "com.github.ixtf:broker:${BuildConfig.DAGGER}")
+        add("ksp", "com.github.ixtf:compiler:${BuildConfig.VERSION}")
+
         add("implementation", "com.google.dagger:dagger:${BuildConfig.DAGGER}")
         add("ksp", "com.google.dagger:dagger-compiler:${BuildConfig.DAGGER}")
-        add("ksp", "com.github.ixtf:compiler:${BuildConfig.VERSION}")
+//        add("implementation", "com.google.devtools.ksp:symbol-processing-api:${BuildConfig.KSP}")
       }
     }
 }
