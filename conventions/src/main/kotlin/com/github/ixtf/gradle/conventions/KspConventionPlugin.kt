@@ -25,7 +25,6 @@ class KspConventionPlugin : Plugin<Project> {
 
         add("implementation", "com.google.dagger:dagger:${BuildConfig.DAGGER}")
         add("ksp", "com.google.dagger:dagger-compiler:${BuildConfig.DAGGER}")
-//        add("implementation", "com.google.devtools.ksp:symbol-processing-api:${BuildConfig.KSP}")
       }
     }
 }
