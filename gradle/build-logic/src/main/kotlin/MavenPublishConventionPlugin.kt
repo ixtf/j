@@ -1,13 +1,16 @@
 import java.time.Instant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.credentials.HttpHeaderCredentials
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.authentication.http.HttpHeaderAuthentication
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.attributes
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.credentials
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.withType
 
@@ -41,6 +44,21 @@ class MavenPublishConventionPlugin : Plugin<Project> {
       }
 
       extensions.configure<PublishingExtension> {
+        repositories {
+          maven {
+            name = "GitHubPackages"
+            // 替换为你的 GitHub 用户名和仓库名
+            url = uri("https://maven.pkg.github.com/ixtf/gradle")
+
+            credentials(HttpHeaderCredentials::class) {
+              // GitHub Actions 环境下自动获取 GITHUB_TOKEN
+              // 本地开发需要手动设置环境变量 GITHUB_TOKEN
+              name = "Authorization"
+              value = "Bearer ${providers.environmentVariable("GITHUB_TOKEN").getOrElse("")}"
+            }
+            authentication { create<HttpHeaderAuthentication>("header") }
+          }
+        }
         publications {
           create<MavenPublication>("mavenJava") {
             from(components["java"])

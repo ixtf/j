@@ -47,6 +47,7 @@ spotless {
     target("*.gradle.kts", "**/build.gradle.kts", "gradle/**/*.gradle.kts")
     targetExclude("**/build/**", "**/generated/**")
     ktfmt().googleStyle()
+    toggleOffOn()
     trimTrailingWhitespace()
     endWithNewline()
   }

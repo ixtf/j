@@ -14,8 +14,8 @@ dependencyResolutionManagement {
     mavenLocal()
     mavenCentral()
     maven("https://plugins.gradle.org/m2")
-    maven("https://jitpack.io")
     maven("https://repo.akka.io/CLDJGqcFkY_87rUicOqyzLdS-W80gXkygSnrkmyvF-WNVdyF/secure")
+    maven("https://jitpack.io")
   }
 }
 
