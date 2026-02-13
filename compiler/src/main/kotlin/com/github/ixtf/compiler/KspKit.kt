@@ -1,8 +1,8 @@
-package com.github.ixtf.compiler.ksp
+package com.github.ixtf.compiler
 
-import com.github.ixtf.compiler.ksp.model.ComponentDescriptor
-import com.github.ixtf.compiler.ksp.model.MethodDescriptor
-import com.github.ixtf.compiler.ksp.model.ParameterDescriptor
+import com.github.ixtf.compiler.model.ComponentDescriptor
+import com.github.ixtf.compiler.model.MethodDescriptor
+import com.github.ixtf.compiler.model.ParameterDescriptor
 import com.github.ixtf.cqrs.eventsourcedentity.EventSourcedEntity
 import com.github.ixtf.cqrs.keyvalueentity.KeyValueEntity
 import com.github.ixtf.cqrs.workflow.Workflow

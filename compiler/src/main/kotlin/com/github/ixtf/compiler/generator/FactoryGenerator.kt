@@ -1,7 +1,7 @@
-package com.github.ixtf.compiler.ksp.generator
+package com.github.ixtf.compiler.generator
 
 import com.github.ixtf.compiler.ksp.CODEGEN_PACKAGE
-import com.github.ixtf.compiler.ksp.model.ComponentDescriptor
+import com.github.ixtf.compiler.model.ComponentDescriptor
 import com.github.ixtf.cqrs.internal.codegen.EventSourcedEntityFactory
 import com.github.ixtf.cqrs.keyvalueentity.KeyValueEntity
 import com.github.ixtf.cqrs.workflow.Workflow
@@ -41,9 +41,9 @@ class FactoryGenerator(private val codeGenerator: CodeGenerator, private val log
   }
 
   private fun generateFactory(
-    descriptor: ComponentDescriptor,
-    factorySuperInterface: ClassName,
-    originatingFiles: Set<KSFile>,
+      descriptor: ComponentDescriptor,
+      factorySuperInterface: ClassName,
+      originatingFiles: Set<KSFile>,
   ) {
     val factoryName = "${descriptor.simpleName}Factory"
     val componentClass = ClassName.bestGuess(descriptor.qualifiedName)

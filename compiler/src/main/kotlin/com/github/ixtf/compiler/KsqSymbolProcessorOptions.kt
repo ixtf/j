@@ -1,4 +1,4 @@
-package com.github.ixtf.compiler.ksp
+package com.github.ixtf.compiler
 
 class KsqSymbolProcessorOptions(options: Map<String, String>) {
   val enabled = options["cqrs.enabled"]?.toBoolean() ?: true

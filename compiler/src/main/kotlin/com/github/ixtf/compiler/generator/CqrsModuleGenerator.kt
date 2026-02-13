@@ -1,8 +1,8 @@
-package com.github.ixtf.compiler.ksp.generator
+package com.github.ixtf.compiler.generator
 
 import com.github.ixtf.compiler.ksp.CODEGEN_PACKAGE
 import com.github.ixtf.compiler.ksp.MODULE_NAME
-import com.github.ixtf.compiler.ksp.model.ComponentDescriptor
+import com.github.ixtf.compiler.model.ComponentDescriptor
 import com.github.ixtf.cqrs.internal.codegen.CodegenCqrsModule
 import com.github.ixtf.cqrs.internal.codegen.ComponentInvoker
 import com.github.ixtf.cqrs.internal.codegen.EventSourcedEntityFactory
