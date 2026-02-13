@@ -51,8 +51,8 @@ class KotlinJvmConventionPlugin : Plugin<Project> {
         add("api", platform(getLibraryByName("bom")))
 
         add("testImplementation", platform(getLibraryByName("junit.bom")))
-        add("testImplementation", "org.junit.jupiter:junit-jupiter")
         add("testImplementation", getLibraryByName("kotlin.test"))
+        add("testImplementation", "org.junit.jupiter:junit-jupiter")
         add("testRuntimeOnly", "org.junit.platform:junit-platform-launcher")
       }
 

@@ -39,9 +39,9 @@ class FactoryGenerator(private val codeGenerator: CodeGenerator, private val log
   }
 
   private fun generateFactory(
-      descriptor: ComponentDescriptor,
-      factorySuperInterface: ClassName,
-      originatingFiles: Set<KSFile>,
+    descriptor: ComponentDescriptor,
+    factorySuperInterface: ClassName,
+    originatingFiles: Set<KSFile>,
   ) {
     val factoryName = "${descriptor.simpleName}Factory"
     val componentClass = ClassName.bestGuess(descriptor.qualifiedName)

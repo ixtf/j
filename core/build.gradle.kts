@@ -1,8 +1,4 @@
-plugins {
-  id("convention-kotlin-jvm")
-  id("convention-spotless")
-  id("convention-maven-publish")
-}
+plugins { id("convention-maven-publish") }
 
 dependencies {
   api("cn.hutool:hutool-log")

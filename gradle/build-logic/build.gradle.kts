@@ -26,10 +26,6 @@ gradlePlugin {
       id = "convention-maven-publish"
       implementationClass = "MavenPublishConventionPlugin"
     }
-    register("KspConventionPlugin") {
-      id = "convention-ksp"
-      implementationClass = "KspConventionPlugin"
-    }
   }
 }
 
