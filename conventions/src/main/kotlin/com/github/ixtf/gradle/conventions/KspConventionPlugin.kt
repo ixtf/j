@@ -22,6 +22,7 @@ class KspConventionPlugin : Plugin<Project> {
         add("implementation", "com.google.devtools.ksp:symbol-processing-api:${BuildConfig.KSP}")
         add("implementation", "com.google.dagger:dagger:${BuildConfig.DAGGER}")
         add("ksp", "com.google.dagger:dagger-compiler:${BuildConfig.DAGGER}")
+        add("ksp", "com.github.ixtf:compiler:${BuildConfig.VERSION}")
         // 这里还有一个自己写的 ksp-processor 如何配置
       }
     }
